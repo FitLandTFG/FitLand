@@ -24,10 +24,10 @@ export default function ConfirmPassword() {
 
     return (
         <AuthLayout
-            title="Confirm your password"
-            description="This is a secure area of the application. Please confirm your password before continuing."
+            title="Confirma tu contraseña"
+            description="Este es un área segura de la aplicación. Por favor, confirma tu contraseña antes de continuar."
         >
-            <Head title="Confirm password" />
+            <Head title="Confirmar contraseña" />
 
             <form onSubmit={submit}>
                 <div className="space-y-6">
