@@ -12,17 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('usuarios', function (Blueprint $table) {
-            //
+            $table->rememberToken()->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('usuarios', function (Blueprint $table) {
-            //
+            $table->dropColumn('remember_token');
         });
     }
 };
