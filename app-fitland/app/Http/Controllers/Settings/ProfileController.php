@@ -13,9 +13,7 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    /**
-     * Show the user's profile settings page.
-     */
+    // Muestra la vista de configuración del perfil
     public function edit(Request $request): Response
     {
         return Inertia::render('settings/profile', [
@@ -24,13 +22,12 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile settings.
-     */
+    // Actualiza los datos del perfil
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
 
+        // Si el correo fue modificado, se desverifica
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
@@ -40,9 +37,7 @@ class ProfileController extends Controller
         return to_route('profile.edit');
     }
 
-    /**
-     * Delete the user's account.
-     */
+    // Elimina la cuenta del usuario
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
@@ -52,7 +47,6 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
-
         $user->delete();
 
         $request->session()->invalidate();

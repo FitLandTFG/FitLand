@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,9 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
         password: '',
         password_confirmation: '',
     });
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -56,34 +59,56 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         <InputError message={errors.email} className="mt-2" />
                     </div>
 
+                    {/* Contraseña nueva con ojo */}
                     <div className="grid gap-2">
                         <Label htmlFor="password">Contraseña nueva</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            name="password"
-                            autoComplete="new-password"
-                            value={data.password}
-                            className="mt-1 block w-full"
-                            autoFocus
-                            onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Contraseña nueva"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                name="password"
+                                autoComplete="new-password"
+                                value={data.password}
+                                className="mt-1 block w-full pr-10"
+                                autoFocus
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="Contraseña nueva"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground"
+                                tabIndex={-1}
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                         <InputError message={errors.password} />
                     </div>
 
+                    {/* Confirmar contraseña nueva con ojo */}
                     <div className="grid gap-2">
                         <Label htmlFor="password_confirmation">Confirmar contraseña nueva</Label>
-                        <Input
-                            id="password_confirmation"
-                            type="password"
-                            name="password_confirmation"
-                            autoComplete="new-password"
-                            value={data.password_confirmation}
-                            className="mt-1 block w-full"
-                            onChange={(e) => setData('password_confirmation', e.target.value)}
-                            placeholder="Confirmar contraseña"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password_confirmation"
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                name="password_confirmation"
+                                autoComplete="new-password"
+                                value={data.password_confirmation}
+                                className="mt-1 block w-full pr-10"
+                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                placeholder="Confirmar contraseña"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground"
+                                tabIndex={-1}
+                            >
+                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                         <InputError message={errors.password_confirmation} className="mt-2" />
                     </div>
 

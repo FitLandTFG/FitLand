@@ -17,19 +17,26 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-
         post(route('password.email'));
     };
 
     return (
-        <AuthLayout title="He olvidado mi contraseña" description="Introduce tu email para enviar un correo para reestablecer la contraseña">
+        <AuthLayout
+            title="He olvidado mi contraseña"
+            description="Introduce tu email para enviar un correo para reestablecer la contraseña"
+        >
             <Head title="He olvidado mi contraseña" />
 
-            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            {status && (
+                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                    {status}
+                </div>
+            )}
 
             <div className="space-y-6">
                 <form onSubmit={submit}>
                     <div className="grid gap-2">
+                        <Label htmlFor="email">Correo electrónico</Label>
                         <Input
                             id="email"
                             type="email"
@@ -40,7 +47,6 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             onChange={(e) => setData('email', e.target.value)}
                             placeholder="Correo electrónico"
                         />
-
                         <InputError message={errors.email} />
                     </div>
 

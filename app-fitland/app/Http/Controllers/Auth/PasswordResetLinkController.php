@@ -11,9 +11,7 @@ use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
-    /**
-     * Show the password reset link request page.
-     */
+    // Muestra la vista para solicitar el enlace de recuperación
     public function create(Request $request): Response
     {
         return Inertia::render('auth/forgot-password', [
@@ -21,21 +19,20 @@ class PasswordResetLinkController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+    // Procesa el envío del enlace de recuperación
     public function store(Request $request): RedirectResponse
     {
+        // Valida que el email esté presente y bien formado
         $request->validate([
             'email' => 'required|email',
         ]);
 
+        // Intenta enviar el enlace de restablecimiento al correo
         Password::sendResetLink(
             $request->only('email')
         );
 
-        return back()->with('status', __('A reset link will be sent if the account exists.'));
+        // Redirige con mensaje (aunque el email no exista, por seguridad)
+        return back()->with('status', __('Se enviará un enlace de restablecimiento si la cuenta existe.'));
     }
 }

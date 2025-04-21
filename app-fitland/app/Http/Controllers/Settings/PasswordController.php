@@ -12,28 +12,27 @@ use Inertia\Response;
 
 class PasswordController extends Controller
 {
-    /**
-     * Show the user's password settings page.
-     */
+    // Muestra la vista de configuración de contraseña
     public function edit(): Response
     {
         return Inertia::render('settings/password');
     }
 
-    /**
-     * Update the user's password.
-     */
+    // Actualiza la contraseña del usuario
     public function update(Request $request): RedirectResponse
     {
+        // Valida que la contraseña actual sea correcta y que la nueva esté confirmada
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
+        // Actualiza la contraseña del usuario en la base de datos
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
 
+        // Vuelve a la misma página
         return back();
     }
 }
