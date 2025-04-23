@@ -28,4 +28,9 @@ class Usuario extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
     ];
+
+    public function esAdmin()
+    {
+        return $this->roles === 'admin';
+    }
 }
