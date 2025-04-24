@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\esAdmin;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -15,8 +16,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-Route::middleware([esAdmin::class])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+
+
+Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('admin');
+
+    // Rutas CRUD de usuarios
+    Route::resource('usuarios', UsuarioController::class)->names('admin.usuarios');
 });
 
 require __DIR__.'/settings.php';

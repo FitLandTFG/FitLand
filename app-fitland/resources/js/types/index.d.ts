@@ -34,11 +34,20 @@ export interface SharedData {
 export interface User {
     id: number;
     nombre_completo: string;
-    email: string;
+    documentacion: string;
+    domicilio: string;
     avatar?: string;
-    roles: string;
+    email: string;
+    password: string;
+    imagen: string;
+    roles: 'user' | 'admin'; // Basado en tu enum rolesusuarios_enum
     email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
-}
+    remember_token: string | null;
+    created_at?: string;
+    updated_at?: string;
+    [key: string]: unknown;
+  }
+  export interface PageProps {
+    auth: Auth;
+    [key: string]: unknown;
+  }

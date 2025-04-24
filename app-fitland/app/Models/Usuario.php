@@ -24,8 +24,8 @@ class Usuario extends Authenticatable implements MustVerifyEmail
         'roles'
     ];
 
+    // Oculta solo el remember_token, permite ver la contraseña hasheada
     protected $hidden = [
-        'password',
         'remember_token',
     ];
 

@@ -20,7 +20,7 @@ type PageProps = {
 export default function Dashboard() {
   const { auth } = usePage<PageProps>().props;
   const user = auth.user;
-  
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard" />
