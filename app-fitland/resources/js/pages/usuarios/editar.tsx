@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps, User } from '@/types';
 
@@ -6,7 +6,8 @@ interface Props extends PageProps {
   usuario: User;
 }
 
-const Edit: React.FC<Props> = ({ usuario }) => {
+const Editar: React.FC<Props> = ({ usuario }) => {
+  // Inicializar el formulario con la data del usuario
   const { data, setData, put, processing, errors } = useForm({
     nombre_completo: usuario.nombre_completo,
     documentacion: usuario.documentacion,
@@ -14,13 +15,29 @@ const Edit: React.FC<Props> = ({ usuario }) => {
     email: usuario.email,
     password: '',
     imagen: usuario.imagen,
-    roles: usuario.roles as 'user' | 'admin', // Asegura que sea 'user' o 'admin'
+    roles: usuario.roles,
+    email_verified_at: usuario.email_verified_at,
   });
+
+  const [isVerified, setIsVerified] = useState<boolean>(!!usuario.email_verified_at);
+
+  const handleCheckboxChange = () => {
+    setIsVerified(!isVerified);
+    setData('email_verified_at', isVerified ? null : new Date().toISOString());
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     put(`/admin/usuarios/${usuario.id}`);
   };
+
+  useEffect(() => {
+    if (usuario.email_verified_at) {
+      setIsVerified(true);
+    } else {
+      setIsVerified(false);
+    }
+  }, [usuario.email_verified_at]);
 
   return (
     <div className="p-6">
@@ -32,14 +49,14 @@ const Edit: React.FC<Props> = ({ usuario }) => {
           { name: 'documentacion', label: 'DNI/NIF' },
           { name: 'domicilio', label: 'Domicilio' },
           { name: 'email', label: 'Email', type: 'email' },
-          { name: 'password', label: 'Nueva contraseña (opcional)', type: 'password' },
+          { name: 'password', label: 'Contraseña (dejar vacío para no cambiar)', type: 'password' },
           { name: 'imagen', label: 'Imagen (URL)' },
         ].map(({ name, label, type = 'text' }) => (
           <div key={name}>
             <label className="block mb-1 font-semibold">{label}</label>
             <input
               type={type}
-              value={data[name as keyof typeof data]}
+              value={data[name as keyof typeof data] ?? ''}
               onChange={(e) => setData(name as keyof typeof data, e.target.value)}
               className="w-full border rounded px-3 py-2"
             />
@@ -53,7 +70,7 @@ const Edit: React.FC<Props> = ({ usuario }) => {
           <label className="block mb-1 font-semibold">Rol</label>
           <select
             value={data.roles}
-            onChange={(e) => setData('roles', e.target.value as 'user' | 'admin')} // Asegura que sea 'user' o 'admin'
+            onChange={(e) => setData('roles', e.target.value as 'user' | 'admin')}
             className="w-full border rounded px-3 py-2"
           >
             <option value="user">Usuario</option>
@@ -62,16 +79,29 @@ const Edit: React.FC<Props> = ({ usuario }) => {
           {errors.roles && <p className="text-red-600 text-sm">{errors.roles}</p>}
         </div>
 
+        <div>
+          <label className="font-semibold">¿Email Verificado? </label> 
+          <input
+            type="checkbox"
+            checked={isVerified}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          {errors.email_verified_at && (
+            <p className="text-red-600 text-sm">{errors.email_verified_at}</p>
+          )}
+        </div>
+
         <button
           type="submit"
           disabled={processing}
-          className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
+          className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
         >
-          Guardar cambios
+          Actualizar usuario
         </button>
       </form>
     </div>
   );
 };
 
-export default Edit;
+export default Editar;

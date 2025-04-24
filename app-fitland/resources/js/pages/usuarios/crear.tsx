@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 
-const Create: React.FC = () => {
+const Crear: React.FC = () => {
   const { data, setData, post, processing, errors } = useForm({
     nombre_completo: '',
     documentacion: '',
@@ -10,10 +10,12 @@ const Create: React.FC = () => {
     password: '',
     imagen: '',
     roles: 'user',
+    email_verified_at: null as string | null,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     post('/admin/usuarios');
   };
 
@@ -34,7 +36,7 @@ const Create: React.FC = () => {
             <label className="block mb-1 font-semibold">{label}</label>
             <input
               type={type}
-              value={data[name as keyof typeof data]}
+              value={data[name as keyof typeof data] ?? ''}
               onChange={(e) => setData(name as keyof typeof data, e.target.value)}
               className="w-full border rounded px-3 py-2"
             />
@@ -57,6 +59,23 @@ const Create: React.FC = () => {
           {errors.roles && <p className="text-red-600 text-sm">{errors.roles}</p>}
         </div>
 
+        <div className="flex items-center space-x-2">
+          <label htmlFor="email_verified" className="font-semibold">
+            ¿Email verificado?
+          </label>
+          <input
+            type="checkbox"
+            id="email_verified"
+            checked={!!data.email_verified_at}
+            onChange={(e) =>
+              setData('email_verified_at', e.target.checked ? new Date().toISOString() : null)
+            }
+          />
+        </div>
+        {errors.email_verified_at && (
+          <p className="text-red-600 text-sm">{errors.email_verified_at}</p>
+        )}
+
         <button
           type="submit"
           disabled={processing}
@@ -69,4 +88,4 @@ const Create: React.FC = () => {
   );
 };
 
-export default Create;
+export default Crear;

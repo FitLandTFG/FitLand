@@ -21,10 +21,10 @@ class Usuario extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'imagen',
-        'roles'
+        'roles',
+        'email_verified_at'
     ];
 
-    // Oculta solo el remember_token, permite ver la contraseña hasheada
     protected $hidden = [
         'remember_token',
     ];
