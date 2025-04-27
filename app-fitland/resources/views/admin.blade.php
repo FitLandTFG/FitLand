@@ -27,7 +27,7 @@
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Suscripciones</h3>
                 <p class="text-gray-600 mb-4">Gestiona las suscripciones disponibles para los usuarios.</p>
-                <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
+                <a href="/admin/suscripciones" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">

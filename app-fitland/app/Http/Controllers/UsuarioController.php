@@ -12,14 +12,14 @@ class UsuarioController extends Controller
     {
         $usuarios = Usuario::orderBy('id', 'desc')->get();
 
-        return Inertia::render('usuarios/index', [
+        return Inertia::render('admin/usuarios/index', [
             'usuarios' => $usuarios
         ]);
     }
 
     public function crear()
     {
-        return Inertia::render('usuarios/crear');
+        return Inertia::render('admin/usuarios/crear');
     }
 
     public function guardar(Request $request)
@@ -84,7 +84,7 @@ class UsuarioController extends Controller
 
     public function editar(Usuario $usuario)
     {
-        return Inertia::render('usuarios/editar', [
+        return Inertia::render('admin/usuarios/editar', [
             'usuario' => $usuario
         ]);
     }
