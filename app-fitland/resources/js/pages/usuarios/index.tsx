@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageProps, User } from '@/types';
 import { Link } from '@inertiajs/react';
+
 interface Props extends PageProps {
     usuarios: User[];
 }
@@ -12,14 +13,19 @@ const Index: React.FC<Props> = ({ usuarios }) => {
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Gestión de Usuarios</h1>
 
-            <div className="mb-4">
-
+            <div className="mb-4 flex space-x-4">
                 <Link
                     href="/admin/usuarios/crear"
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                     Crear Usuario
                 </Link>
+                <a
+                    href="/admin"
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                    Volver
+                </a>
             </div>
 
             <div className="overflow-x-auto bg-white rounded shadow">
@@ -64,12 +70,20 @@ const Index: React.FC<Props> = ({ usuarios }) => {
                                         Editar
                                     </Link>
                                     <Link
-                                        href={`/admin/usuarios/${u.id}/eliminar`}
+                                        as="button"
+                                        method="delete"
+                                        href={`/admin/usuarios/${u.id}`}
                                         className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                                        onClick={(e) => {
+                                            if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+                                                e.preventDefault();
+                                            }
+                                        }}
                                     >
                                         Eliminar
                                     </Link>
                                 </td>
+
                             </tr>
                         ))}
                     </tbody>

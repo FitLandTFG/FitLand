@@ -20,16 +20,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin');
-    
-    Route::resource('usuarios', UsuarioController::class)
-    ->only(['index', 'crear', 'guardar', 'editar', 'actualizar', 'eliminar'])
-    ->names('admin.usuarios');
+
+    Route::get('usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
     Route::get('usuarios/crear', [UsuarioController::class, 'crear'])->name('admin.usuarios.crear');
     Route::post('usuarios', [UsuarioController::class, 'guardar'])->name('admin.usuarios.guardar');
     Route::get('usuarios/{usuario}/editar', [UsuarioController::class, 'editar'])->name('admin.usuarios.editar');
     Route::put('usuarios/{usuario}', [UsuarioController::class, 'actualizar'])->name('admin.usuarios.actualizar');
-
+    Route::delete('usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('admin.usuarios.destroy');
 });
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

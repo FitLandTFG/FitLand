@@ -76,13 +76,22 @@ const Crear: React.FC = () => {
           <p className="text-red-600 text-sm">{errors.email_verified_at}</p>
         )}
 
-        <button
-          type="submit"
-          disabled={processing}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-        >
-          Crear usuario
-        </button>
+<div className="flex space-x-4">
+  <button
+    type="submit"
+    disabled={processing}
+    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+  >
+    Crear usuario
+  </button>
+
+  <a
+    href="/admin/usuarios"
+    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+  >
+    Volver
+  </a>
+</div>
       </form>
     </div>
   );
