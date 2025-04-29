@@ -23,7 +23,7 @@ class UsuarioController extends Controller
     }
 
     public function guardar(Request $request)
-{
+    {
     $request->validate(
         [
             'nombre_completo' => [
@@ -46,7 +46,6 @@ class UsuarioController extends Controller
             'email_verified_at' => 'nullable|date',
         ],
         [
-            // Mensajes personalizados
             'nombre_completo.required' => 'El nombre es obligatorio.',
             'nombre_completo.regex' => 'El nombre solo puede contener letras y espacios.',
             'nombre_completo.max' => 'El nombre no puede tener más de 50 caracteres.',
@@ -77,10 +76,7 @@ class UsuarioController extends Controller
 
     return redirect()->route('admin.usuarios.index')
         ->with('success', 'Usuario creado correctamente.');
-}
-
-
-
+    }
 
     public function editar(Usuario $usuario)
     {
@@ -90,7 +86,7 @@ class UsuarioController extends Controller
     }
 
     public function actualizar(Request $request, Usuario $usuario)
-{
+    {
     $request->validate(
         [
             'nombre_completo' => [
@@ -137,10 +133,10 @@ class UsuarioController extends Controller
 
     return redirect()->route('admin.usuarios.index')
         ->with('success', 'Usuario actualizado correctamente.');
-}
+    }
 
 
-    public function destroy(Usuario $usuario)
+    public function eliminar(Usuario $usuario)
     {
         $usuario->delete();
 

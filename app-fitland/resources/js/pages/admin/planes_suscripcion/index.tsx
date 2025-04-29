@@ -1,29 +1,29 @@
 import React from 'react';
-import { PageProps } from '@/types';
 import { Link } from '@inertiajs/react';
 
-interface Suscripcion {
+interface Plan {
   id: number;
   nombre: string;
   precio: number;
-  duracion: string;
+  tipo: 'Prueba' | 'Silver' | 'Gold' | 'Diamond';
+  duracion_dias: number;
 }
 
-interface Props extends PageProps {
-  suscripciones: Suscripcion[];
+interface Props {
+  planes: Plan[];
 }
 
-const Index: React.FC<Props> = ({ suscripciones }) => {
+const Index: React.FC<Props> = ({ planes }) => {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Gestión de Suscripciones</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Planes de Suscripción</h1>
 
       <div className="mb-4 flex space-x-4">
         <Link
-          href="/admin/suscripciones/crear"
+          href="/admin/planes/crear"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Crear Suscripción
+          Crear Plan
         </Link>
         <a
           href="/admin"
@@ -40,20 +40,22 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
               <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Nombre</th>
               <th className="px-4 py-2">Precio (€)</th>
-              <th className="px-4 py-2">Duración (meses)</th>
+              <th className="px-4 py-2">Tipo</th>
+              <th className="px-4 py-2">Duración (días)</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {suscripciones.map((s) => (
-              <tr key={s.id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2">{s.id}</td>
-                <td className="px-4 py-2">{s.nombre}</td>
-                <td className="px-4 py-2">{s.precio}€</td>
-                <td className="px-4 py-2">{s.duracion}</td>
+            {planes.map((plan) => (
+              <tr key={plan.id} className="border-b hover:bg-gray-50">
+                <td className="px-4 py-2">{plan.id}</td>
+                <td className="px-4 py-2">{plan.nombre}</td>
+                <td className="px-4 py-2">{plan.precio.toFixed(2)}</td>
+                <td className="px-4 py-2 capitalize">{plan.tipo}</td>
+                <td className="px-4 py-2">{plan.duracion_dias}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
-                    href={`/admin/suscripciones/${s.id}/editar`}
+                    href={`/admin/planes/${plan.id}/editar`}
                     className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   >
                     Editar
@@ -61,10 +63,10 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
                   <Link
                     as="button"
                     method="delete"
-                    href={`/admin/suscripciones/${s.id}`}
+                    href={`/admin/planes/${plan.id}`}
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                     onClick={(e) => {
-                      if (!confirm(`¿Estás seguro de que quieres eliminar la suscripción "${s.nombre}"?`)) {
+                      if (!confirm(`¿Estás seguro de que quieres eliminar el plan "${plan.nombre}"?`)) {
                         e.preventDefault();
                       }
                     }}
@@ -74,10 +76,10 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
                 </td>
               </tr>
             ))}
-            {suscripciones.length === 0 && (
+            {planes.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center text-gray-500 py-4">
-                  No hay suscripciones registradas.
+                <td colSpan={6} className="text-center text-gray-500 py-4">
+                  No hay planes registrados.
                 </td>
               </tr>
             )}

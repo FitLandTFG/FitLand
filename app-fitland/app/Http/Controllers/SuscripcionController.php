@@ -17,5 +17,8 @@ class SuscripcionController extends Controller
         ]);
     }
 
-    // Aquí luego puedes añadir métodos como crear, guardar, editar, actualizar, eliminar...
+    public function crear()
+    {
+        return Inertia::render('admin/suscripciones/crear');
+    }
 }

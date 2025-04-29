@@ -86,6 +86,13 @@ const Index: React.FC<Props> = ({ usuarios }) => {
 
                             </tr>
                         ))}
+                        {usuarios.length === 0 && (
+                            <tr>
+                                <td colSpan={10} className="text-center text-gray-500 py-4">
+                                    No hay usuarios registrados.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Middleware\esAdmin;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\PlanSuscripcionController;
 use App\Http\Controllers\SuscripcionController;
 
 Route::get('/', function () {
@@ -28,7 +29,15 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::post('usuarios', [UsuarioController::class, 'guardar'])->name('admin.usuarios.guardar');
     Route::get('usuarios/{usuario}/editar', [UsuarioController::class, 'editar'])->name('admin.usuarios.editar');
     Route::put('usuarios/{usuario}', [UsuarioController::class, 'actualizar'])->name('admin.usuarios.actualizar');
-    Route::delete('usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('admin.usuarios.destroy');
+    Route::delete('usuarios/{usuario}', [UsuarioController::class, 'eliminar'])->name('admin.usuarios.eliminar');
+
+    // Planes de suscripción
+    Route::get('planes_suscripcion', [PlanSuscripcionController::class, 'index'])->name('admin.planes_suscripcion.index');
+    Route::get('planes_suscripcion/crear', [PlanSuscripcionController::class, 'crear'])->name('admin.planes_suscripcion.crear');
+    Route::post('planes_suscripcion', [PlanSuscripcionController::class, 'guardar'])->name('admin.planes_suscripcion.guardar');
+    Route::get('planes_suscripcion/{plan}/editar', [PlanSuscripcionController::class, 'editar'])->name('admin.planes_suscripcion.editar');
+    Route::put('planes_suscripcion/{plan}', [PlanSuscripcionController::class, 'actualizar'])->name('admin.planes_suscripcion.actualizar');
+    Route::delete('planes_suscripcion/{plan}', [PlanSuscripcionController::class, 'eliminar'])->name('admin.planes_suscripcion.eliminar');
 
     // Suscripciones
     Route::get('suscripciones', [SuscripcionController::class, 'index'])->name('admin.suscripciones.index');
@@ -36,7 +45,7 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::post('suscripciones', [SuscripcionController::class, 'guardar'])->name('admin.suscripciones.guardar');
     Route::get('suscripciones/{suscripcion}/editar', [SuscripcionController::class, 'editar'])->name('admin.suscripciones.editar');
     Route::put('suscripciones/{suscripcion}', [SuscripcionController::class, 'actualizar'])->name('admin.suscripciones.actualizar');
-    Route::delete('suscripciones/{suscripcion}', [SuscripcionController::class, 'destroy'])->name('admin.suscripciones.destroy');
+    Route::delete('suscripciones/{suscripcion}', [SuscripcionController::class, 'eliminar'])->name('admin.suscripciones.eliminar');
 });
 
 
