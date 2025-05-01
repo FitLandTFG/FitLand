@@ -8,6 +8,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PlanSuscripcionController;
 use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PagoController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -55,6 +56,14 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('productos/{producto}/editar', [ProductoController::class, 'editar'])->name('admin.productos.editar');
     Route::put('productos/{producto}', [ProductoController::class, 'actualizar'])->name('admin.productos.actualizar');
     Route::delete('productos/{producto}', [ProductoController::class, 'eliminar'])->name('admin.productos.eliminar');
+
+    // Pagos
+    Route::get('pagos', [PagoController::class, 'index'])->name('admin.pagos.index');
+    Route::get('pagos/crear', [PagoController::class, 'crear'])->name('admin.pagos.crear');
+    Route::post('pagos', [PagoController::class, 'guardar'])->name('admin.pagos.guardar');
+    Route::get('pagos/{producto}/editar', [PagoController::class, 'editar'])->name('admin.pagos.editar');
+    Route::put('pagos/{producto}', [PagoController::class, 'actualizar'])->name('admin.pagos.actualizar');
+    Route::delete('pagos/{producto}', [PagoController::class, 'eliminar'])->name('admin.pagos.eliminar');
 });
 
 

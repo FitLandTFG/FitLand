@@ -21,7 +21,7 @@ const Crear: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Crear Nuevo Usuario</h1>
+      <h1 className="text-2xl font-bold mb-6">Crear Usuario</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         {[
