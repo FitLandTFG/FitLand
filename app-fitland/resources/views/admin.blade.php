@@ -39,31 +39,31 @@
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Productos</h3>
                 <p class="text-gray-600 mb-4">Gestiona los productos disponibles en la tienda online.</p>
-                <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
+                <a href="/admin/productos" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Pagos</h3>
                 <p class="text-gray-600 mb-4">Gestiona los pagos realizados por los usuarios.</p>
-                <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
+                <a href="/admin/pagos" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Compras</h3>
                 <p class="text-gray-600 mb-4">Gestiona las compras realizadas por los usuarios.</p>
-                <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
+                <a href="/admin/compras" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Clases</h3>
                 <p class="text-gray-600 mb-4">Gestiona las clases disponibles para los usuarios.</p>
-                <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
+                <a href="/admin/clases" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Inscripciones</h3>
                 <p class="text-gray-600 mb-4">Gestiona las inscripciones a las clases de los usuarios.</p>
-                <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
+                <a href="/admin/inscripciones" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
         </div>
     </main>

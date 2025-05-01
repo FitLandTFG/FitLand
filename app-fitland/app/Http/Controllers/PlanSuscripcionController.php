@@ -31,14 +31,16 @@ class PlanSuscripcionController extends Controller
             'duracion_dias' => 'required|integer|min:1',
         ]);
 
-        PlanSuscripcion::create($request->all());
+        PlanSuscripcion::create($request->only(['nombre', 'precio', 'tipo', 'duracion_dias']));
 
         return redirect()->route('admin.planes_suscripcion.index');
     }
 
     public function editar(PlanSuscripcion $plan)
     {
-        return Inertia::render('admin/planes_suscripcion/editar', ['plan_suscripcion' => $plan]);
+        return Inertia::render('admin/planes_suscripcion/editar', [
+            'plan' => $plan
+        ]);
     }
 
     public function actualizar(Request $request, PlanSuscripcion $plan)
@@ -50,7 +52,7 @@ class PlanSuscripcionController extends Controller
             'duracion_dias' => 'required|integer|min:1',
         ]);
 
-        $plan->update($request->all());
+        $plan->update($request->only(['nombre', 'precio', 'tipo', 'duracion_dias']));
 
         return redirect()->route('admin.planes_suscripcion.index');
     }
@@ -58,6 +60,7 @@ class PlanSuscripcionController extends Controller
     public function eliminar(PlanSuscripcion $plan)
     {
         $plan->delete();
+
         return redirect()->route('admin.planes_suscripcion.index');
     }
 }

@@ -4,9 +4,12 @@ import { Link } from '@inertiajs/react';
 
 interface Suscripcion {
   id: number;
-  nombre: string;
+  usuario: { nombre_completo: string };
+  plan: { nombre: string };
   precio: number;
-  duracion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  estado: 'activa' | 'expirada' | 'cancelada';
 }
 
 interface Props extends PageProps {
@@ -38,9 +41,12 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
           <thead className="bg-gray-100 border-b">
             <tr>
               <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Nombre</th>
+              <th className="px-4 py-2">Usuario</th>
+              <th className="px-4 py-2">Plan</th>
               <th className="px-4 py-2">Precio (€)</th>
-              <th className="px-4 py-2">Duración (meses)</th>
+              <th className="px-4 py-2">Inicio</th>
+              <th className="px-4 py-2">Fin</th>
+              <th className="px-4 py-2">Estado</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
@@ -48,9 +54,12 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
             {suscripciones.map((s) => (
               <tr key={s.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2">{s.id}</td>
-                <td className="px-4 py-2">{s.nombre}</td>
-                <td className="px-4 py-2">{s.precio}€</td>
-                <td className="px-4 py-2">{s.duracion}</td>
+                <td className="px-4 py-2">{s.usuario?.nombre_completo}</td>
+                <td className="px-4 py-2">{s.plan?.nombre}</td>
+                <td className="px-4 py-2">{s.precio.toFixed(2)} €</td>
+                <td className="px-4 py-2">{s.fecha_inicio}</td>
+                <td className="px-4 py-2">{s.fecha_fin}</td>
+                <td className="px-4 py-2 capitalize">{s.estado}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
                     href={`/admin/suscripciones/${s.id}/editar`}
@@ -64,7 +73,7 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
                     href={`/admin/suscripciones/${s.id}`}
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                     onClick={(e) => {
-                      if (!confirm(`¿Estás seguro de que quieres eliminar la suscripción "${s.nombre}"?`)) {
+                      if (!confirm(`¿Eliminar la suscripción de "${s.usuario?.nombre_completo}"?`)) {
                         e.preventDefault();
                       }
                     }}
@@ -76,7 +85,7 @@ const Index: React.FC<Props> = ({ suscripciones }) => {
             ))}
             {suscripciones.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center text-gray-500 py-4">
+                <td colSpan={8} className="text-center text-gray-500 py-4">
                   No hay suscripciones registradas.
                 </td>
               </tr>
