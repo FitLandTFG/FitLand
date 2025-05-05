@@ -10,10 +10,12 @@ class Pago extends Model
 
     protected $fillable = [
         'usuario_id',
-        'suscripcion_id',
+        'compra_id',
         'fecha_pago',
         'monto',
         'metodo_pago',
+        'estado',
+        'transaccion_id',
     ];
 
     public function usuario()
@@ -21,8 +23,8 @@ class Pago extends Model
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
-    public function suscripcion()
+    public function compra()
     {
-        return $this->belongsTo(Suscripcion::class, 'suscripcion_id');
+        return $this->belongsTo(Compra::class, 'compra_id');
     }
 }

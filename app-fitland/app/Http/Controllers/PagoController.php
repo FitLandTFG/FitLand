@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Suscripcion;
+use App\Models\Compra;
 use App\Models\Usuario;
 use App\Models\Pago;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ class PagoController extends Controller
 {
     public function index()
     {
-        $pagos = Pago::with(['usuario', 'suscripcion'])->orderBy('id', 'desc')->get();
+        $pagos = Pago::with(['usuario', 'compra'])->orderBy('id', 'desc')->get();
 
         return Inertia::render('admin/pagos/index', [
             'pagos' => $pagos
@@ -23,7 +23,7 @@ class PagoController extends Controller
     {
         return Inertia::render('admin/pagos/crear', [
             'usuarios' => Usuario::all(),
-            'suscripciones' => Suscripcion::all(),
+            'compras' => Compra::all(),
         ]);
     }
 

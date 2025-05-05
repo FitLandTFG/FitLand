@@ -6,18 +6,20 @@ interface Usuario {
   nombre_completo: string;
 }
 
-interface Suscripcion {
+interface Compra {
   id: number;
-  nombre: string;
+  fecha_compra: string;
 }
 
 interface Pago {
   id: number;
   usuario: Usuario;
-  suscripcion: Suscripcion;
-  cantidad: number;
-  fecha_pago: string;
+  compra: Compra;
   metodo_pago: string;
+  estado: string;
+  monto: number;
+  transaccion_id: string;
+  fecha_pago: string;
 }
 
 interface Props {
@@ -30,12 +32,18 @@ const Index: React.FC<Props> = ({ pagos }) => {
       <h1 className="text-2xl font-bold mb-6">Gestión de Pagos</h1>
 
       <div className="mb-4 flex space-x-4">
-        <Link href="/admin/pagos/crear" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Registrar Pago
+        <Link
+          href="/admin/pagos/crear"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Crear Pago
         </Link>
-        <a href="/admin" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+        <Link
+          href="/admin"
+          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
           Volver
-        </a>
+        </Link>
       </div>
 
       <div className="overflow-x-auto bg-white rounded shadow">
@@ -44,10 +52,12 @@ const Index: React.FC<Props> = ({ pagos }) => {
             <tr>
               <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Suscripción</th>
-              <th className="px-4 py-2">Cantidad (€)</th>
+              <th className="px-4 py-2">Compra</th>
+              <th className="px-4 py-2">Método de Pago</th>
+              <th className="px-4 py-2">Estado</th>
+              <th className="px-4 py-2">Monto (€)</th>
+              <th className="px-4 py-2">Transacción ID</th>
               <th className="px-4 py-2">Fecha de Pago</th>
-              <th className="px-4 py-2">Método</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
@@ -55,11 +65,13 @@ const Index: React.FC<Props> = ({ pagos }) => {
             {pagos.map((pago) => (
               <tr key={pago.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2">{pago.id}</td>
-                <td className="px-4 py-2">{pago.usuario?.nombre_completo}</td>
-                <td className="px-4 py-2">{pago.suscripcion?.nombre}</td>
-                <td className="px-4 py-2">{pago.cantidad.toFixed(2)}</td>
-                <td className="px-4 py-2">{pago.fecha_pago}</td>
+                <td className="px-4 py-2">{pago.usuario?.nombre_completo || '—'}</td>
+                <td className="px-4 py-2">{pago.compra?.fecha_compra || '—'}</td>
                 <td className="px-4 py-2">{pago.metodo_pago}</td>
+                <td className="px-4 py-2 capitalize">{pago.estado}</td>
+                <td className="px-4 py-2">{pago.monto.toFixed(2)}</td>
+                <td className="px-4 py-2">{pago.transaccion_id}</td>
+                <td className="px-4 py-2">{new Date(pago.fecha_pago).toLocaleDateString()}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
                     href={`/admin/pagos/${pago.id}/editar`}
@@ -73,7 +85,7 @@ const Index: React.FC<Props> = ({ pagos }) => {
                     href={`/admin/pagos/${pago.id}`}
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                     onClick={(e) => {
-                      if (!confirm(`¿Eliminar el pago #${pago.id}?`)) {
+                      if (!confirm(`¿Eliminar pago de ${pago.usuario?.nombre_completo}?`)) {
                         e.preventDefault();
                       }
                     }}
@@ -83,13 +95,6 @@ const Index: React.FC<Props> = ({ pagos }) => {
                 </td>
               </tr>
             ))}
-            {pagos.length === 0 && (
-              <tr>
-                <td colSpan={7} className="text-center text-gray-500 py-4">
-                  No hay pagos registrados.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
