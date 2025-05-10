@@ -35,6 +35,14 @@ class InscripcionController extends Controller
             'fecha_inscripcion' => 'required|date',
         ]);
 
+        $clase = Clase::findOrFail($request->clase_id);
+
+        if ($clase->aforo <= 0) {
+            return back()->withErrors(['clase_id' => 'No hay plazas disponibles en esta clase.']);
+        }
+
+        $clase->decrement('aforo');
+
         Inscripcion::create($request->all());
 
         return redirect()->route('admin.inscripciones.index');

@@ -20,6 +20,7 @@ interface Pago {
   fecha_pago: string;
   metodo_pago: string;
   transaccion_id: string | null;
+  estado: 'pendiente' | 'completado' | 'fallido';
 }
 
 interface Props extends PageProps {
@@ -36,6 +37,7 @@ const Editar: React.FC<Props> = ({ pago, usuarios, compras }) => {
     fecha_pago: pago.fecha_pago,
     metodo_pago: pago.metodo_pago,
     transaccion_id: pago.transaccion_id ?? '',
+    estado: pago.estado,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -123,6 +125,20 @@ const Editar: React.FC<Props> = ({ pago, usuarios, compras }) => {
             onChange={(e) => setData('transaccion_id', e.target.value)}
             className="w-full border rounded px-3 py-2"
           />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold">Estado</label>
+          <select
+            value={data.estado}
+            onChange={(e) => setData('estado', e.target.value as 'pendiente' | 'completado' | 'fallido')}
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="pendiente">Pendiente</option>
+            <option value="completado">Completado</option>
+            <option value="fallido">Fallido</option>
+          </select>
+          {errors.estado && <p className="text-red-600 text-sm">{errors.estado}</p>}
         </div>
 
         <div className="flex space-x-4">

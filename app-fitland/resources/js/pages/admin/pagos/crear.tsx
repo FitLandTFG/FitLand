@@ -25,6 +25,7 @@ const Crear: React.FC<Props> = ({ usuarios, compras }) => {
     fecha_pago: '',
     metodo_pago: '',
     transaccion_id: '',
+    estado: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,6 +114,20 @@ const Crear: React.FC<Props> = ({ usuarios, compras }) => {
             className="w-full border rounded px-3 py-2"
           />
         </div>
+
+        <div>
+          <label className="block mb-1 font-semibold">Estado</label>
+          <select
+            value={data.estado}
+            onChange={(e) => setData('estado', e.target.value)}
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="pendiente">Pendiente</option>
+            <option value="completado">Completado</option>
+            <option value="fallido">Fallido</option>
+          </select>
+        {errors.estado && <p className="text-red-600 text-sm">{errors.estado}</p>}
+      </div>
 
         <div className="flex space-x-4">
           <button
