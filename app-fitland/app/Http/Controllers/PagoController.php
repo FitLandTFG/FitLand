@@ -30,14 +30,22 @@ class PagoController extends Controller
     public function guardar(Request $request)
     {
         $request->validate([
-            'usuario_id' => 'required|exists:usuarios,id',
-            'suscripcion_id' => 'required|exists:suscripciones,id',
-            'cantidad' => 'required|numeric|min:0',
-            'fecha_pago' => 'required|date',
-            'metodo_pago' => 'required|string|max:50',
+            'usuario_id'   => 'required|exists:usuarios,id',
+            'compra_id'    => 'required|exists:compras,id',
+            'monto'        => 'required|numeric|min:0',
+            'fecha_pago'   => 'required|date',
+            'metodo_pago'  => 'required|string|max:50',
         ]);
 
-        Pago::create($request->all());
+        Pago::create([
+            'usuario_id'     => $request->usuario_id,
+            'compra_id'      => $request->compra_id,
+            'monto'          => $request->monto,
+            'fecha_pago'     => $request->fecha_pago,
+            'metodo_pago'    => $request->metodo_pago,
+            'estado'         => 'pendiente', // o 'pagado' si ya está confirmado
+            'transaccion_id' => $request->transaccion_id ?? null,
+        ]);
 
         return redirect()->route('admin.pagos.index');
     }
@@ -45,23 +53,31 @@ class PagoController extends Controller
     public function editar(Pago $pago)
     {
         return Inertia::render('admin/pagos/editar', [
-            'pago' => $pago,
+            'pago'     => $pago,
             'usuarios' => Usuario::all(),
-            'suscripciones' => Suscripcion::all(),
+            'compras'  => Compra::all(),
         ]);
     }
 
     public function actualizar(Request $request, Pago $pago)
     {
         $request->validate([
-            'usuario_id' => 'required|exists:usuarios,id',
-            'suscripcion_id' => 'required|exists:suscripciones,id',
-            'cantidad' => 'required|numeric|min:0',
-            'fecha_pago' => 'required|date',
-            'metodo_pago' => 'required|string|max:50',
+            'usuario_id'   => 'required|exists:usuarios,id',
+            'compra_id'    => 'required|exists:compras,id',
+            'monto'        => 'required|numeric|min:0',
+            'fecha_pago'   => 'required|date',
+            'metodo_pago'  => 'required|string|max:50',
         ]);
 
-        $pago->update($request->all());
+        $pago->update([
+            'usuario_id'     => $request->usuario_id,
+            'compra_id'      => $request->compra_id,
+            'monto'          => $request->monto,
+            'fecha_pago'     => $request->fecha_pago,
+            'metodo_pago'    => $request->metodo_pago,
+            'estado'         => $request->estado ?? $pago->estado,
+            'transaccion_id' => $request->transaccion_id ?? $pago->transaccion_id,
+        ]);
 
         return redirect()->route('admin.pagos.index');
     }

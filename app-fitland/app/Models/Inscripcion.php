@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Compra extends Model
+class Inscripcion extends Model
 {
-    protected $table = 'compras';
+    protected $table = 'inscripciones';
 
     protected $fillable = [
         'usuario_id',
-        'producto_id',
-        'fecha_compra',
+        'clase_id',
+        'fecha_inscripcion',
     ];
 
     public function usuario()
@@ -19,8 +19,8 @@ class Compra extends Model
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
-    public function producto()
+    public function clase()
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Clase::class, 'clase_id');
     }
 }

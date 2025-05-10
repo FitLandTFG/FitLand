@@ -9,6 +9,9 @@ use App\Http\Controllers\PlanSuscripcionController;
 use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\ClaseController;
+use App\Http\Controllers\InscripcionController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -61,9 +64,36 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('pagos', [PagoController::class, 'index'])->name('admin.pagos.index');
     Route::get('pagos/crear', [PagoController::class, 'crear'])->name('admin.pagos.crear');
     Route::post('pagos', [PagoController::class, 'guardar'])->name('admin.pagos.guardar');
-    Route::get('pagos/{producto}/editar', [PagoController::class, 'editar'])->name('admin.pagos.editar');
-    Route::put('pagos/{producto}', [PagoController::class, 'actualizar'])->name('admin.pagos.actualizar');
-    Route::delete('pagos/{producto}', [PagoController::class, 'eliminar'])->name('admin.pagos.eliminar');
+    Route::get('pagos/{pago}/editar', [PagoController::class, 'editar'])->name('admin.pagos.editar');
+    Route::put('pagos/{pago}', [PagoController::class, 'actualizar'])->name('admin.pagos.actualizar');
+    Route::delete('pagos/{pago}', [PagoController::class, 'eliminar'])->name('admin.pagos.eliminar');
+
+    // Compras
+    Route::get('compras', [CompraController::class, 'index'])->name('admin.compras.index');
+    Route::get('compras/crear', [CompraController::class, 'crear'])->name('admin.compras.crear');
+    Route::post('compras', [CompraController::class, 'guardar'])->name('admin.compras.guardar');
+    Route::get('compras/{compra}/editar', [CompraController::class, 'editar'])->name('admin.compras.editar');
+    Route::put('compras/{compra}', [CompraController::class, 'actualizar'])->name('admin.compras.actualizar');
+    Route::delete('compras/{compra}', [CompraController::class, 'eliminar'])->name('admin.compras.eliminar');
+
+    // Clases
+    Route::get('clases', [ClaseController::class, 'index'])->name('admin.clases.index');
+    Route::get('clases/crear', [ClaseController::class, 'crear'])->name('admin.clases.crear');
+    Route::post('clases', [ClaseController::class, 'guardar'])->name('admin.clases.guardar');
+    Route::get('clases/{clase}/editar', [ClaseController::class, 'editar'])->name('admin.clases.editar');
+    Route::put('clases/{clase}', [ClaseController::class, 'actualizar'])->name('admin.clases.actualizar');
+    Route::delete('clases/{clase}', [ClaseController::class, 'eliminar'])->name('admin.clases.eliminar');
+
+    // Inscripciones
+    Route::get('inscripciones', [InscripcionController::class, 'index'])->name('admin.inscripciones.index');
+    Route::get('inscripciones/crear', [InscripcionController::class, 'crear'])->name('admin.inscripciones.crear');
+    Route::post('inscripciones', [InscripcionController::class, 'guardar'])->name('admin.inscripciones.guardar');
+    Route::get('inscripciones/{inscripcion}/editar', [InscripcionController::class, 'editar'])->name('admin.inscripciones.editar');
+    Route::put('inscripciones/{inscripcion}', [InscripcionController::class, 'actualizar'])->name('admin.inscripciones.actualizar');
+    Route::delete('inscripciones/{inscripcion}', [InscripcionController::class, 'eliminar'])->name('admin.inscripciones.eliminar');
+
+
+
 });
 
 

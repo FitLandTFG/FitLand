@@ -1,38 +1,41 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
+import { PageProps } from '@/types';
 
 interface Usuario {
   id: number;
   nombre_completo: string;
 }
 
-interface Suscripcion {
+interface Compra {
   id: number;
-  nombre: string;
+  fecha_compra: string;
 }
 
 interface Pago {
   id: number;
   usuario_id: number;
-  suscripcion_id: number;
-  cantidad: number;
+  compra_id: number;
+  monto: number;
   fecha_pago: string;
   metodo_pago: string;
+  transaccion_id: string | null;
 }
 
-interface Props {
+interface Props extends PageProps {
   pago: Pago;
   usuarios: Usuario[];
-  suscripciones: Suscripcion[];
+  compras: Compra[];
 }
 
-const Editar: React.FC<Props> = ({ pago, usuarios, suscripciones }) => {
+const Editar: React.FC<Props> = ({ pago, usuarios, compras }) => {
   const { data, setData, put, processing, errors } = useForm({
     usuario_id: pago.usuario_id,
-    suscripcion_id: pago.suscripcion_id,
-    cantidad: pago.cantidad,
+    compra_id: pago.compra_id,
+    monto: pago.monto,
     fecha_pago: pago.fecha_pago,
     metodo_pago: pago.metodo_pago,
+    transaccion_id: pago.transaccion_id ?? '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,18 +44,18 @@ const Editar: React.FC<Props> = ({ pago, usuarios, suscripciones }) => {
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar Pago</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
 
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         <div>
-          <label className="block font-semibold mb-1">Usuario</label>
+          <label className="block mb-1 font-semibold">Usuario</label>
           <select
             value={data.usuario_id}
             onChange={(e) => setData('usuario_id', Number(e.target.value))}
             className="w-full border rounded px-3 py-2"
           >
-            <option value="">Selecciona un usuario</option>
+            <option value="">Seleccionar usuario</option>
             {usuarios.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.nombre_completo}
@@ -63,36 +66,35 @@ const Editar: React.FC<Props> = ({ pago, usuarios, suscripciones }) => {
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Suscripción</label>
+          <label className="block mb-1 font-semibold">Compra</label>
           <select
-            value={data.suscripcion_id}
-            onChange={(e) => setData('suscripcion_id', Number(e.target.value))}
+            value={data.compra_id}
+            onChange={(e) => setData('compra_id', Number(e.target.value))}
             className="w-full border rounded px-3 py-2"
           >
-            <option value="">Selecciona una suscripción</option>
-            {suscripciones.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.nombre}
+            <option value="">Seleccionar compra</option>
+            {compras.map((c) => (
+              <option key={c.id} value={c.id}>
+                #{c.id} - {c.fecha_compra}
               </option>
             ))}
           </select>
-          {errors.suscripcion_id && <p className="text-red-600 text-sm">{errors.suscripcion_id}</p>}
+          {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Cantidad (€)</label>
+          <label className="block mb-1 font-semibold">Monto (€)</label>
           <input
             type="number"
-            step="0.01"
-            value={data.cantidad}
-            onChange={(e) => setData('cantidad', parseFloat(e.target.value))}
+            value={data.monto}
+            onChange={(e) => setData('monto', Number(e.target.value))}
             className="w-full border rounded px-3 py-2"
           />
-          {errors.cantidad && <p className="text-red-600 text-sm">{errors.cantidad}</p>}
+          {errors.monto && <p className="text-red-600 text-sm">{errors.monto}</p>}
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Fecha de Pago</label>
+          <label className="block mb-1 font-semibold">Fecha de Pago</label>
           <input
             type="date"
             value={data.fecha_pago}
@@ -103,7 +105,7 @@ const Editar: React.FC<Props> = ({ pago, usuarios, suscripciones }) => {
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Método de Pago</label>
+          <label className="block mb-1 font-semibold">Método de Pago</label>
           <input
             type="text"
             value={data.metodo_pago}
@@ -113,13 +115,28 @@ const Editar: React.FC<Props> = ({ pago, usuarios, suscripciones }) => {
           {errors.metodo_pago && <p className="text-red-600 text-sm">{errors.metodo_pago}</p>}
         </div>
 
-        <button
-          type="submit"
-          disabled={processing}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-        >
-          Guardar Cambios
-        </button>
+        <div>
+          <label className="block mb-1 font-semibold">ID de Transacción (opcional)</label>
+          <input
+            type="text"
+            value={data.transaccion_id}
+            onChange={(e) => setData('transaccion_id', e.target.value)}
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            disabled={processing}
+            className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
+          >
+            Actualizar pago
+          </button>
+          <a href="/admin/pagos" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            Volver
+          </a>
+        </div>
       </form>
     </div>
   );

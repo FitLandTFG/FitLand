@@ -2,38 +2,34 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
-interface Pago {
+interface Compra {
   id: number;
-  monto: number;
-  fecha_pago: string;
-  metodo_pago: string;
-  estado: string;
-  transaccion_id: string | null;
+  fecha_compra: string;
   usuario: {
     id: number;
     nombre_completo: string;
   };
-  compra: {
+  producto: {
     id: number;
-    fecha_compra: string;
+    nombre: string;
   };
 }
 
 interface Props extends PageProps {
-  pagos: Pago[];
+  compras: Compra[];
 }
 
-const Index: React.FC<Props> = ({ pagos }) => {
+const Index: React.FC<Props> = ({ compras }) => {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Gestión de Pagos</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Compras</h1>
 
       <div className="mb-4 flex space-x-4">
         <Link
-          href="/admin/pagos/crear"
+          href="/admin/compras/crear"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Registrar Pago
+          Registrar Compra
         </Link>
         <a
           href="/admin"
@@ -49,27 +45,21 @@ const Index: React.FC<Props> = ({ pagos }) => {
             <tr>
               <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Compra</th>
-              <th className="px-4 py-2">Fecha</th>
-              <th className="px-4 py-2">Método</th>
-              <th className="px-4 py-2">Monto (€)</th>
-              <th className="px-4 py-2">Estado</th>
+              <th className="px-4 py-2">Producto</th>
+              <th className="px-4 py-2">Fecha de Compra</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {pagos.map((p) => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2">{p.id}</td>
-                <td className="px-4 py-2">{p.usuario?.nombre_completo ?? '—'}</td>
-                <td className="px-4 py-2">#{p.compra?.id ?? '—'}</td>
-                <td className="px-4 py-2">{p.fecha_pago}</td>
-                <td className="px-4 py-2">{p.metodo_pago}</td>
-                <td className="px-4 py-2">{p.monto.toFixed(2)} €</td>
-                <td className="px-4 py-2 capitalize">{p.estado}</td>
+            {compras.map((c) => (
+              <tr key={c.id} className="border-b hover:bg-gray-50">
+                <td className="px-4 py-2">{c.id}</td>
+                <td className="px-4 py-2">{c.usuario?.nombre_completo ?? '—'}</td>
+                <td className="px-4 py-2">{c.producto?.nombre ?? '—'}</td>
+                <td className="px-4 py-2">{c.fecha_compra}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
-                    href={`/admin/pagos/${p.id}/editar`}
+                    href={`/admin/compras/${c.id}/editar`}
                     className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   >
                     Editar
@@ -77,10 +67,10 @@ const Index: React.FC<Props> = ({ pagos }) => {
                   <Link
                     as="button"
                     method="delete"
-                    href={`/admin/pagos/${p.id}`}
+                    href={`/admin/compras/${c.id}`}
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                     onClick={(e) => {
-                      if (!confirm(`¿Eliminar el pago #${p.id}?`)) {
+                      if (!confirm(`¿Eliminar la compra #${c.id}?`)) {
                         e.preventDefault();
                       }
                     }}
@@ -90,10 +80,10 @@ const Index: React.FC<Props> = ({ pagos }) => {
                 </td>
               </tr>
             ))}
-            {pagos.length === 0 && (
+            {compras.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center text-gray-500 py-4">
-                  No hay pagos registrados.
+                <td colSpan={5} className="text-center text-gray-500 py-4">
+                  No hay compras registradas.
                 </td>
               </tr>
             )}

@@ -2,38 +2,28 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
-interface Pago {
+interface Clase {
   id: number;
-  monto: number;
-  fecha_pago: string;
-  metodo_pago: string;
-  estado: string;
-  transaccion_id: string | null;
-  usuario: {
-    id: number;
-    nombre_completo: string;
-  };
-  compra: {
-    id: number;
-    fecha_compra: string;
-  };
+  nombre: string;
+  horario: string;
+  aforo: number;
 }
 
 interface Props extends PageProps {
-  pagos: Pago[];
+  clases: Clase[];
 }
 
-const Index: React.FC<Props> = ({ pagos }) => {
+const Index: React.FC<Props> = ({ clases }) => {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Gestión de Pagos</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Clases</h1>
 
       <div className="mb-4 flex space-x-4">
         <Link
-          href="/admin/pagos/crear"
+          href="/admin/clases/crear"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Registrar Pago
+          Crear Clase
         </Link>
         <a
           href="/admin"
@@ -48,28 +38,22 @@ const Index: React.FC<Props> = ({ pagos }) => {
           <thead className="bg-gray-100 border-b">
             <tr>
               <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Compra</th>
-              <th className="px-4 py-2">Fecha</th>
-              <th className="px-4 py-2">Método</th>
-              <th className="px-4 py-2">Monto (€)</th>
-              <th className="px-4 py-2">Estado</th>
+              <th className="px-4 py-2">Nombre</th>
+              <th className="px-4 py-2">Horario</th>
+              <th className="px-4 py-2">Aforo</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {pagos.map((p) => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2">{p.id}</td>
-                <td className="px-4 py-2">{p.usuario?.nombre_completo ?? '—'}</td>
-                <td className="px-4 py-2">#{p.compra?.id ?? '—'}</td>
-                <td className="px-4 py-2">{p.fecha_pago}</td>
-                <td className="px-4 py-2">{p.metodo_pago}</td>
-                <td className="px-4 py-2">{p.monto.toFixed(2)} €</td>
-                <td className="px-4 py-2 capitalize">{p.estado}</td>
+            {clases.map((c) => (
+              <tr key={c.id} className="border-b hover:bg-gray-50">
+                <td className="px-4 py-2">{c.id}</td>
+                <td className="px-4 py-2">{c.nombre}</td>
+                <td className="px-4 py-2">{new Date(c.horario).toLocaleString()}</td>
+                <td className="px-4 py-2">{c.aforo}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
-                    href={`/admin/pagos/${p.id}/editar`}
+                    href={`/admin/clases/${c.id}/editar`}
                     className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   >
                     Editar
@@ -77,10 +61,10 @@ const Index: React.FC<Props> = ({ pagos }) => {
                   <Link
                     as="button"
                     method="delete"
-                    href={`/admin/pagos/${p.id}`}
+                    href={`/admin/clases/${c.id}`}
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                     onClick={(e) => {
-                      if (!confirm(`¿Eliminar el pago #${p.id}?`)) {
+                      if (!confirm(`¿Eliminar la clase "${c.nombre}"?`)) {
                         e.preventDefault();
                       }
                     }}
@@ -90,10 +74,10 @@ const Index: React.FC<Props> = ({ pagos }) => {
                 </td>
               </tr>
             ))}
-            {pagos.length === 0 && (
+            {clases.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center text-gray-500 py-4">
-                  No hay pagos registrados.
+                <td colSpan={5} className="text-center text-gray-500 py-4">
+                  No hay clases registradas.
                 </td>
               </tr>
             )}
