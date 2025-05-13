@@ -22,7 +22,7 @@ class PagoController extends Controller
     public function crear()
     {
         return Inertia::render('admin/pagos/crear', [
-            'usuarios' => Usuario::all(),
+            'compras' => Compra::with('usuario')->get(),
             'compras' => Compra::all(),
         ]);
     }
@@ -30,20 +30,22 @@ class PagoController extends Controller
     public function guardar(Request $request)
     {
         $request->validate([
-            'usuario_id'   => 'required|exists:usuarios,id',
             'compra_id'    => 'required|exists:compras,id',
             'monto'        => 'required|numeric|min:0',
             'fecha_pago'   => 'required|date',
             'metodo_pago'  => 'required|string|max:50',
         ]);
 
+        $compra = Compra::with('usuario')->findOrFail($request->compra_id);
+        $usuario_id = $compra->usuario_id;
+
         Pago::create([
-            'usuario_id'     => $request->usuario_id,
-            'compra_id'      => $request->compra_id,
+            'usuario_id'     => $usuario_id,
+            'compra_id'      => $compra->id,
             'monto'          => $request->monto,
             'fecha_pago'     => $request->fecha_pago,
             'metodo_pago'    => $request->metodo_pago,
-            'estado'         => 'pendiente', // o 'pagado' si ya está confirmado
+            'estado'         => 'pendiente',
             'transaccion_id' => $request->transaccion_id ?? null,
         ]);
 
@@ -69,8 +71,11 @@ class PagoController extends Controller
             'metodo_pago'  => 'required|string|max:50',
         ]);
 
+        $compra = Compra::with('usuario')->findOrFail($request->compra_id);
+        $usuario_id = $compra->usuario_id;
+
         $pago->update([
-            'usuario_id'     => $request->usuario_id,
+            'usuario_id'     => $usuario_id,
             'compra_id'      => $request->compra_id,
             'monto'          => $request->monto,
             'fecha_pago'     => $request->fecha_pago,

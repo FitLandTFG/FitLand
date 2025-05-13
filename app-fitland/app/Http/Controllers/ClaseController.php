@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Clase;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Database\QueryException;
 
 class ClaseController extends Controller
 {
@@ -13,7 +14,8 @@ class ClaseController extends Controller
         $clases = Clase::orderBy('id', 'desc')->get();
 
         return Inertia::render('admin/clases/index', [
-            'clases' => $clases
+            'clases' => $clases,
+            'flash' => ['error' => session('error')],
         ]);
     }
 
@@ -57,8 +59,16 @@ class ClaseController extends Controller
 
     public function eliminar(Clase $clase)
     {
-        $clase->delete();
-
-        return redirect()->route('admin.clases.index');
+        try {
+            $clase->delete();
+            return redirect()->route('admin.clases.index');
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23503') {
+                return redirect()->back()->with('error', 'No se puede eliminar la clase porque tiene inscripciones asociadas.
+                                                          Elimine las inscripciones asociadas para poder eliminar la clase.');
+            }
+    
+            return redirect()->back()->with('error', 'Ocurrió un error al eliminar la clase.');
+        }
     }
 }

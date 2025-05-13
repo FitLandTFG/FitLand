@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Database\QueryException;
 
 class ProductoController extends Controller
 {
@@ -13,7 +14,8 @@ class ProductoController extends Controller
         $productos = Producto::orderBy('id', 'desc')->get();
 
         return Inertia::render('admin/productos/index', [
-            'productos' => $productos
+            'productos' => $productos,
+            'flash' => ['error' => session('error')],
         ]);
     }
 
@@ -61,8 +63,16 @@ class ProductoController extends Controller
 
     public function eliminar(Producto $producto)
     {
-        $producto->delete();
-
-        return redirect()->route('admin.productos.index');
+        try {
+            $producto->delete();
+            return redirect()->route('admin.productos.index');
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23503') {
+                return redirect()->back()->with('error', 'No se puede eliminar el producto porque tiene una compra asociada.
+                                                          Elimine las compras asociadas para poder eliminar el producto.');
+            }
+    
+            return redirect()->back()->with('error', 'Ocurrió un error al eliminar la clase.');
+        }
     }
 }

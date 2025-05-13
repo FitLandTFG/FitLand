@@ -19,7 +19,7 @@ interface Props extends PageProps {
   inscripciones: Inscripcion[];
 }
 
-const Index: React.FC<Props> = ({ inscripciones }) => {
+const Index: React.FC<Props> = ({ inscripciones}) => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Gestión de Inscripciones</h1>

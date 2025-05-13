@@ -11,11 +11,19 @@ interface Clase {
 
 interface Props extends PageProps {
   clases: Clase[];
+  flash: {
+    error?: string;
+  };
 }
 
-const Index: React.FC<Props> = ({ clases }) => {
+const Index: React.FC<Props> = ({ clases, flash }) => {
   return (
     <div className="p-6">
+      {flash.error && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {flash.error}
+        </div>
+      )}
       <h1 className="text-2xl font-bold mb-6">Gestión de Clases</h1>
 
       <div className="mb-4 flex space-x-4">

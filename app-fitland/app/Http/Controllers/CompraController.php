@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Database\QueryException;
 
 class CompraController extends Controller
 {
@@ -15,7 +16,8 @@ class CompraController extends Controller
         $compras = Compra::with(['usuario', 'producto'])->orderBy('id', 'desc')->get();
 
         return Inertia::render('admin/compras/index', [
-            'compras' => $compras
+            'compras' => $compras,
+            'flash' => ['error' => session('error')],
         ]);
     }
 
@@ -64,8 +66,16 @@ class CompraController extends Controller
 
     public function eliminar(Compra $compra)
     {
-        $compra->delete();
-
-        return redirect()->route('admin.compras.index');
+        try {
+            $compra->delete();
+            return redirect()->route('admin.compras.index');
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23503') {
+                return redirect()->back()->with('error', 'No se puede eliminar la compra porque tiene un pago asociado.
+                                                          Elimine el pago asociado para poder eliminar la compra.');
+            }
+    
+            return redirect()->back()->with('error', 'Ocurrió un error al eliminar la compra.');
+        }
     }
 }
