@@ -37,8 +37,19 @@ class SuscripcionController extends Controller
             'precio' => 'required|numeric|min:0',
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
-            'estado' => 'required|in:activa,expirada,cancelada',
         ]);
+
+        // Verificar si el usuario ya tiene una suscripción activa
+    $yaTieneActiva = \App\Models\Suscripcion::where('usuario_id', $request->usuario_id)
+    ->where('estado', 'activa')
+    ->exists();
+
+    if ($yaTieneActiva) {
+        return back()
+            ->withErrors(['usuario_id' => 'Este usuario ya tiene una suscripción activa.'])
+            ->withInput();
+    }
+
 
         Suscripcion::create($request->all());
 
@@ -64,6 +75,20 @@ class SuscripcionController extends Controller
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
             'estado' => 'required|in:activa,expirada,cancelada',
         ]);
+
+         // Si el nuevo estado será "activa", hay que comprobar si ya tiene otra activa
+    if ($request->estado === 'activa') {
+        $yaTieneOtraActiva = \App\Models\Suscripcion::where('usuario_id', $request->usuario_id)
+            ->where('estado', 'activa')
+            ->where('id', '!=', $suscripcion->id)
+            ->exists();
+
+        if ($yaTieneOtraActiva) {
+            return back()
+                ->withErrors(['usuario_id' => 'Este usuario ya tiene otra suscripción activa.'])
+                ->withInput();
+        }
+    }
 
         $suscripcion->update($request->all());
 

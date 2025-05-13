@@ -29,7 +29,16 @@ class PlanSuscripcionController extends Controller
             'precio' => 'required|numeric|min:0',
             'tipo' => 'required|in:Prueba,Silver,Gold,Diamond',
             'duracion_dias' => 'required|integer|min:1',
+        ],
+        [
+            'nombre.max' => 'El nombre no puede tener más de 50 caracteres.',
         ]);
+          // Verificar unicidad sin distinguir mayúsculas/minúsculas
+        $existe = PlanSuscripcion::whereRaw('LOWER(nombre) = ?', [strtolower($request->nombre)])->exists();
+
+        if ($existe) {
+            return back()->withErrors(['nombre' => 'Ya existe un plan con ese nombre.'])->withInput();
+        }
 
         PlanSuscripcion::create($request->only(['nombre', 'precio', 'tipo', 'duracion_dias']));
 
@@ -51,6 +60,16 @@ class PlanSuscripcionController extends Controller
             'tipo' => 'required|in:Prueba,Silver,Gold,Diamond',
             'duracion_dias' => 'required|integer|min:1',
         ]);
+
+
+    // Verificar si ya existe otro plan con el mismo nombre (sin distinguir mayúsculas)
+    $existe = PlanSuscripcion::whereRaw('LOWER(nombre) = ?', [strtolower($request->nombre)])
+    ->where('id', '!=', $plan->id)
+    ->exists();
+
+    if ($existe) {
+        return back()->withErrors(['nombre' => 'Ya existe otro plan con ese nombre.'])->withInput();
+    }
 
         $plan->update($request->only(['nombre', 'precio', 'tipo', 'duracion_dias']));
 

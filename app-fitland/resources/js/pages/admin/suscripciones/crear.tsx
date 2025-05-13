@@ -129,20 +129,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           />
         </div>
 
-        {/* Estado */}
-        <div>
-          <label className="block font-semibold mb-1">Estado</label>
-          <select
-            value={data.estado}
-            onChange={(e) => setData('estado', e.target.value)}
-            className="w-full border rounded px-3 py-2"
-          >
-            <option value="activa">Activa</option>
-            <option value="expirada">Expirada</option>
-            <option value="cancelada">Cancelada</option>
-          </select>
-          {errors.estado && <p className="text-red-600 text-sm">{errors.estado}</p>}
-        </div>
 
         {/* Botones */}
         <div className="flex space-x-4">
