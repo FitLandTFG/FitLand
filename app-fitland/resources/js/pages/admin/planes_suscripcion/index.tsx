@@ -12,12 +12,20 @@ interface Plan {
 
 interface Props extends PageProps {
   planes: Plan[];
+errors: Record<string, string>;
 }
 
-const Index: React.FC<Props> = ({ planes }) => {
+const Index: React.FC<Props> = ({ planes, errors }) => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Gestión de Planes de Suscripción</h1>
+
+        {errors.general && (
+        <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
+            {errors.general}
+        </div>
+        )}
+
 
       <div className="mb-4 flex space-x-4">
         <Link

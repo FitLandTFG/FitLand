@@ -64,13 +64,23 @@ const Crear: React.FC = () => {
             ¿Email verificado?
           </label>
           <input
-            type="checkbox"
-            id="email_verified"
-            checked={!!data.email_verified_at}
-            onChange={(e) =>
-              setData('email_verified_at', e.target.checked ? new Date().toISOString() : null)
-            }
-          />
+  type="checkbox"
+  id="email_verified"
+  checked={!!data.email_verified_at}
+  onChange={(e) => {
+  if (e.target.checked) {
+    const now = new Date();
+    const fechaLocal = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+    setData('email_verified_at', fechaLocal);
+  } else {
+    setData('email_verified_at', null);
+  }
+}}
+/>
+
         </div>
         {errors.email_verified_at && (
           <p className="text-red-600 text-sm">{errors.email_verified_at}</p>

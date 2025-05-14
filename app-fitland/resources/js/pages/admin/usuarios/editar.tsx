@@ -21,10 +21,21 @@ const Editar: React.FC<Props> = ({ usuario }) => {
 
   const [isVerified, setIsVerified] = useState<boolean>(!!usuario.email_verified_at);
 
-  const handleCheckboxChange = () => {
-    setIsVerified(!isVerified);
-    setData('email_verified_at', isVerified ? null : new Date().toISOString());
-  };
+ const handleCheckboxChange = () => {
+  const nuevoEstado = !isVerified;
+  setIsVerified(nuevoEstado);
+
+  if (nuevoEstado) {
+    const now = new Date();
+    const fechaLocal = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+    setData('email_verified_at', fechaLocal);
+  } else {
+    setData('email_verified_at', null);
+  }
+};
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

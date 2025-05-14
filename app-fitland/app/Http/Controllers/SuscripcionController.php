@@ -57,13 +57,13 @@ class SuscripcionController extends Controller
     }
 
     public function editar(Suscripcion $suscripcion)
-    {
-        return Inertia::render('admin/suscripciones/editar', [
-            'suscripcion' => $suscripcion,
-            'usuarios' => Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
-            'planes' => PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre']),
-        ]);
-    }
+{
+    return Inertia::render('admin/suscripciones/editar', [
+        'suscripcion' => $suscripcion,
+        'usuarios' => Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
+        'planes' => PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']), // ← añade aquí los campos que faltan
+    ]);
+}
 
     public function actualizar(Request $request, Suscripcion $suscripcion)
     {

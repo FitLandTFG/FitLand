@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
@@ -10,6 +10,8 @@ interface Usuario {
 interface Plan {
   id: number;
   nombre: string;
+    precio: number;
+  duracion_dias: number;
 }
 
 interface Suscripcion {
@@ -32,11 +34,35 @@ const Editar: React.FC<Props> = ({ suscripcion, usuarios, planes }) => {
   const { data, setData, put, processing, errors } = useForm({
     usuario_id: suscripcion.usuario_id,
     plan_id: suscripcion.plan_id,
-    precio: suscripcion.precio,
+   precio: suscripcion.precio?.toString() ?? '0',
+
     fecha_inicio: suscripcion.fecha_inicio,
     fecha_fin: suscripcion.fecha_fin,
     estado: suscripcion.estado,
   });
+useEffect(() => {
+  const planSeleccionado = planes.find(p => p.id === Number(data.plan_id));
+
+  if (planSeleccionado) {
+    setData('precio', planSeleccionado.precio.toFixed(2));
+
+    if (data.fecha_inicio && /^\d{4}-\d{2}-\d{2}$/.test(data.fecha_inicio)) {
+      const inicio = new Date(data.fecha_inicio);
+      const fin = new Date(inicio);
+
+      if (planSeleccionado.duracion_dias >= 360) {
+        fin.setFullYear(fin.getFullYear() + 1);
+      } else if (planSeleccionado.duracion_dias >= 28) {
+        fin.setMonth(fin.getMonth() + 1);
+      } else {
+        fin.setDate(fin.getDate() + planSeleccionado.duracion_dias);
+      }
+
+      setData('fecha_fin', fin.toISOString().split('T')[0]);
+    }
+  }
+}, [data.plan_id, data.fecha_inicio, planes, setData]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,12 +104,12 @@ const Editar: React.FC<Props> = ({ suscripcion, usuarios, planes }) => {
 
         <div>
           <label className="block font-semibold mb-1">Precio</label>
-          <input
+        <input
             type="number"
             value={data.precio}
-            onChange={(e) => setData('precio', parseFloat(e.target.value))}
-            className="w-full border rounded px-3 py-2"
-          />
+            disabled
+            className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700"
+            />
           {errors.precio && <p className="text-red-600 text-sm">{errors.precio}</p>}
         </div>
 
@@ -103,9 +129,9 @@ const Editar: React.FC<Props> = ({ suscripcion, usuarios, planes }) => {
           <input
             type="date"
             value={data.fecha_fin}
-            onChange={(e) => setData('fecha_fin', e.target.value)}
-            className="w-full border rounded px-3 py-2"
-          />
+            disabled
+            className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700"
+            />
           {errors.fecha_fin && <p className="text-red-600 text-sm">{errors.fecha_fin}</p>}
         </div>
 

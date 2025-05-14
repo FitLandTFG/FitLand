@@ -4,15 +4,21 @@ import { Link } from '@inertiajs/react';
 
 interface Props extends PageProps {
     usuarios: User[];
+    errors: Record<string, string>;
 }
 
-const Index: React.FC<Props> = ({ usuarios }) => {
+const Index: React.FC<Props> = ({ usuarios, errors }) => {
 
 
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Gestión de Usuarios</h1>
 
+            {errors.general && (
+                <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {errors.general}
+                </div>
+                )}
             <div className="mb-4 flex space-x-4">
                 <Link
                     href="/admin/usuarios/crear"

@@ -136,12 +136,23 @@ class UsuarioController extends Controller
     }
 
 
-    public function eliminar(Usuario $usuario)
-    {
+ public function eliminar(Usuario $usuario)
+{
+    try {
         $usuario->delete();
 
         return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario eliminado correctamente.');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() === '23503') {
+            return redirect()->back()
+                ->withErrors(['general' => 'No se puede eliminar este usuario porque está asociado a otros registros.']);
+        }
+
+        return redirect()->back()
+            ->withErrors(['general' => 'Ocurrió un error al intentar eliminar el usuario.']);
     }
+}
+
 
 }
