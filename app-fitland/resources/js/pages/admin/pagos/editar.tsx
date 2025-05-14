@@ -2,19 +2,17 @@ import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
-interface Usuario {
-  id: number;
-  nombre_completo: string;
-}
-
 interface Compra {
   id: number;
   fecha_compra: string;
+  usuario: {
+    id: number;
+    nombre_completo: string;
+  };
 }
 
 interface Pago {
   id: number;
-  usuario_id: number;
   compra_id: number;
   monto: number;
   fecha_pago: string;
@@ -25,13 +23,11 @@ interface Pago {
 
 interface Props extends PageProps {
   pago: Pago;
-  usuarios: Usuario[];
   compras: Compra[];
 }
 
 const Editar: React.FC<Props> = ({ pago, usuarios, compras }) => {
   const { data, setData, put, processing, errors } = useForm({
-    usuario_id: pago.usuario_id,
     compra_id: pago.compra_id,
     monto: pago.monto,
     fecha_pago: pago.fecha_pago,
@@ -50,39 +46,21 @@ const Editar: React.FC<Props> = ({ pago, usuarios, compras }) => {
       <h1 className="text-2xl font-bold mb-6">Editar Pago</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        <div>
-          <label className="block mb-1 font-semibold">Usuario</label>
-          <select
-            value={data.usuario_id}
-            onChange={(e) => setData('usuario_id', Number(e.target.value))}
-            className="w-full border rounded px-3 py-2"
-          >
-            <option value="">Seleccionar usuario</option>
-            {usuarios.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.nombre_completo}
-              </option>
-            ))}
-          </select>
-          {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
-        </div>
-
-        <div>
-          <label className="block mb-1 font-semibold">Compra</label>
-          <select
-            value={data.compra_id}
-            onChange={(e) => setData('compra_id', Number(e.target.value))}
-            className="w-full border rounded px-3 py-2"
-          >
-            <option value="">Seleccionar compra</option>
-            {compras.map((c) => (
-              <option key={c.id} value={c.id}>
-                #{c.id} - {c.fecha_compra}
-              </option>
-            ))}
-          </select>
-          {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
-        </div>
+      <div>
+        <label className="block mb-1 font-semibold">Compra</label>
+        <select
+        value={data.compra_id}
+        onChange={(e) => setData('compra_id', Number(e.target.value))}
+        className="w-full border rounded px-3 py-2"
+        >
+          {compras.map((c) => (
+            <option key={c.id} value={c.id}>
+              #{c.id} - {c.fecha_compra} - {c.usuario?.nombre_completo}
+            </option>
+          ))}
+        </select>
+        {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
+      </div>
 
         <div>
           <label className="block mb-1 font-semibold">Monto (€)</label>

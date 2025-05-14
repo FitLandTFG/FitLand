@@ -84,9 +84,10 @@ class PlanSuscripcionController extends Controller
         return redirect()->route('admin.planes_suscripcion.index')
             ->with('success', 'Plan eliminado correctamente.');
     } catch (\Illuminate\Database\QueryException $e) {
-        if ($e->getCode() === '23503') { // Error de clave foránea (PostgreSQL)
+        if ($e->getCode() === '23503') {
             return redirect()->back()
-                ->withErrors(['general' => 'No se puede eliminar este plan porque está asociado a una o más suscripciones.']);
+                ->withErrors(['general' => 'No se puede eliminar este plan porque está asociado a una o más usuarios suscritos.
+                                            Elimine las suscripciones asociadas para poder eliminar el plan.']);
         }
 
         return redirect()->back()

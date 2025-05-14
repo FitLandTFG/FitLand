@@ -146,7 +146,8 @@ class UsuarioController extends Controller
     } catch (\Illuminate\Database\QueryException $e) {
         if ($e->getCode() === '23503') {
             return redirect()->back()
-                ->withErrors(['general' => 'No se puede eliminar este usuario porque está asociado a otros registros.']);
+                ->withErrors(['general' => 'No se puede eliminar este usuario porque está asociado a otros registros como compras, pagos o suscripciones.
+                                            Elimine los registros asociados para poder eliminar al usuario.']);
         }
 
         return redirect()->back()

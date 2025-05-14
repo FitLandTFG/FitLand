@@ -23,7 +23,6 @@ class PagoController extends Controller
     {
         return Inertia::render('admin/pagos/crear', [
             'compras' => Compra::with('usuario')->get(),
-            'compras' => Compra::all(),
         ]);
     }
 
@@ -45,7 +44,7 @@ class PagoController extends Controller
             'monto'          => $request->monto,
             'fecha_pago'     => $request->fecha_pago,
             'metodo_pago'    => $request->metodo_pago,
-            'estado'         => 'pendiente',
+            'estado'         => $request->estado,
             'transaccion_id' => $request->transaccion_id ?? null,
         ]);
 
@@ -54,17 +53,19 @@ class PagoController extends Controller
 
     public function editar(Pago $pago)
     {
+        $pago->load('compra.usuario');
+    
+        $compras = Compra::with('usuario')->get();
+    
         return Inertia::render('admin/pagos/editar', [
-            'pago'     => $pago,
-            'usuarios' => Usuario::all(),
-            'compras'  => Compra::all(),
+            'pago'    => $pago,
+            'compras' => $compras,
         ]);
     }
 
     public function actualizar(Request $request, Pago $pago)
     {
         $request->validate([
-            'usuario_id'   => 'required|exists:usuarios,id',
             'compra_id'    => 'required|exists:compras,id',
             'monto'        => 'required|numeric|min:0',
             'fecha_pago'   => 'required|date',
