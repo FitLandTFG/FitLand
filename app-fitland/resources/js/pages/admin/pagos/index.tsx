@@ -7,7 +7,7 @@ interface Pago {
   monto: number;
   fecha_pago: string;
   metodo_pago: string;
-  estado: string;
+  estado: 'pendiente' | 'completado' | 'fallido';
   transaccion_id: string | null;
   usuario: {
     id: number;
@@ -66,7 +66,19 @@ const Index: React.FC<Props> = ({ pagos }) => {
                 <td className="px-4 py-2">{p.fecha_pago}</td>
                 <td className="px-4 py-2">{p.metodo_pago}</td>
                 <td className="px-4 py-2">{p.monto.toFixed(2)} €</td>
-                <td className="px-4 py-2 capitalize">{p.estado}</td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`px-2 py-1 rounded text-white text-xs ${
+                      p.estado === 'completado'
+                        ? 'bg-green-600'
+                        : p.estado === 'pendiente'
+                        ? 'bg-yellow-500'
+                        : 'bg-red-600'
+                    }`}
+                  >
+                    {p.estado}
+                  </span>
+                </td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
                     href={`/admin/pagos/${p.id}/editar`}

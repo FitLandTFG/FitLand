@@ -30,18 +30,26 @@ class PagoController extends Controller
     {
         $request->validate([
             'compra_id'    => 'required|exists:compras,id',
-            'monto'        => 'required|numeric|min:0',
             'fecha_pago'   => 'required|date',
             'metodo_pago'  => 'required|string|max:50',
+            'estado'       => 'required|in:pendiente,completado,fallido',
+            'transaccion_id' => 'nullable|string|max:100',
+            // Si usas monto manual, activa esta línea:
+            // 'monto'        => 'required|numeric|min:0',
         ]);
 
-        $compra = Compra::with('usuario')->findOrFail($request->compra_id);
+        $compra = Compra::with(['usuario', 'productos'])->findOrFail($request->compra_id);
         $usuario_id = $compra->usuario_id;
+
+        // ✅ Calculamos el monto automáticamente:
+        $monto = $compra->productos->sum(function ($producto) {
+            return $producto->precio * $producto->pivot->cantidad;
+        });
 
         Pago::create([
             'usuario_id'     => $usuario_id,
             'compra_id'      => $compra->id,
-            'monto'          => $request->monto,
+            'monto'          => $monto, // o usa $request->monto si prefieres
             'fecha_pago'     => $request->fecha_pago,
             'metodo_pago'    => $request->metodo_pago,
             'estado'         => $request->estado,
@@ -54,9 +62,9 @@ class PagoController extends Controller
     public function editar(Pago $pago)
     {
         $pago->load('compra.usuario');
-    
+
         $compras = Compra::with('usuario')->get();
-    
+
         return Inertia::render('admin/pagos/editar', [
             'pago'    => $pago,
             'compras' => $compras,
@@ -67,22 +75,28 @@ class PagoController extends Controller
     {
         $request->validate([
             'compra_id'    => 'required|exists:compras,id',
-            'monto'        => 'required|numeric|min:0',
             'fecha_pago'   => 'required|date',
             'metodo_pago'  => 'required|string|max:50',
+            'estado'       => 'required|in:pendiente,completado,fallido',
+            'transaccion_id' => 'nullable|string|max:100',
+            // 'monto' => 'required|numeric|min:0', // Solo si lo introduces a mano
         ]);
 
-        $compra = Compra::with('usuario')->findOrFail($request->compra_id);
+        $compra = Compra::with(['usuario', 'productos'])->findOrFail($request->compra_id);
         $usuario_id = $compra->usuario_id;
+
+        $monto = $compra->productos->sum(function ($producto) {
+            return $producto->precio * $producto->pivot->cantidad;
+        });
 
         $pago->update([
             'usuario_id'     => $usuario_id,
-            'compra_id'      => $request->compra_id,
-            'monto'          => $request->monto,
+            'compra_id'      => $compra->id,
+            'monto'          => $monto, // o $request->monto
             'fecha_pago'     => $request->fecha_pago,
             'metodo_pago'    => $request->metodo_pago,
-            'estado'         => $request->estado ?? $pago->estado,
-            'transaccion_id' => $request->transaccion_id ?? $pago->transaccion_id,
+            'estado'         => $request->estado,
+            'transaccion_id' => $request->transaccion_id ?? null,
         ]);
 
         return redirect()->route('admin.pagos.index');

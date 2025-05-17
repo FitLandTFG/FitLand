@@ -9,10 +9,13 @@ interface Compra {
     id: number;
     nombre_completo: string;
   };
-  producto: {
+  productos: {
     id: number;
     nombre: string;
-  };
+    pivot: {
+      cantidad: number;
+    };
+  }[];
 }
 
 interface Props extends PageProps {
@@ -20,7 +23,6 @@ interface Props extends PageProps {
   flash: {
     error?: string;
   };
-
 }
 
 const Index: React.FC<Props> = ({ compras, flash }) => {
@@ -31,6 +33,7 @@ const Index: React.FC<Props> = ({ compras, flash }) => {
           {flash.error}
         </div>
       )}
+
       <h1 className="text-2xl font-bold mb-6">Gestión de Compras</h1>
 
       <div className="mb-4 flex space-x-4">
@@ -54,7 +57,7 @@ const Index: React.FC<Props> = ({ compras, flash }) => {
             <tr>
               <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Producto</th>
+              <th className="px-4 py-2">Productos</th>
               <th className="px-4 py-2">Fecha de Compra</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
@@ -64,7 +67,11 @@ const Index: React.FC<Props> = ({ compras, flash }) => {
               <tr key={c.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2">{c.id}</td>
                 <td className="px-4 py-2">{c.usuario?.nombre_completo ?? '—'}</td>
-                <td className="px-4 py-2">{c.producto?.nombre ?? '—'}</td>
+                <td className="px-4 py-2">
+                  {c.productos.length > 0
+                    ? c.productos.map((p) => `${p.nombre} x${p.pivot.cantidad}`).join(', ')
+                    : '—'}
+                </td>
                 <td className="px-4 py-2">{c.fecha_compra}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link

@@ -12,6 +12,7 @@ use App\Http\Controllers\PagoController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\DetalleCompraController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -91,7 +92,13 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('inscripciones/{inscripcion}/editar', [InscripcionController::class, 'editar'])->name('admin.inscripciones.editar');
     Route::put('inscripciones/{inscripcion}', [InscripcionController::class, 'actualizar'])->name('admin.inscripciones.actualizar');
     Route::delete('inscripciones/{inscripcion}', [InscripcionController::class, 'eliminar'])->name('admin.inscripciones.eliminar');
-
+// Detalle de Compras (gestión manual por parte del admin)
+Route::get('detalle-compras', [DetalleCompraController::class, 'index'])->name('admin.detalle-compras.index');
+Route::get('detalle-compras/crear', [DetalleCompraController::class, 'crear'])->name('admin.detalle-compras.crear');
+Route::post('detalle-compras', [DetalleCompraController::class, 'guardar'])->name('admin.detalle-compras.guardar');
+Route::get('detalle-compras/{detalleCompra}/editar', [DetalleCompraController::class, 'editar'])->name('admin.detalle-compras.editar');
+Route::put('detalle-compras/{detalleCompra}', [DetalleCompraController::class, 'actualizar'])->name('admin.detalle-compras.actualizar');
+Route::delete('detalle-compras/{detalleCompra}', [DetalleCompraController::class, 'eliminar'])->name('admin.detalle-compras.eliminar');
 
 
 });

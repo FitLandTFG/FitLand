@@ -7,6 +7,8 @@ interface Usuario {
   nombre_completo: string;
 }
 
+
+
 interface Producto {
   id: number;
   nombre: string;
@@ -20,9 +22,32 @@ interface Props extends PageProps {
 const Crear: React.FC<Props> = ({ usuarios, productos }) => {
   const { data, setData, post, processing, errors } = useForm({
     usuario_id: '',
-    producto_id: '',
     fecha_compra: '',
+    productos: [{ id: '', cantidad: 1 }],
   });
+
+  const handleAddProducto = () => {
+    setData('productos', [...data.productos, { id: '', cantidad: 1 }]);
+  };
+
+  const handleRemoveProducto = (index: number) => {
+    const nuevos = [...data.productos];
+    nuevos.splice(index, 1);
+    setData('productos', nuevos);
+  };
+
+ const handleProductoChange = (index: number, campo: 'id' | 'cantidad', valor: string) => {
+  const nuevos = [...data.productos];
+
+  if (campo === 'id') {
+    nuevos[index].id = valor;
+  } else if (campo === 'cantidad') {
+    nuevos[index].cantidad = parseInt(valor);
+  }
+
+  setData('productos', nuevos);
+};
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +59,7 @@ const Crear: React.FC<Props> = ({ usuarios, productos }) => {
       <h1 className="text-2xl font-bold mb-6">Registrar Compra</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+        {/* Usuario */}
         <div>
           <label className="block mb-1 font-semibold">Usuario</label>
           <select
@@ -51,23 +77,7 @@ const Crear: React.FC<Props> = ({ usuarios, productos }) => {
           {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
         </div>
 
-        <div>
-          <label className="block mb-1 font-semibold">Producto</label>
-          <select
-            value={data.producto_id}
-            onChange={(e) => setData('producto_id', e.target.value)}
-            className="w-full border rounded px-3 py-2"
-          >
-            <option value="">Seleccionar producto</option>
-            {productos.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nombre}
-              </option>
-            ))}
-          </select>
-          {errors.producto_id && <p className="text-red-600 text-sm">{errors.producto_id}</p>}
-        </div>
-
+        {/* Fecha de compra */}
         <div>
           <label className="block mb-1 font-semibold">Fecha de Compra</label>
           <input
@@ -79,7 +89,53 @@ const Crear: React.FC<Props> = ({ usuarios, productos }) => {
           {errors.fecha_compra && <p className="text-red-600 text-sm">{errors.fecha_compra}</p>}
         </div>
 
-        <div className="flex space-x-4">
+        {/* Productos */}
+        <div>
+          <label className="block mb-2 font-semibold">Productos</label>
+          {data.productos.map((producto, index) => (
+            <div key={index} className="flex items-center gap-2 mb-2">
+              <select
+                value={producto.id}
+                onChange={(e) => handleProductoChange(index, 'id', e.target.value)}
+                className="flex-1 border rounded px-3 py-2"
+              >
+                <option value="">Seleccionar producto</option>
+                {productos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min={1}
+                value={producto.cantidad}
+                onChange={(e) => handleProductoChange(index, 'cantidad', e.target.value)}
+                className="w-24 border rounded px-3 py-2"
+                placeholder="Cantidad"
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveProducto(index)}
+                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          {errors.productos && <p className="text-red-600 text-sm">{errors.productos}</p>}
+
+          <button
+            type="button"
+            onClick={handleAddProducto}
+            className="mt-2 text-sm text-blue-600 hover:underline"
+          >
+            + Añadir otro producto
+          </button>
+        </div>
+
+        {/* Botones */}
+        <div className="flex space-x-4 pt-4">
           <button
             type="submit"
             disabled={processing}
