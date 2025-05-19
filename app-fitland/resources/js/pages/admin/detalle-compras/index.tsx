@@ -24,16 +24,24 @@ interface Props extends PageProps {
 const Index: React.FC<Props> = ({ detalles }) => {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Detalle de Compras</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de detalles de compras</h1>
 
-      <Link
-        href="/admin/detalle-compras/crear"
-        className="mb-4 inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Añadir producto a compra
-      </Link>
+      <div className="mb-4 flex space-x-4">
+        <Link
+          href="/admin/detalle-compras/crear"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Añadir producto a compra
+        </Link>
+        <a
+          href="/admin"
+          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          Volver
+        </a>
+      </div>
 
-      <div className="overflow-x-auto bg-white rounded shadow mt-4">
+      <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 border-b">
             <tr>
@@ -66,7 +74,9 @@ const Index: React.FC<Props> = ({ detalles }) => {
                     href={`/admin/detalle-compras/${d.id}`}
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                     onClick={(e) => {
-                      if (!confirm(`¿Eliminar detalle #${d.id}?`)) e.preventDefault();
+                      if (!confirm(`¿Eliminar el detalle de compra #${d.id}?`)) {
+                        e.preventDefault();
+                      }
                     }}
                   >
                     Eliminar

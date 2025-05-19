@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import dayjs from 'dayjs';
 
 interface Usuario {
   id: number;
@@ -10,6 +11,7 @@ interface Usuario {
 interface Clase {
   id: number;
   nombre: string;
+  horario: string; // Necesario para cambiar fecha si se edita la clase
 }
 
 interface Inscripcion {
@@ -29,8 +31,17 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
   const { data, setData, put, processing, errors } = useForm({
     usuario_id: inscripcion.usuario_id,
     clase_id: inscripcion.clase_id,
-    fecha_inscripcion: inscripcion.fecha_inscripcion,
+    fecha_inscripcion: dayjs(inscripcion.fecha_inscripcion).format('YYYY-MM-DDTHH:mm:ss'),
   });
+
+  // Si se cambia la clase, actualiza automáticamente la fecha
+  useEffect(() => {
+    const claseSeleccionada = clases.find(c => c.id === Number(data.clase_id));
+    if (claseSeleccionada) {
+      const nuevaFecha = dayjs(claseSeleccionada.horario).format('YYYY-MM-DDTHH:mm:ss');
+      setData('fecha_inscripcion', nuevaFecha);
+    }
+  }, [data.clase_id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +53,7 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
       <h1 className="text-2xl font-bold mb-6">Editar Inscripción</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+        {/* Usuario */}
         <div>
           <label className="block mb-1 font-semibold">Usuario</label>
           <select
@@ -59,6 +71,7 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
           {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
         </div>
 
+        {/* Clase */}
         <div>
           <label className="block mb-1 font-semibold">Clase</label>
           <select
@@ -76,17 +89,19 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
           {errors.clase_id && <p className="text-red-600 text-sm">{errors.clase_id}</p>}
         </div>
 
+        {/* Fecha (readonly) */}
         <div>
           <label className="block mb-1 font-semibold">Fecha de Inscripción</label>
           <input
-            type="date"
+            type="datetime-local"
             value={data.fecha_inscripcion}
-            onChange={(e) => setData('fecha_inscripcion', e.target.value)}
-            className="w-full border rounded px-3 py-2"
+            readOnly
+            className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
           />
           {errors.fecha_inscripcion && <p className="text-red-600 text-sm">{errors.fecha_inscripcion}</p>}
         </div>
 
+        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"

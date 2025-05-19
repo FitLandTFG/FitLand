@@ -38,12 +38,12 @@ const Crear: React.FC<Props> = ({ compras }) => {
 
   const [montoCalculado, setMontoCalculado] = useState(0);
 
-  // Recalcular monto cuando cambia la compra seleccionada
   useEffect(() => {
     const compra = compras.find((c) => c.id === Number(data.compra_id));
     if (compra) {
       const total = compra.productos.reduce((sum, p) => {
-        return sum + p.precio * p.pivot.cantidad;
+        const cantidad = p.pivot?.cantidad ?? 0;
+        return sum + p.precio * cantidad;
       }, 0);
       setMontoCalculado(total);
     } else {

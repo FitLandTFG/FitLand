@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface Inscripcion {
   id: number;
@@ -56,7 +62,7 @@ const Index: React.FC<Props> = ({ inscripciones}) => {
                 <td className="px-4 py-2">{i.id}</td>
                 <td className="px-4 py-2">{i.usuario?.nombre_completo ?? '—'}</td>
                 <td className="px-4 py-2">{i.clase?.nombre ?? '—'}</td>
-                <td className="px-4 py-2">{i.fecha_inscripcion}</td>
+                <td className="px-4 py-2">{dayjs(i.fecha_inscripcion).tz('Europe/Madrid').format('DD/MM/YYYY HH:mm')}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
                     href={`/admin/inscripciones/${i.id}/editar`}

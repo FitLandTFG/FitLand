@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface Clase {
   id: number;
@@ -57,7 +63,7 @@ const Index: React.FC<Props> = ({ clases, flash }) => {
               <tr key={c.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2">{c.id}</td>
                 <td className="px-4 py-2">{c.nombre}</td>
-                <td className="px-4 py-2">{new Date(c.horario).toLocaleString()}</td>
+                <td className="px-4 py-2">{dayjs(c.horario).tz('Europe/Madrid').format('DD/MM/YYYY HH:mm')}</td>
                 <td className="px-4 py-2">{c.aforo}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link

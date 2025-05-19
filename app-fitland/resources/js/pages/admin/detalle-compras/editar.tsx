@@ -33,16 +33,30 @@ const Editar: React.FC<Props> = ({ detalle }) => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Editar Detalle de Compra</h1>
-
-      <p className="mb-2 text-gray-700">
-        <strong>Compra #{detalle.compra.id}</strong> – {detalle.compra.usuario.nombre_completo}
-      </p>
-      <p className="mb-4 text-gray-700">
-        <strong>Producto:</strong> {detalle.producto.nombre}
-      </p>
+      <h1 className="text-2xl font-bold mb-6">Editar detalle de compras</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
+
+        <div>
+          <label className="block mb-1 font-semibold">Cliente</label>
+          <input
+            type="text"
+            value={detalle.compra.usuario.nombre_completo}
+            readOnly
+            className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold">Producto</label>
+          <input
+            type="text"
+            value={detalle.producto.nombre}
+            readOnly
+            className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
+          />
+        </div>
+
         <div>
           <label className="block mb-1 font-semibold">Cantidad</label>
           <input
@@ -63,7 +77,10 @@ const Editar: React.FC<Props> = ({ detalle }) => {
           >
             Actualizar
           </button>
-          <a href="/admin/detalle-compras" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+          <a
+            href="/admin/detalle-compras"
+            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          >
             Volver
           </a>
         </div>

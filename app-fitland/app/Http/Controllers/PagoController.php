@@ -22,7 +22,12 @@ class PagoController extends Controller
     public function crear()
     {
         return Inertia::render('admin/pagos/crear', [
-            'compras' => Compra::with('usuario')->get(),
+            'compras' => Compra::with([
+                'usuario',
+                'productos' => function ($query) {
+                    $query->withPivot('cantidad');
+                }
+            ])->get(),
         ]);
     }
 
@@ -41,7 +46,6 @@ class PagoController extends Controller
         $compra = Compra::with(['usuario', 'productos'])->findOrFail($request->compra_id);
         $usuario_id = $compra->usuario_id;
 
-        // ✅ Calculamos el monto automáticamente:
         $monto = $compra->productos->sum(function ($producto) {
             return $producto->precio * $producto->pivot->cantidad;
         });
@@ -49,7 +53,7 @@ class PagoController extends Controller
         Pago::create([
             'usuario_id'     => $usuario_id,
             'compra_id'      => $compra->id,
-            'monto'          => $monto, // o usa $request->monto si prefieres
+            'monto'          => $monto,
             'fecha_pago'     => $request->fecha_pago,
             'metodo_pago'    => $request->metodo_pago,
             'estado'         => $request->estado,

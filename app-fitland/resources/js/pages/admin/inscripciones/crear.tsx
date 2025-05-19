@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import dayjs from 'dayjs';
 
 interface Usuario {
   id: number;
@@ -10,6 +11,7 @@ interface Usuario {
 interface Clase {
   id: number;
   nombre: string;
+  horario: string; // ← Necesario para obtener la fecha
 }
 
 interface Props extends PageProps {
@@ -24,6 +26,18 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
     fecha_inscripcion: '',
   });
 
+  // Actualiza automáticamente la fecha cuando cambia clase_id
+  useEffect(() => {
+    const claseSeleccionada = clases.find(c => c.id === Number(data.clase_id));
+    if (claseSeleccionada) {
+      // Formato ISO 8601: YYYY-MM-DDTHH:mm:ss (válido para timestamp)
+      const horarioFormateado = dayjs(claseSeleccionada.horario).format('YYYY-MM-DDTHH:mm:ss');
+      setData('fecha_inscripcion', horarioFormateado);
+    } else {
+      setData('fecha_inscripcion', '');
+    }
+  }, [data.clase_id]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     post('/admin/inscripciones');
@@ -34,6 +48,7 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
       <h1 className="text-2xl font-bold mb-6">Registrar Inscripción</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+        {/* Usuario */}
         <div>
           <label className="block mb-1 font-semibold">Usuario</label>
           <select
@@ -51,6 +66,7 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
           {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
         </div>
 
+        {/* Clase */}
         <div>
           <label className="block mb-1 font-semibold">Clase</label>
           <select
@@ -68,17 +84,19 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
           {errors.clase_id && <p className="text-red-600 text-sm">{errors.clase_id}</p>}
         </div>
 
+        {/* Fecha de inscripción (readonly y autocompletada) */}
         <div>
           <label className="block mb-1 font-semibold">Fecha de Inscripción</label>
           <input
-            type="date"
+            type="datetime-local"
             value={data.fecha_inscripcion}
-            onChange={(e) => setData('fecha_inscripcion', e.target.value)}
-            className="w-full border rounded px-3 py-2"
+            readOnly
+            className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
           />
           {errors.fecha_inscripcion && <p className="text-red-600 text-sm">{errors.fecha_inscripcion}</p>}
         </div>
 
+        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"
