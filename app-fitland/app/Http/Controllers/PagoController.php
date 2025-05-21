@@ -64,16 +64,27 @@ class PagoController extends Controller
     }
 
     public function editar(Pago $pago)
-    {
-        $pago->load('compra.usuario');
+{
+    $pago->load([
+        'compra.usuario',
+        'compra.productos' => function ($query) {
+            $query->withPivot('cantidad');
+        }
+    ]);
 
-        $compras = Compra::with('usuario')->get();
+    $compras = Compra::with([
+        'usuario',
+        'productos' => function ($query) {
+            $query->withPivot('cantidad');
+        }
+    ])->get();
 
-        return Inertia::render('admin/pagos/editar', [
-            'pago'    => $pago,
-            'compras' => $compras,
-        ]);
-    }
+    return Inertia::render('admin/pagos/editar', [
+        'pago'    => $pago,
+        'compras' => $compras,
+    ]);
+}
+
 
     public function actualizar(Request $request, Pago $pago)
     {
