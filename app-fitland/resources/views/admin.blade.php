@@ -9,8 +9,16 @@
 <body class="bg-gray-100 font-sans">
 
     <header class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto">
-            <h1 class="text-2xl font-semibold">Administrador</h1>
+        <div class="container mx-auto flex items-center justify-between relative">
+            <div>
+                <a href="/dashboard" style="background-color: #4EB11F;" class="inline-block text-white px-4 py-2 rounded-full">
+                    Volver al dashboard
+                </a>
+            </div>
+
+            <h1 class="absolute left-1/2 transform -translate-x-1/2 text-2xl font-semibold">
+                Administrador
+            </h1>
         </div>
     </header>
 
@@ -72,9 +80,6 @@
             <a href="/admin/detalle-compras" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
             <div class="flex flex-col justify-end h-40">
-  <a href="/dashboard" class="inline-block bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition duration-300">
-    Volver al dashboard
-  </a>
 </div>
 
         </div>
