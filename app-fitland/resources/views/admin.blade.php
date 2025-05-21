@@ -71,6 +71,11 @@
             <p class="text-gray-600 mb-4">Gestiona los productos asociados a cada compra.</p>
             <a href="/admin/detalle-compras" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
+            <div class="flex flex-col justify-end h-40">
+  <a href="/dashboard" class="inline-block bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition duration-300">
+    Volver al dashboard
+  </a>
+</div>
 
         </div>
     </main>
