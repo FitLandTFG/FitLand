@@ -9,6 +9,7 @@ interface Producto {
   descripcion: string;
   precio: number;
   imagen: string;
+  stock: number;
 }
 
 interface Props extends PageProps {
@@ -51,6 +52,7 @@ const Index: React.FC<Props> = ({ productos, flash }) => {
               <th className="px-4 py-2">Nombre</th>
               <th className="px-4 py-2">Tipo</th>
               <th className="px-4 py-2">Precio</th>
+              <th className="px-4 py-2">Stock</th>
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
@@ -62,6 +64,7 @@ const Index: React.FC<Props> = ({ productos, flash }) => {
                 <td className="px-4 py-2">{p.nombre}</td>
                 <td className="px-4 py-2 capitalize">{p.tipo}</td>
                 <td className="px-4 py-2">{p.precio.toFixed(2)} €</td>
+                <td className="px-4 py-2">{p.stock}</td>
                 <td className="px-4 py-2">
                   <img src={p.imagen} alt="Producto" className="w-10 h-10 object-cover rounded" />
                 </td>
@@ -90,7 +93,7 @@ const Index: React.FC<Props> = ({ productos, flash }) => {
             ))}
             {productos.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center text-gray-500 py-4">
+                <td colSpan={7} className="text-center text-gray-500 py-4">
                   No hay productos registrados.
                 </td>
               </tr>

@@ -9,6 +9,7 @@ interface Producto {
   descripcion: string;
   precio: number;
   imagen: string;
+  stock: number;
 }
 
 interface Props extends PageProps {
@@ -22,6 +23,7 @@ const Editar: React.FC<Props> = ({ producto }) => {
     descripcion: producto.descripcion,
     precio: producto.precio,
     imagen: producto.imagen,
+    stock: producto.stock, // ✅ nuevo campo
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,6 +57,19 @@ const Editar: React.FC<Props> = ({ producto }) => {
         ))}
 
         <div>
+          <label className="block mb-1 font-semibold">Stock</label>
+          <input
+            type="number"
+            min={0}
+            max={999}
+            value={data.stock}
+            onChange={(e) => setData('stock', parseInt(e.target.value) || 0)}
+            className="w-full border rounded px-3 py-2"
+          />
+          {errors.stock && <p className="text-red-600 text-sm">{errors.stock}</p>}
+        </div>
+
+        <div>
           <label className="block mb-1 font-semibold">Tipo</label>
           <select
             value={data.tipo}
@@ -63,6 +78,8 @@ const Editar: React.FC<Props> = ({ producto }) => {
           >
             <option value="ropa">Ropa</option>
             <option value="suplemento">Suplemento</option>
+            <option value="bebida">Bebida</option> {/* ✅ nuevo */}
+            <option value="accesorio">Accesorio</option> {/* ✅ nuevo */}
           </select>
           {errors.tipo && <p className="text-red-600 text-sm">{errors.tipo}</p>}
         </div>

@@ -27,11 +27,12 @@ class ProductoController extends Controller
     public function guardar(Request $request)
     {
         $request->validate([
-            'tipo' => 'required|in:ropa,suplemento',
+            'tipo' => 'required|in:ropa,suplemento,bebida,accesorio',
             'nombre' => 'required|string|max:100',
             'descripcion' => 'required|string',
             'precio' => 'required|numeric|min:0',
             'imagen' => 'required|string',
+            'stock' => 'required|integer|min:0|max:999',
         ]);
 
         Producto::create($request->all());
@@ -49,11 +50,12 @@ class ProductoController extends Controller
     public function actualizar(Request $request, Producto $producto)
     {
         $request->validate([
-            'tipo' => 'required|in:ropa,suplemento',
+            'tipo' => 'required|in:ropa,suplemento,bebida,accesorio',
             'nombre' => 'required|string|max:100',
             'descripcion' => 'required|string',
             'precio' => 'required|numeric|min:0',
             'imagen' => 'required|string',
+            'stock' => 'required|integer|min:0|max:999',
         ]);
 
         $producto->update($request->all());
@@ -71,7 +73,7 @@ class ProductoController extends Controller
                 return redirect()->back()->with('error', 'No se puede eliminar el producto porque tiene una compra asociada.
                                                           Elimine las compras asociadas para poder eliminar el producto.');
             }
-    
+
             return redirect()->back()->with('error', 'Ocurrió un error al eliminar la clase.');
         }
     }
