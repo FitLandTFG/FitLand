@@ -43,12 +43,12 @@ class CompraController extends Controller
 
     try {
         DB::transaction(function () use ($request) {
-            // Validar stock antes de crear la compra
             foreach ($request->productos as $producto) {
                 $productoBD = Producto::findOrFail($producto['id']);
+                $cantidadSolicitada = $producto['cantidad'];
 
-                if ($productoBD->stock < $producto['cantidad']) {
-                    throw new \Exception("No hay suficiente stock para el producto: {$productoBD->nombre}");
+                if ($productoBD->stock < $cantidadSolicitada) {
+                    throw new \Exception("La cantidad solicitada supera el stock disponible del producto: {$productoBD->nombre}");
                 }
             }
 

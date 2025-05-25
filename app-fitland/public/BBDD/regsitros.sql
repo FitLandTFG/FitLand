@@ -175,22 +175,3 @@ INSERT INTO public.productos (id, tipo, nombre, descripcion, precio, imagen, sto
 (28, 'accesorio', 'Comba de velocidad', 'Cuerda ajustable con rodamientos para entrenamientos de cardio o boxeo.', 8.49, 'https://via.placeholder.com/100x100?text=Comba', 18, NULL, NULL);
 
 ALTER SEQUENCE productos_id_seq RESTART WITH 29;
-
-
--- Esto de abajo no lo insertes esta mal
---INSERT INTO public.inscripciones VALUES (2, 11, 22, '2025-05-06', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (3, 79, 23, '2025-05-03', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (4, 80, 24, '2025-05-04', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (5, 81, 25, '2025-05-01', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (6, 82, 26, '2025-05-06', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (7, 83, 27, '2025-05-06', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (8, 84, 28, '2025-05-01', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (9, 85, 29, '2025-05-03', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (10, 86, 30, '2025-05-04', NULL, NULL);
---INSERT INTO public.inscripciones VALUES (1, 11, 22, '2025-05-10', '2025-05-21 20:08:02', '2025-05-21 20:08:02');
-
-
-
-
-
-

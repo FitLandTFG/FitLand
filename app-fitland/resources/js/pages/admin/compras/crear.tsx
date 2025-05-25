@@ -15,6 +15,7 @@ interface Producto {
 interface Props extends PageProps {
   usuarios: Usuario[];
   productos: Producto[];
+  error?: string;
 }
 
 const Crear: React.FC<Props> = (props) => {
@@ -51,11 +52,12 @@ const Crear: React.FC<Props> = (props) => {
     post('/admin/compras');
   };
 
+  console.log('flash', flash);
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Registrar Compra</h1>
 
-      {/* Error general */}
       {flash?.error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {flash.error}
@@ -63,7 +65,6 @@ const Crear: React.FC<Props> = (props) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Usuario */}
         <div>
           <label className="block mb-1 font-semibold">Usuario</label>
           <select
