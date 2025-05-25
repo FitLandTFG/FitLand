@@ -19,7 +19,7 @@ interface Props extends PageProps {
   productos: Producto[];
 }
 
-const Crear: React.FC<Props> = ({ compras, productos }) => {
+const Crear: React.FC<Props> = ({ compras, productos, flash }) => {
   const { data, setData, post, processing, errors } = useForm({
     compra_id: '',
     producto_id: '',
@@ -35,7 +35,15 @@ const Crear: React.FC<Props> = ({ compras, productos }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Añadir Producto a Compra</h1>
 
+      {/* Mensaje de error general (por ejemplo, sin stock) */}
+      {flash?.error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {flash.error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+        {/* Compra */}
         <div>
           <label className="block mb-1 font-semibold">Compra</label>
           <select
@@ -53,6 +61,7 @@ const Crear: React.FC<Props> = ({ compras, productos }) => {
           {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
         </div>
 
+        {/* Producto */}
         <div>
           <label className="block mb-1 font-semibold">Producto</label>
           <select
@@ -70,6 +79,7 @@ const Crear: React.FC<Props> = ({ compras, productos }) => {
           {errors.producto_id && <p className="text-red-600 text-sm">{errors.producto_id}</p>}
         </div>
 
+        {/* Cantidad */}
         <div>
           <label className="block mb-1 font-semibold">Cantidad</label>
           <input
@@ -82,6 +92,7 @@ const Crear: React.FC<Props> = ({ compras, productos }) => {
           {errors.cantidad && <p className="text-red-600 text-sm">{errors.cantidad}</p>}
         </div>
 
+        {/* Botones */}
         <div className="flex space-x-4 pt-4">
           <button
             type="submit"

@@ -19,9 +19,12 @@ interface DetalleCompra {
 
 interface Props extends PageProps {
   detalle: DetalleCompra;
+  flash?: {
+    error?: string;
+  };
 }
 
-const Editar: React.FC<Props> = ({ detalle }) => {
+const Editar: React.FC<Props> = ({ detalle, flash }) => {
   const { data, setData, put, processing, errors } = useForm({
     cantidad: detalle.cantidad,
   });
@@ -35,8 +38,14 @@ const Editar: React.FC<Props> = ({ detalle }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar detalle de compras</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
+      {/* Mensaje de error global (por ejemplo, stock insuficiente) */}
+      {flash?.error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {flash.error}
+        </div>
+      )}
 
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
         <div>
           <label className="block mb-1 font-semibold">Cliente</label>
           <input

@@ -12,8 +12,6 @@ interface Producto {
   nombre: string;
 }
 
-
-
 interface Compra {
   id: number;
   usuario_id: number;
@@ -30,7 +28,9 @@ interface Props extends PageProps {
   productos: Producto[];
 }
 
-const Editar: React.FC<Props> = ({ compra, usuarios, productos }) => {
+const Editar: React.FC<Props> = (props) => {
+  const { compra, usuarios, productos, flash } = props;
+
   const { data, setData, put, processing, errors } = useForm<{
     usuario_id: number | string;
     fecha_compra: string;
@@ -61,19 +61,24 @@ const Editar: React.FC<Props> = ({ compra, usuarios, productos }) => {
 
   const handleProductoChange = (index: number, campo: 'id' | 'cantidad', valor: string) => {
     const nuevos = [...data.productos];
-
     if (campo === 'id') {
       nuevos[index].id = valor;
     } else if (campo === 'cantidad') {
       nuevos[index].cantidad = parseInt(valor);
     }
-
     setData('productos', nuevos);
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar Compra</h1>
+
+      {/* Error general si viene desde el backend (por ejemplo, sin stock) */}
+      {flash?.error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {flash.error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         {/* Usuario */}

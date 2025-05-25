@@ -7,8 +7,6 @@ interface Usuario {
   nombre_completo: string;
 }
 
-
-
 interface Producto {
   id: number;
   nombre: string;
@@ -19,7 +17,9 @@ interface Props extends PageProps {
   productos: Producto[];
 }
 
-const Crear: React.FC<Props> = ({ usuarios, productos }) => {
+const Crear: React.FC<Props> = (props) => {
+  const { usuarios, productos, flash } = props;
+
   const { data, setData, post, processing, errors } = useForm({
     usuario_id: '',
     fecha_compra: '',
@@ -36,18 +36,15 @@ const Crear: React.FC<Props> = ({ usuarios, productos }) => {
     setData('productos', nuevos);
   };
 
- const handleProductoChange = (index: number, campo: 'id' | 'cantidad', valor: string) => {
-  const nuevos = [...data.productos];
-
-  if (campo === 'id') {
-    nuevos[index].id = valor;
-  } else if (campo === 'cantidad') {
-    nuevos[index].cantidad = parseInt(valor);
-  }
-
-  setData('productos', nuevos);
-};
-
+  const handleProductoChange = (index: number, campo: 'id' | 'cantidad', valor: string) => {
+    const nuevos = [...data.productos];
+    if (campo === 'id') {
+      nuevos[index].id = valor;
+    } else if (campo === 'cantidad') {
+      nuevos[index].cantidad = parseInt(valor);
+    }
+    setData('productos', nuevos);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +54,13 @@ const Crear: React.FC<Props> = ({ usuarios, productos }) => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Registrar Compra</h1>
+
+      {/* Error general */}
+      {flash?.error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {flash.error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         {/* Usuario */}

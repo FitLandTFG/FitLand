@@ -18,6 +18,7 @@ class DetalleCompraController extends Controller
 
         return Inertia::render('admin/detalle-compras/index', [
             'detalles' => $detalles,
+            'flash' => ['success' => session('success'), 'error' => session('error')],
         ]);
     }
 
@@ -26,6 +27,7 @@ class DetalleCompraController extends Controller
         return Inertia::render('admin/detalle-compras/crear', [
             'compras' => Compra::with('usuario')->get(),
             'productos' => Producto::all(),
+            'flash' => ['error' => session('error')],
         ]);
     }
 
@@ -37,13 +39,21 @@ class DetalleCompraController extends Controller
             'cantidad' => 'required|integer|min:1',
         ]);
 
+        $producto = Producto::findOrFail($request->producto_id);
+
+        if ($producto->stock < $request->cantidad) {
+            return redirect()->back()->with('error', 'No hay suficiente stock para el producto: ' . $producto->nombre);
+        }
+
         DetalleCompra::create([
             'compra_id' => $request->compra_id,
             'producto_id' => $request->producto_id,
             'cantidad' => $request->cantidad,
         ]);
 
-        return redirect()->route('admin.detalle-compras.index');
+        $producto->decrement('stock', $request->cantidad);
+
+        return redirect()->route('admin.detalle-compras.index')->with('success', 'Producto añadido correctamente.');
     }
 
     public function editar(DetalleCompra $detalleCompra)
@@ -52,6 +62,7 @@ class DetalleCompraController extends Controller
 
         return Inertia::render('admin/detalle-compras/editar', [
             'detalle' => $detalleCompra,
+            'flash' => ['error' => session('error')],
         ]);
     }
 
@@ -61,17 +72,33 @@ class DetalleCompraController extends Controller
             'cantidad' => 'required|integer|min:1',
         ]);
 
+        $producto = Producto::findOrFail($detalleCompra->producto_id);
+
+        // Restaurar el stock anterior antes de aplicar el nuevo cambio
+        $producto->increment('stock', $detalleCompra->cantidad);
+
+        // Validar nuevo stock
+        if ($producto->stock < $request->cantidad) {
+            return redirect()->back()->with('error', 'No hay suficiente stock para actualizar este producto: ' . $producto->nombre);
+        }
+
+        // Actualizar y descontar nuevo stock
         $detalleCompra->update([
             'cantidad' => $request->cantidad,
         ]);
 
-        return redirect()->route('admin.detalle-compras.index');
+        $producto->decrement('stock', $request->cantidad);
+
+        return redirect()->route('admin.detalle-compras.index')->with('success', 'Detalle actualizado correctamente.');
     }
 
     public function eliminar(DetalleCompra $detalleCompra)
     {
+        // Devolver el stock antes de borrar
+        Producto::where('id', $detalleCompra->producto_id)->increment('stock', $detalleCompra->cantidad);
+
         $detalleCompra->delete();
 
-        return redirect()->route('admin.detalle-compras.index');
+        return redirect()->route('admin.detalle-compras.index')->with('success', 'Producto eliminado correctamente.');
     }
 }

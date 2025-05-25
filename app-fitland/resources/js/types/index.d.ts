@@ -48,6 +48,10 @@ export interface User {
     [key: string]: unknown;
   }
   export interface PageProps {
-    auth: Auth;
-    [key: string]: unknown;
-  }
+  auth: Auth;
+  flash?: {
+    success?: string;
+    error?: string;
+  };
+  [key: string]: unknown;
+}

@@ -32,16 +32,26 @@ class CompraController extends Controller
     }
 
     public function guardar(Request $request)
-    {
-        $request->validate([
-            'usuario_id' => 'required|exists:usuarios,id',
-            'fecha_compra' => 'required|date',
-            'productos' => 'required|array|min:1',
-            'productos.*.id' => 'required|exists:productos,id',
-            'productos.*.cantidad' => 'required|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'usuario_id' => 'required|exists:usuarios,id',
+        'fecha_compra' => 'required|date',
+        'productos' => 'required|array|min:1',
+        'productos.*.id' => 'required|exists:productos,id',
+        'productos.*.cantidad' => 'required|integer|min:1',
+    ]);
 
+    try {
         DB::transaction(function () use ($request) {
+            // Validar stock antes de crear la compra
+            foreach ($request->productos as $producto) {
+                $productoBD = Producto::findOrFail($producto['id']);
+
+                if ($productoBD->stock < $producto['cantidad']) {
+                    throw new \Exception("No hay suficiente stock para el producto: {$productoBD->nombre}");
+                }
+            }
+
             $compra = Compra::create([
                 'usuario_id' => $request->usuario_id,
                 'fecha_compra' => $request->fecha_compra,
@@ -53,11 +63,19 @@ class CompraController extends Controller
                     'producto_id' => $producto['id'],
                     'cantidad' => $producto['cantidad'],
                 ]);
+
+                Producto::where('id', $producto['id'])->decrement('stock', $producto['cantidad']);
             }
         });
 
         return redirect()->route('admin.compras.index');
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
     }
+}
+
+
 
     public function editar(Compra $compra)
     {
@@ -71,36 +89,58 @@ class CompraController extends Controller
     }
 
     public function actualizar(Request $request, Compra $compra)
-    {
-        $request->validate([
-            'usuario_id' => 'required|exists:usuarios,id',
-            'fecha_compra' => 'required|date',
-            'productos' => 'required|array|min:1',
-            'productos.*.id' => 'required|exists:productos,id',
-            'productos.*.cantidad' => 'required|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'usuario_id' => 'required|exists:usuarios,id',
+        'fecha_compra' => 'required|date',
+        'productos' => 'required|array|min:1',
+        'productos.*.id' => 'required|exists:productos,id',
+        'productos.*.cantidad' => 'required|integer|min:1',
+    ]);
 
+    try {
         DB::transaction(function () use ($request, $compra) {
+            // Restaurar stock anterior
+            foreach ($compra->detalles as $detalle) {
+                Producto::where('id', $detalle->producto_id)->increment('stock', $detalle->cantidad);
+            }
+
             $compra->update([
                 'usuario_id' => $request->usuario_id,
                 'fecha_compra' => $request->fecha_compra,
             ]);
 
-            // Borrar los detalles antiguos
+            // Eliminar los detalles antiguos
             $compra->detalles()->delete();
 
-            // Insertar los nuevos
+            // Validar stock para los nuevos productos
+            foreach ($request->productos as $producto) {
+                $productoBD = Producto::findOrFail($producto['id']);
+
+                if ($productoBD->stock < $producto['cantidad']) {
+                    throw new \Exception("No hay suficiente stock para el producto: {$productoBD->nombre}");
+                }
+            }
+
+            // Insertar los nuevos detalles y descontar stock
             foreach ($request->productos as $producto) {
                 DetalleCompra::create([
                     'compra_id' => $compra->id,
                     'producto_id' => $producto['id'],
                     'cantidad' => $producto['cantidad'],
                 ]);
+
+                Producto::where('id', $producto['id'])->decrement('stock', $producto['cantidad']);
             }
         });
 
         return redirect()->route('admin.compras.index');
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
     }
+}
+
 
     public function eliminar(Compra $compra)
     {
