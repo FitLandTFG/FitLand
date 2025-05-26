@@ -1,7 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.locale('es');
+dayjs.extend(utc);
 
 interface Usuario {
   id: number;
@@ -11,7 +16,7 @@ interface Usuario {
 interface Clase {
   id: number;
   nombre: string;
-  horario: string; // Necesario para cambiar fecha si se edita la clase
+  horario: string;
 }
 
 interface Inscripcion {
@@ -28,20 +33,20 @@ interface Props extends PageProps {
 }
 
 const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
-  const { data, setData, put, processing, errors } = useForm({
-    usuario_id: inscripcion.usuario_id,
-    clase_id: inscripcion.clase_id,
-    fecha_inscripcion: dayjs(inscripcion.fecha_inscripcion).format('YYYY-MM-DDTHH:mm:ss'),
-  });
+  const claseOriginal = clases.find((c) => c.id === inscripcion.clase_id);
+  const nombreInicial = claseOriginal?.nombre ?? '';
 
-  // Si se cambia la clase, actualiza automáticamente la fecha
-  useEffect(() => {
-    const claseSeleccionada = clases.find(c => c.id === Number(data.clase_id));
-    if (claseSeleccionada) {
-      const nuevaFecha = dayjs(claseSeleccionada.horario).format('YYYY-MM-DDTHH:mm:ss');
-      setData('fecha_inscripcion', nuevaFecha);
-    }
-  }, [data.clase_id]);
+  const { data, setData, put, processing, errors } = useForm<{
+    usuario_id: number;
+    nombre_clase: string;
+    clase_id: number | string;
+    fecha_inscripcion: string;
+  }>({
+    usuario_id: inscripcion.usuario_id,
+    nombre_clase: nombreInicial,
+    clase_id: inscripcion.clase_id,
+    fecha_inscripcion: dayjs.utc(inscripcion.fecha_inscripcion).format('YYYY-MM-DD HH:mm:ss'),
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,52 +58,81 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
       <h1 className="text-2xl font-bold mb-6">Editar Inscripción</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Usuario */}
-        <div>
-          <label className="block mb-1 font-semibold">Usuario</label>
-          <select
-            value={data.usuario_id}
-            onChange={(e) => setData('usuario_id', Number(e.target.value))}
-            className="w-full border rounded px-3 py-2"
-          >
-            <option value="">Seleccionar usuario</option>
-            {usuarios.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.nombre_completo}
-              </option>
-            ))}
-          </select>
-          {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
-        </div>
+        {/* Usuario (solo lectura) */}
+<div>
+  <label className="block mb-1 font-semibold">Usuario</label>
+  <input
+    type="text"
+    value={usuarios.find((u) => u.id === data.usuario_id)?.nombre_completo || ''}
+    readOnly
+    className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
+  />
+</div>
 
-        {/* Clase */}
+
+        {/* Clase (nombre) */}
         <div>
           <label className="block mb-1 font-semibold">Clase</label>
           <select
-            value={data.clase_id}
-            onChange={(e) => setData('clase_id', Number(e.target.value))}
+            value={data.nombre_clase}
+            onChange={(e) => {
+              setData('nombre_clase', e.target.value);
+              setData('clase_id', '');
+              setData('fecha_inscripcion', '');
+            }}
             className="w-full border rounded px-3 py-2"
           >
             <option value="">Seleccionar clase</option>
-            {clases.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombre}
+            {[...new Set(clases.map((c) => c.nombre))].map((nombreClase, i) => (
+              <option key={i} value={nombreClase}>
+                {nombreClase}
               </option>
             ))}
           </select>
-          {errors.clase_id && <p className="text-red-600 text-sm">{errors.clase_id}</p>}
+          {errors.nombre_clase && <p className="text-red-600 text-sm">{errors.nombre_clase}</p>}
         </div>
 
-        {/* Fecha (readonly) */}
+        {/* Horario */}
         <div>
-          <label className="block mb-1 font-semibold">Fecha de Inscripción</label>
-          <input
-            type="datetime-local"
+          <label className="block mb-1 font-semibold">Horario</label>
+          <select
             value={data.fecha_inscripcion}
-            readOnly
-            className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
-          />
-          {errors.fecha_inscripcion && <p className="text-red-600 text-sm">{errors.fecha_inscripcion}</p>}
+            onChange={(e) => {
+              const claseSeleccionada = clases.find(
+                (c) =>
+                  c.nombre === data.nombre_clase &&
+                  dayjs.utc(c.horario).format('YYYY-MM-DD HH:mm:ss') === e.target.value
+              );
+
+              if (claseSeleccionada) {
+                setData('clase_id', claseSeleccionada.id);
+                setData('fecha_inscripcion', dayjs.utc(claseSeleccionada.horario).format('YYYY-MM-DD HH:mm:ss'));
+              }
+            }}
+            className="w-full border rounded px-3 py-2"
+            disabled={!data.nombre_clase}
+          >
+            <option value="">
+              {data.nombre_clase ? 'Seleccionar horario' : 'Seleccione una clase primero'}
+            </option>
+            {data.nombre_clase &&
+              clases
+                .filter((c) => c.nombre === data.nombre_clase)
+                .sort((a, b) => dayjs.utc(a.horario).unix() - dayjs.utc(b.horario).unix())
+                .map((c) => {
+                  const valor = dayjs.utc(c.horario).format('YYYY-MM-DD HH:mm:ss');
+                  const texto = dayjs.utc(c.horario).format('dddd, DD MMMM YYYY - HH:mm');
+                  const capitalizado = texto.charAt(0).toUpperCase() + texto.slice(1);
+                  return (
+                    <option key={c.id} value={valor}>
+                      {capitalizado}
+                    </option>
+                  );
+                })}
+          </select>
+          {errors.fecha_inscripcion && (
+            <p className="text-red-600 text-sm">{errors.fecha_inscripcion}</p>
+          )}
         </div>
 
         {/* Botones */}
@@ -110,7 +144,10 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
           >
             Actualizar inscripción
           </button>
-          <a href="/admin/inscripciones" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+          <a
+            href="/admin/inscripciones"
+            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          >
             Volver
           </a>
         </div>

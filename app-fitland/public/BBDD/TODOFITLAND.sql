@@ -907,7 +907,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 4	HIIT	2025-06-02 12:00:00	16	\N	\N
 5	Full Body Workout	2025-06-02 13:20:00	18	\N	\N
 6	Cardio Dance	2025-06-02 14:40:00	22	\N	\N
-7	Stretching	2025-06-02 16:00:00	12	\N	\N
+7	Yoga	2025-06-02 16:00:00	12	\N	\N
 8	Entrenamiento Funcional	2025-06-02 17:20:00	20	\N	\N
 9	Boxeo	2025-06-02 18:40:00	14	\N	\N
 10	Kickboxing	2025-06-02 20:00:00	12	\N	\N
@@ -917,7 +917,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 14	HIIT	2025-06-03 12:00:00	16	\N	\N
 15	Full Body Workout	2025-06-03 13:20:00	18	\N	\N
 16	Cardio Dance	2025-06-03 14:40:00	22	\N	\N
-17	Stretching	2025-06-03 16:00:00	12	\N	\N
+17	Yoga	2025-06-03 16:00:00	12	\N	\N
 18	Entrenamiento Funcional	2025-06-03 17:20:00	20	\N	\N
 19	Boxeo	2025-06-03 18:40:00	14	\N	\N
 20	Kickboxing	2025-06-03 20:00:00	12	\N	\N
@@ -927,7 +927,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 24	HIIT	2025-06-04 12:00:00	16	\N	\N
 25	Full Body Workout	2025-06-04 13:20:00	18	\N	\N
 26	Cardio Dance	2025-06-04 14:40:00	22	\N	\N
-27	Stretching	2025-06-04 16:00:00	12	\N	\N
+27	Yoga	2025-06-04 16:00:00	12	\N	\N
 28	Entrenamiento Funcional	2025-06-04 17:20:00	20	\N	\N
 29	Boxeo	2025-06-04 18:40:00	14	\N	\N
 30	Kickboxing	2025-06-04 20:00:00	12	\N	\N
@@ -937,7 +937,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 34	HIIT	2025-06-05 12:00:00	16	\N	\N
 35	Full Body Workout	2025-06-05 13:20:00	18	\N	\N
 36	Cardio Dance	2025-06-05 14:40:00	22	\N	\N
-37	Stretching	2025-06-05 16:00:00	12	\N	\N
+37	Yoga	2025-06-05 16:00:00	12	\N	\N
 38	Entrenamiento Funcional	2025-06-05 17:20:00	20	\N	\N
 39	Boxeo	2025-06-05 18:40:00	14	\N	\N
 40	Kickboxing	2025-06-05 20:00:00	12	\N	\N
@@ -947,7 +947,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 44	HIIT	2025-06-06 12:00:00	16	\N	\N
 45	Full Body Workout	2025-06-06 13:20:00	18	\N	\N
 46	Cardio Dance	2025-06-06 14:40:00	22	\N	\N
-47	Stretching	2025-06-06 16:00:00	12	\N	\N
+47	Yoga	2025-06-06 16:00:00	12	\N	\N
 48	Entrenamiento Funcional	2025-06-06 17:20:00	20	\N	\N
 49	Boxeo	2025-06-06 18:40:00	14	\N	\N
 50	Kickboxing	2025-06-06 20:00:00	12	\N	\N
@@ -957,7 +957,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 54	HIIT	2025-06-07 12:00:00	16	\N	\N
 55	Full Body Workout	2025-06-07 13:20:00	18	\N	\N
 56	Cardio Dance	2025-06-07 14:40:00	22	\N	\N
-57	Stretching	2025-06-07 16:00:00	12	\N	\N
+57	Yoga	2025-06-07 16:00:00	12	\N	\N
 58	Entrenamiento Funcional	2025-06-07 17:20:00	20	\N	\N
 59	Boxeo	2025-06-07 18:40:00	14	\N	\N
 60	Kickboxing	2025-06-07 20:00:00	12	\N	\N
@@ -967,7 +967,7 @@ COPY public.clases (id, nombre, horario, aforo, updated_at, created_at) FROM std
 64	HIIT	2025-06-08 12:00:00	16	\N	\N
 65	Full Body Workout	2025-06-08 13:20:00	18	\N	\N
 66	Cardio Dance	2025-06-08 14:40:00	22	\N	\N
-67	Stretching	2025-06-08 16:00:00	12	\N	\N
+67	Yoga	2025-06-08 16:00:00	12	\N	\N
 68	Entrenamiento Funcional	2025-06-08 17:20:00	20	\N	\N
 69	Boxeo	2025-06-08 18:40:00	14	\N	\N
 70	Kickboxing	2025-06-08 20:00:00	12	\N	\N

@@ -70,7 +70,7 @@ INSERT INTO public.clases VALUES (3, 'GAP', '2025-06-02 10:40:00', 15, NULL, NUL
 INSERT INTO public.clases VALUES (4, 'HIIT', '2025-06-02 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (5, 'Full Body Workout', '2025-06-02 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (6, 'Cardio Dance', '2025-06-02 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (7, 'Stretching', '2025-06-02 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (7, 'Yoga', '2025-06-02 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (8, 'Entrenamiento Funcional', '2025-06-02 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (9, 'Boxeo', '2025-06-02 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (10, 'Kickboxing', '2025-06-02 20:00:00', 12, NULL, NULL);
@@ -81,7 +81,7 @@ INSERT INTO public.clases VALUES (13, 'GAP', '2025-06-03 10:40:00', 15, NULL, NU
 INSERT INTO public.clases VALUES (14, 'HIIT', '2025-06-03 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (15, 'Full Body Workout', '2025-06-03 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (16, 'Cardio Dance', '2025-06-03 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (17, 'Stretching', '2025-06-03 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (17, 'Yoga', '2025-06-03 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (18, 'Entrenamiento Funcional', '2025-06-03 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (19, 'Boxeo', '2025-06-03 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (20, 'Kickboxing', '2025-06-03 20:00:00', 12, NULL, NULL);
@@ -92,7 +92,7 @@ INSERT INTO public.clases VALUES (23, 'GAP', '2025-06-04 10:40:00', 15, NULL, NU
 INSERT INTO public.clases VALUES (24, 'HIIT', '2025-06-04 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (25, 'Full Body Workout', '2025-06-04 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (26, 'Cardio Dance', '2025-06-04 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (27, 'Stretching', '2025-06-04 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (27, 'Yoga', '2025-06-04 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (28, 'Entrenamiento Funcional', '2025-06-04 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (29, 'Boxeo', '2025-06-04 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (30, 'Kickboxing', '2025-06-04 20:00:00', 12, NULL, NULL);
@@ -103,7 +103,7 @@ INSERT INTO public.clases VALUES (33, 'GAP', '2025-06-05 10:40:00', 15, NULL, NU
 INSERT INTO public.clases VALUES (34, 'HIIT', '2025-06-05 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (35, 'Full Body Workout', '2025-06-05 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (36, 'Cardio Dance', '2025-06-05 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (37, 'Stretching', '2025-06-05 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (37, 'Yoga', '2025-06-05 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (38, 'Entrenamiento Funcional', '2025-06-05 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (39, 'Boxeo', '2025-06-05 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (40, 'Kickboxing', '2025-06-05 20:00:00', 12, NULL, NULL);
@@ -114,7 +114,7 @@ INSERT INTO public.clases VALUES (43, 'GAP', '2025-06-06 10:40:00', 15, NULL, NU
 INSERT INTO public.clases VALUES (44, 'HIIT', '2025-06-06 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (45, 'Full Body Workout', '2025-06-06 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (46, 'Cardio Dance', '2025-06-06 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (47, 'Stretching', '2025-06-06 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (47, 'Yoga', '2025-06-06 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (48, 'Entrenamiento Funcional', '2025-06-06 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (49, 'Boxeo', '2025-06-06 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (50, 'Kickboxing', '2025-06-06 20:00:00', 12, NULL, NULL);
@@ -125,7 +125,7 @@ INSERT INTO public.clases VALUES (53, 'GAP', '2025-06-07 10:40:00', 15, NULL, NU
 INSERT INTO public.clases VALUES (54, 'HIIT', '2025-06-07 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (55, 'Full Body Workout', '2025-06-07 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (56, 'Cardio Dance', '2025-06-07 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (57, 'Stretching', '2025-06-07 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (57, 'Yoga', '2025-06-07 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (58, 'Entrenamiento Funcional', '2025-06-07 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (59, 'Boxeo', '2025-06-07 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (60, 'Kickboxing', '2025-06-07 20:00:00', 12, NULL, NULL);
@@ -136,7 +136,7 @@ INSERT INTO public.clases VALUES (63, 'GAP', '2025-06-08 10:40:00', 15, NULL, NU
 INSERT INTO public.clases VALUES (64, 'HIIT', '2025-06-08 12:00:00', 16, NULL, NULL);
 INSERT INTO public.clases VALUES (65, 'Full Body Workout', '2025-06-08 13:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (66, 'Cardio Dance', '2025-06-08 14:40:00', 22, NULL, NULL);
-INSERT INTO public.clases VALUES (67, 'Stretching', '2025-06-08 16:00:00', 12, NULL, NULL);
+INSERT INTO public.clases VALUES (67, 'Yoga', '2025-06-08 16:00:00', 12, NULL, NULL);
 INSERT INTO public.clases VALUES (68, 'Entrenamiento Funcional', '2025-06-08 17:20:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (69, 'Boxeo', '2025-06-08 18:40:00', 14, NULL, NULL);
 INSERT INTO public.clases VALUES (70, 'Kickboxing', '2025-06-08 20:00:00', 12, NULL, NULL);

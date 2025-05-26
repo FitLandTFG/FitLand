@@ -4,9 +4,11 @@ import { PageProps } from '@/types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import 'dayjs/locale/es';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.locale('es');
 
 interface Inscripcion {
   id: number;
@@ -25,7 +27,7 @@ interface Props extends PageProps {
   inscripciones: Inscripcion[];
 }
 
-const Index: React.FC<Props> = ({ inscripciones}) => {
+const Index: React.FC<Props> = ({ inscripciones }) => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Gestión de Inscripciones</h1>
@@ -57,36 +59,40 @@ const Index: React.FC<Props> = ({ inscripciones}) => {
             </tr>
           </thead>
           <tbody>
-            {inscripciones.map((i) => (
-              <tr key={i.id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2">{i.id}</td>
-                <td className="px-4 py-2">{i.usuario?.nombre_completo ?? '—'}</td>
-                <td className="px-4 py-2">{i.clase?.nombre ?? '—'}</td>
-                <td className="px-4 py-2">{dayjs(i.fecha_inscripcion).tz('Europe/Madrid').format('DD/MM/YYYY HH:mm')}</td>
-                <td className="px-4 py-2 space-x-2">
-                  <Link
-                    href={`/admin/inscripciones/${i.id}/editar`}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                  >
-                    Editar
-                  </Link>
-                  <Link
-                    as="button"
-                    method="delete"
-                    href={`/admin/inscripciones/${i.id}`}
-                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                    onClick={(e) => {
-                      if (!confirm(`¿Eliminar la inscripción #${i.id}?`)) {
-                        e.preventDefault();
-                      }
-                    }}
-                  >
-                    Eliminar
-                  </Link>
-                </td>
-              </tr>
-            ))}
-            {inscripciones.length === 0 && (
+            {inscripciones.length > 0 ? (
+              inscripciones.map((i) => (
+                <tr key={i.id} className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-2">{i.id}</td>
+                  <td className="px-4 py-2">{i.usuario?.nombre_completo ?? '—'}</td>
+                  <td className="px-4 py-2">{i.clase?.nombre ?? '—'}</td>
+                  <td className="px-4 py-2">
+                    {dayjs(i.fecha_inscripcion).format('DD/MM/YYYY HH:mm')}
+
+                  </td>
+                  <td className="px-4 py-2 space-x-2">
+                    <Link
+                      href={`/admin/inscripciones/${i.id}/editar`}
+                      className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                      Editar
+                    </Link>
+                    <Link
+                      as="button"
+                      method="delete"
+                      href={`/admin/inscripciones/${i.id}`}
+                      className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                      onClick={(e) => {
+                        if (!confirm(`¿Eliminar la inscripción #${i.id}?`)) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
+                      Eliminar
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan={5} className="text-center text-gray-500 py-4">
                   No hay inscripciones registradas.

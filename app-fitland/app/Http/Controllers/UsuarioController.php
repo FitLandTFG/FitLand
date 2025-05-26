@@ -29,7 +29,7 @@ class UsuarioController extends Controller
             'nombre_completo' => [
                 'required',
                 'string',
-                'max:50',
+                'max:100',
                 'regex:/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/u'
             ],
             'documentacion' => [
@@ -48,7 +48,7 @@ class UsuarioController extends Controller
         [
             'nombre_completo.required' => 'El nombre es obligatorio.',
             'nombre_completo.regex' => 'El nombre solo puede contener letras y espacios.',
-            'nombre_completo.max' => 'El nombre no puede tener más de 50 caracteres.',
+            'nombre_completo.max' => 'El nombre no puede tener más de 100 caracteres.',
 
             'documentacion.required' => 'El DNI o NIE es obligatorio.',
             'documentacion.regex' => 'El DNI o NIE no es válido (solo se permiten letras mayúsculas).',
@@ -92,7 +92,7 @@ class UsuarioController extends Controller
             'nombre_completo' => [
                 'required',
                 'string',
-                'max:50',
+                'max:100',
                 'regex:/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/u'
             ],
             'documentacion' => [
@@ -114,7 +114,7 @@ class UsuarioController extends Controller
         [
             'nombre_completo.required' => 'El nombre es obligatorio.',
             'nombre_completo.regex' => 'El nombre solo puede contener letras y espacios.',
-            'nombre_completo.max' => 'El nombre no puede tener más de 50 caracteres.',
+            'nombre_completo.max' => 'El nombre no puede tener más de 100 caracteres.',
 
             'documentacion.required' => 'El DNI o NIE es obligatorio.',
             'documentacion.regex' => 'El DNI o NIE no es válido (solo se permiten letras mayúsculas).',
