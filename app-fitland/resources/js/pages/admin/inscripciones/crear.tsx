@@ -30,39 +30,39 @@ interface Props extends PageProps {
   inscripciones: Inscripcion[];
 }
 
-const Crear: React.FC<Props> = ({ usuarios, clases, inscripciones }) => {
-  const { data, setData, post, processing, errors } = useForm<{
-    usuario_id: number | string;
-    nombre_clase: string;
-    clase_id: number | string;
-    fecha_inscripcion: string;
-  }>({
+type FormData = {
+  usuario_id: number | string;
+  nombre_clase: string;
+  clase_id: number | string;
+  fecha_inscripcion: string;
+};
+
+const Crear: React.FC<Props> = ({ usuarios, clases }) => {
+  const { data, setData, post, processing, errors } = useForm<FormData>({
     usuario_id: '',
     nombre_clase: '',
     clase_id: '',
     fecha_inscripcion: '',
   });
 
+  // 👇 Compatibilidad total: extraemos errors.general como string opcional
+  const generalError = (errors as Record<string, string>).general;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const yaInscrito = inscripciones.some(
-      (i) =>
-        i.usuario_id === Number(data.usuario_id) &&
-        i.clase_id === Number(data.clase_id)
-    );
-
-    if (yaInscrito) {
-      alert('Este usuario ya está inscrito en esta clase.');
-      return;
-    }
-
     post('/admin/inscripciones');
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Registrar Inscripción</h1>
+
+      {/* ✅ Error general si lo hay */}
+      {generalError && (
+        <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
+          {generalError}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         {/* Usuario */}
@@ -133,7 +133,7 @@ const Crear: React.FC<Props> = ({ usuarios, clases, inscripciones }) => {
                 .filter(
                   (c) =>
                     c.nombre === data.nombre_clase &&
-                    dayjs.utc(c.horario).isAfter(dayjs()) // solo futuros
+                    dayjs.utc(c.horario).isAfter(dayjs())
                 )
                 .sort((a, b) => dayjs.utc(a.horario).unix() - dayjs.utc(b.horario).unix())
                 .map((c) => {
