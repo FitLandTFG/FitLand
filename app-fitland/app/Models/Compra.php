@@ -11,6 +11,7 @@ class Compra extends Model
     protected $fillable = [
         'usuario_id',
         'fecha_compra',
+        'stock_descargado' => 'boolean',
     ];
 
     public function usuario()
