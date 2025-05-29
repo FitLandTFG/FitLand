@@ -11,8 +11,8 @@
     <header class="bg-blue-600 text-white p-4">
         <div class="container mx-auto flex items-center justify-between relative">
             <div>
-                <a href="/dashboard" style="background-color: #4EB11F;" class="inline-block text-white px-4 py-2 rounded-full">
-                    Volver al dashboard
+                <a href="/" style="background-color: #4EB11F;" class="inline-block text-white px-4 py-2 rounded-full">
+                    Volver al inicio
                 </a>
             </div>
 

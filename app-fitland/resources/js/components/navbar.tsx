@@ -44,34 +44,41 @@ export default function Navbar() {
         <Link href="/tienda" className="text-lg px-5 py-2 hover:underline">Tienda</Link>
         <Link href="/carrito" className="text-lg px-5 py-2 hover:underline">Carrito</Link>
 
-        <div className="relative" ref={menuRef}>
-          <button onClick={() => setOpen(!open)} className="focus:outline-none cursor-pointer">
-            <img
-              src={user?.avatar}
-              alt="Avatar"
-              className="w-13 h-13 rounded-full border object-cover"
-            />
-          </button>
+        {user ? (
+          <div className="relative" ref={menuRef}>
+            <button onClick={() => setOpen(!open)} className="focus:outline-none cursor-pointer">
+              <img
+                src={user.avatar}
+                alt="Avatar"
+                className="w-13 h-13 rounded-full border object-cover"
+              />
+            </button>
 
-          {open && (
-            <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
-              <Link
-                href="/ajustes"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Ajustes
-              </Link>
-              <Link
-                href="/logout"
-                method="post"
-                as="button"
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Cerrar sesión
-              </Link>
-            </div>
-          )}
-        </div>
+            {open && (
+              <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
+                <Link
+                  href="/ajustes"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  Ajustes
+                </Link>
+                <Link
+                  href="/logout"
+                  method="post"
+                  as="button"
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Cerrar sesión
+                </Link>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <Link href="/login" className="text-lg px-5 py-2 hover:underline">Iniciar sesión</Link>
+            <Link href="/register" className="text-lg px-5 py-2 hover:underline">Registrarse</Link>
+          </>
+        )}
       </div>
     </nav>
   );
