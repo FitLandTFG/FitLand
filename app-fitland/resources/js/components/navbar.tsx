@@ -33,7 +33,7 @@ export default function Navbar() {
       </div>
 
       <div className="absolute right-1/2 transform -translate-x-1/2">
-        <Link href="/dashboard">
+        <Link href="/">
           <AppLogo />
         </Link>
       </div>
