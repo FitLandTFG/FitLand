@@ -18,6 +18,8 @@ Route::get('/', function () {
     return Inertia::render('dashboard');
 })->name('dashboard');
 
+Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
+
 Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin');
 

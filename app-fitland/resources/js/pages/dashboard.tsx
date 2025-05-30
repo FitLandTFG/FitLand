@@ -33,8 +33,7 @@ export default function Dashboard() {
             className="w-16 h-16 rounded-full border object-cover"
           />
           <div>
-            <h1 className="text-2xl font-bold">Bienvenido, {user.nombre_completo} 👋</h1>
-            <p className="text-sm text-gray-500">Rol: {user.roles}</p>
+            <h1 className="text-2xl font-bold">Bienvenido, {user.nombre_completo}</h1>
           </div>
         </div>
       )}
