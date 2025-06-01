@@ -13,12 +13,16 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\DetalleCompraController;
+    use App\Http\Controllers\CarritoController;
+
 
 Route::get('/', function () {
     return Inertia::render('dashboard');
 })->name('dashboard');
 
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
+Route::middleware('auth')->get('/carrito/obtener', [CarritoController::class, 'obtener']);
+
 
 Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin');
@@ -94,6 +98,9 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('detalle-compras/{detalleCompra}/editar', [DetalleCompraController::class, 'editar'])->name('admin.detalle-compras.editar');
     Route::put('detalle-compras/{detalleCompra}', [DetalleCompraController::class, 'actualizar'])->name('admin.detalle-compras.actualizar');
     Route::delete('detalle-compras/{detalleCompra}', [DetalleCompraController::class, 'eliminar'])->name('admin.detalle-compras.eliminar');
+
+
+
 });
 
 
