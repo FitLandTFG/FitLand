@@ -11,9 +11,21 @@ class ItemCarrito extends Model
 
     protected $table = 'items_carrito';
 
-    public function producto()
-{
-    return $this->belongsTo(\App\Models\Producto::class, 'producto_id');
-}
+    public $timestamps = false; // ← importante porque la tabla no tiene created_at/updated_at
 
+    protected $fillable = [
+        'carrito_id',
+        'producto_id',
+        'cantidad',
+    ];
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
+    }
+
+    public function carrito()
+    {
+        return $this->belongsTo(Carrito::class, 'carrito_id');
+    }
 }

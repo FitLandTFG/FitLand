@@ -13,7 +13,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\DetalleCompraController;
-    use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\CarritoController;
 
 
 Route::get('/', function () {
@@ -99,6 +99,13 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::put('detalle-compras/{detalleCompra}', [DetalleCompraController::class, 'actualizar'])->name('admin.detalle-compras.actualizar');
     Route::delete('detalle-compras/{detalleCompra}', [DetalleCompraController::class, 'eliminar'])->name('admin.detalle-compras.eliminar');
 
+    // Carritos
+    Route::get('carritos', [CarritoController::class, 'index'])->name('admin.carritos.index');
+    Route::get('carritos/crear', [CarritoController::class, 'crear'])->name('admin.carritos.crear');
+    Route::post('carritos', [CarritoController::class, 'guardar'])->name('admin.carritos.guardar');
+    Route::get('carritos/{carrito}/editar', [CarritoController::class, 'editar'])->name('admin.carritos.editar');
+    Route::put('carritos/{carrito}', [CarritoController::class, 'actualizar'])->name('admin.carritos.actualizar');
+    Route::delete('carritos/{carrito}', [CarritoController::class, 'eliminar'])->name('admin.carritos.eliminar');
 
 
 });
