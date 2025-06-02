@@ -13,35 +13,6 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const carritoRef = useRef<HTMLDivElement>(null);
 
-  const [carrito, setCarrito] = useState<{ id: number; nombre: string; cantidad: number; precio: number }[]>([]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setOpenUserMenu(false);
-      }
-      if (carritoRef.current && !carritoRef.current.contains(event.target as Node)) {
-        setOpenCarrito(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    if (openCarrito) {
-      fetch('/carrito/obtener')
-        .then(res => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then(data => setCarrito(data.items))
-        .catch(error => {
-          console.error('Error al cargar el carrito:', error);
-        });
-    }
-  }, [openCarrito]);
-
   return (
     <nav className="h-22 bg-[#222222] text-white px-6 py-3 flex justify-between items-center">
       <div className="flex items-center gap-6">
@@ -62,40 +33,10 @@ export default function Navbar() {
         <Link href="/clases" className="text-lg px-5 py-2 hover:underline">Clases</Link>
         <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline">Inscripciones</Link>
         <Link href="/tienda" className="text-lg px-5 py-2 hover:underline">Tienda</Link>
-
-        {/* Carrito (solo si el usuario ha iniciado sesión) */}
         {user && (
-          <div className="relative" ref={carritoRef}>
-            <button
-              onClick={() => setOpenCarrito(!openCarrito)}
-              className="text-lg px-5 py-2 hover:underline"
-            >
-              Carrito
-            </button>
-
-            {openCarrito && (
-              <div className="absolute right-0 mt-2 w-80 bg-white text-black rounded shadow-lg z-50 p-4">
-                {carrito.length === 0 ? (
-                  <p className="text-center text-gray-600">No hay productos en el carrito.</p>
-                ) : (
-                  <ul>
-                    {carrito.map((producto) => (
-                      <li key={producto.id} className="flex justify-between items-center border-b py-2">
-                        <div>
-                          <p className="font-semibold">{producto.nombre}</p>
-                          <p className="text-sm text-gray-600">Cantidad: {producto.cantidad}</p>
-                        </div>
-                        <p>{(producto.precio * producto.cantidad).toFixed(2)} €</p>
-                      </li>
-                    ))}
-                    <div className="mt-2 text-right font-bold">
-                      Total: {carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0).toFixed(2)} €
-                    </div>
-                  </ul>
-                )}
-              </div>
-            )}
-          </div>
+          <Link href={route('carrito.index')} className="text-lg px-5 py-2 hover:underline">
+            Carrito
+          </Link>
         )}
 
         {/* Usuario */}

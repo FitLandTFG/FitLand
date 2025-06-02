@@ -106,10 +106,14 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::get('carritos/{carrito}/editar', [CarritoController::class, 'editar'])->name('admin.carritos.editar');
     Route::put('carritos/{carrito}', [CarritoController::class, 'actualizar'])->name('admin.carritos.actualizar');
     Route::delete('carritos/{carrito}', [CarritoController::class, 'eliminar'])->name('admin.carritos.eliminar');
-
-
 });
 
+Route::prefix('carrito')->middleware(['auth'])->group(function () {
+    Route::get('/', [CarritoController::class, 'vistaUsuario'])->name('carrito.index');
+    Route::delete('item/{id}', [CarritoController::class, 'eliminarItem'])->name('carrito.eliminarItem');
+    Route::post('vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
+    Route::post('checkout', [CarritoController::class, 'checkout'])->name('carrito.checkout');
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

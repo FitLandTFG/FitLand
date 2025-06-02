@@ -3,40 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carrito;
-use Illuminate\Support\Facades\Auth;
-
 use App\Models\Usuario;
 use App\Models\Producto;
 use App\Models\ItemCarrito;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class CarritoController extends Controller
 {
-    public function obtener()
-    {
-        $usuarioId = Auth::id();
-
-        $carrito = Carrito::where('usuario_id', $usuarioId)
-            ->with(['items.producto'])
-            ->first();
-
-        if (!$carrito) {
-            return response()->json(['items' => []]);
-        }
-
-        $items = $carrito->items->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'nombre' => $item->producto->nombre,
-                'cantidad' => $item->cantidad,
-                'precio' => $item->producto->precio,
-            ];
-        });
-
-        return response()->json(['items' => $items]);
-    }
-
-      public function index()
+    public function index()
     {
         $carritos = Carrito::with(['usuario', 'items.producto'])->get();
 
@@ -126,5 +103,79 @@ class CarritoController extends Controller
         $carrito->delete();
 
         return redirect()->route('admin.carritos.index');
+    }
+
+    public function vistaUsuario()
+    {
+        $usuarioId = Auth::id();
+
+        $carrito = Carrito::with('items.producto')
+            ->where('usuario_id', $usuarioId)
+            ->first();
+
+        $items = $carrito ? $carrito->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'cantidad' => $item->cantidad,
+                'producto' => [
+                    'id' => $item->producto->id,
+                    'nombre' => $item->producto->nombre,
+                    'precio' => $item->producto->precio,
+                    'imagen_url' => $item->producto->imagen_url,
+                ]
+            ];
+        }) : [];
+
+        $total = collect($items)->sum(function ($item) {
+            return $item['cantidad'] * $item['producto']['precio'];
+        });
+
+        return Inertia::render('Carrito/index', [
+            'carrito' => [
+                'items' => $items,
+                'total' => $total,
+            ],
+        ]);
+    }
+
+    public function eliminarItem($id)
+    {
+        $item = ItemCarrito::findOrFail($id);
+        
+        $carrito = Carrito::where('usuario_id', Auth::id())->first();
+
+        if ($item->carrito_id !== $carrito->id) {
+            abort(403, 'No puedes eliminar este producto.');
+        }
+
+        $item->delete();
+
+        return redirect('/carrito');
+    }
+
+    public function vaciar()
+    {
+        $carrito = Carrito::where('usuario_id', Auth::id())->first();
+
+        if ($carrito) {
+            $carrito->items()->delete();
+        }
+
+        return redirect('/carrito');
+    }
+
+    public function checkout()
+    {
+        $carrito = Carrito::with('items.producto')->where('usuario_id', Auth::id())->first();
+
+        if (!$carrito || $carrito->items->isEmpty()) {
+            return redirect('/carrito')->withErrors('Tu carrito está vacío.');
+        }
+    
+        DB::transaction(function () use ($carrito) {
+            $carrito->items()->delete();
+        });
+
+        return redirect('/carrito')->with('success', 'Compra finalizada con éxito.');
     }
 }
