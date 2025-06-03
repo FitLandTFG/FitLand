@@ -4,16 +4,16 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\esAdmin;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\PlanSuscripcionController;
-use App\Http\Controllers\SuscripcionController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\PagoController;
-use App\Http\Controllers\CompraController;
-use App\Http\Controllers\ClaseController;
-use App\Http\Controllers\InscripcionController;
-use App\Http\Controllers\DetalleCompraController;
 use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\ClaseController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PlanSuscripcionController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\SuscripcionController;
+use App\Http\Controllers\TiendaController;
+use App\Http\Controllers\UsuarioController;
 
 
 Route::get('/', function () {
@@ -108,11 +108,10 @@ Route::prefix('admin')->middleware([esAdmin::class])->group(function () {
     Route::delete('carritos/{carrito}', [CarritoController::class, 'eliminar'])->name('admin.carritos.eliminar');
 });
 
+Route::get('/tienda', [TiendaController::class, 'index'])->name('tienda.index');
+
 Route::prefix('carrito')->middleware(['auth'])->group(function () {
     Route::get('/', [CarritoController::class, 'vistaUsuario'])->name('carrito.index');
-    Route::delete('item/{id}', [CarritoController::class, 'eliminarItem'])->name('carrito.eliminarItem');
-    Route::post('vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
-    Route::post('checkout', [CarritoController::class, 'checkout'])->name('carrito.checkout');
 });
 
 require __DIR__.'/settings.php';
