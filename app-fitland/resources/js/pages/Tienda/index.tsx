@@ -76,21 +76,30 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
                   aplicarFiltros(buscar, categoria);
                 }}
               >
-                {categoria}
+                {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
               </li>
             ))}
           </ul>
         </aside>
 
         <main className="md:w-3/4 md:pl-6">
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <input
               type="text"
               value={buscar}
               onChange={(e) => setBuscar(e.target.value)}
               placeholder="Buscar productos..."
-              className="w-full p-2 border rounded"
+              className="w-full p-2 pr-10 border rounded"
             />
+            {buscar && (
+              <button
+                type="button"
+                onClick={() => setBuscar('')}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           {productos.data.length > 0 ? (
@@ -101,10 +110,10 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
                     <img
                       src={producto.imagen}
                       alt={producto.nombre}
-                      className="w-full h-48 object-cover mb-2"
+                      className="w-full h-80 object-contain"
                     />
                     <h3 className="text-lg font-semibold">{producto.nombre}</h3>
-                    <p className="text-gray-700">€{producto.precio.toFixed(2)}</p>
+                    <p className="text-gray-700">{producto.precio.toFixed(2)}€</p>
                   </div>
                 ))}
               </div>
