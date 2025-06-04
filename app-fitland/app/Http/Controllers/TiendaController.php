@@ -12,18 +12,24 @@ class TiendaController extends Controller
     {
         $query = Producto::query();
 
+        // Filtro por categoría (tipo)
         if ($request->filled('categoria')) {
             $query->where('tipo', $request->input('categoria'));
         }
 
+        // Filtro por búsqueda insensible a mayúsculas
         if ($request->filled('buscar')) {
-            $query->where('nombre', 'like', '%' . $request->input('buscar') . '%');
+            $buscar = strtolower($request->input('buscar'));
+            $query->whereRaw('LOWER(nombre) LIKE ?', ['%' . $buscar . '%']);
         }
 
-        $productos = $query->paginate(9)->withQueryString();
+        // Paginación con preservación de filtros en la URL
+        $productos = $query->orderBy('id', 'desc')->paginate(9)->withQueryString();
 
+        // Obtener lista de categorías únicas
         $categorias = Producto::select('tipo')->distinct()->pluck('tipo');
 
+        // Renderizar la vista Inertia
         return Inertia::render('Tienda/index', [
             'productos' => $productos,
             'categorias' => $categorias,

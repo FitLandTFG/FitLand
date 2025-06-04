@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { usePage, router, Link } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { router, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 
 type Producto = {
@@ -32,9 +32,24 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
   const [buscar, setBuscar] = useState(filtros.buscar || '');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(filtros.categoria || '');
 
-  const aplicarFiltros = () => {
-    router.get(route('tienda.index'), { buscar, categoria: categoriaSeleccionada }, { preserveState: true });
+  const aplicarFiltros = (nuevaBusqueda?: string, nuevaCategoria?: string) => {
+    router.get(route('tienda.index'), {
+      buscar: nuevaBusqueda !== undefined ? nuevaBusqueda : buscar,
+      categoria: nuevaCategoria !== undefined ? nuevaCategoria : categoriaSeleccionada,
+    }, { preserveState: true });
   };
+
+  // Efecto para buscar a medida que el usuario escribe (con retardo)
+ useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    router.get(route('tienda.index'), {
+      buscar,
+      categoria: categoriaSeleccionada,
+    }, { preserveState: true });
+  }, 300);
+
+  return () => clearTimeout(delayDebounce);
+}, [buscar, categoriaSeleccionada]);
 
   return (
     <>
@@ -47,7 +62,7 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
               className={`cursor-pointer mb-1 ${!categoriaSeleccionada ? 'font-bold' : ''}`}
               onClick={() => {
                 setCategoriaSeleccionada('');
-                aplicarFiltros();
+                aplicarFiltros(buscar, '');
               }}
             >
               Todas
@@ -58,7 +73,7 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
                 className={`cursor-pointer mb-1 ${categoriaSeleccionada === categoria ? 'font-bold' : ''}`}
                 onClick={() => {
                   setCategoriaSeleccionada(categoria);
-                  aplicarFiltros();
+                  aplicarFiltros(buscar, categoria);
                 }}
               >
                 {categoria}
@@ -76,12 +91,6 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
               placeholder="Buscar productos..."
               className="w-full p-2 border rounded"
             />
-            <button
-              onClick={aplicarFiltros}
-              className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Buscar
-            </button>
           </div>
 
           {productos.data.length > 0 ? (
