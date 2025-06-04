@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { router, Link } from '@inertiajs/react';
+import { router, usePage, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 
 type Producto = {
@@ -32,6 +32,9 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
   const [buscar, setBuscar] = useState(filtros.buscar || '');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(filtros.categoria || '');
 
+  const { url } = usePage();
+  const currentPage = new URLSearchParams(url.split('?')[1] || '').get('page') || 1;
+
   const aplicarFiltros = (nuevaBusqueda?: string, nuevaCategoria?: string) => {
     router.get(route('tienda.index'), {
       buscar: nuevaBusqueda !== undefined ? nuevaBusqueda : buscar,
@@ -39,17 +42,19 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
     }, { preserveState: true });
   };
 
-  // Efecto para buscar a medida que el usuario escribe (con retardo)
- useEffect(() => {
+  // Efecto para búsqueda reactiva (conserva la página actual)
+  useEffect(() => {
   const delayDebounce = setTimeout(() => {
     router.get(route('tienda.index'), {
       buscar,
       categoria: categoriaSeleccionada,
+      page: currentPage,
     }, { preserveState: true });
   }, 300);
 
   return () => clearTimeout(delayDebounce);
-}, [buscar, categoriaSeleccionada]);
+}, [buscar, categoriaSeleccionada, currentPage]);
+
 
   return (
     <>
@@ -119,24 +124,29 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
               </div>
 
               <div className="flex justify-center mt-6 space-x-2">
-                {productos.links.map((link, index) => (
-                  link.url ? (
+                {productos.links.map((link, index) => {
+                  const label = link.label
+                    .replace(/&laquo;|&raquo;/g, '')
+                    .replace('Previous', 'Página anterior')
+                    .replace('Next', 'Página siguiente');
+
+                  return link.url ? (
                     <Link
                       key={index}
                       href={link.url}
                       className={`px-3 py-1 border rounded ${link.active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'}`}
                     >
-                      {link.label.replace(/&laquo;|&raquo;/g, '')}
+                      {label}
                     </Link>
                   ) : (
                     <span
                       key={index}
                       className="px-3 py-1 border rounded text-gray-400"
                     >
-                      {link.label.replace(/&laquo;|&raquo;/g, '')}
+                      {label}
                     </span>
-                  )
-                ))}
+                  );
+                })}
               </div>
             </>
           ) : (
