@@ -13,4 +13,8 @@ class Clase extends Model
         'horario',
         'aforo',
     ];
+
+    protected $casts = [
+        'horario' => 'datetime',
+    ];
 }

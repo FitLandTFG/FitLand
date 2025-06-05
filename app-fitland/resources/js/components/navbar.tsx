@@ -30,7 +30,10 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-6">
-        <Link href="/clases" className="text-lg px-5 py-2 hover:underline">Clases</Link>
+        <Link href="/horario-clases" className="text-lg px-5 py-2 hover:underline">
+  Clases
+</Link>
+
         <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline">Inscripciones</Link>
         <Link href="/tienda" className="text-lg px-5 py-2 hover:underline">Tienda</Link>
         {user && (
