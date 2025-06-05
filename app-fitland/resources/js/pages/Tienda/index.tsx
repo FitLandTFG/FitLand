@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { router, usePage, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
+import { ShoppingCart, Info } from 'lucide-react';
+
 
 type Producto = {
   id: number;
@@ -111,16 +113,34 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {productos.data.map((producto) => (
-                  <div key={producto.id} className="border p-4 rounded">
-                    <img
-                      src={producto.imagen}
-                      alt={producto.nombre}
-                      className="w-full h-80 object-contain"
-                    />
-                    <h3 className="text-lg font-semibold">{producto.nombre}</h3>
-                    <p className="text-gray-700">{producto.precio.toFixed(2)}€</p>
-                  </div>
-                ))}
+  <div key={producto.id} className="border p-4 rounded flex flex-col items-center">
+    <img
+      src={producto.imagen}
+      alt={producto.nombre}
+      className="w-full h-80 object-contain"
+    />
+    <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
+
+    <p className="text-gray-700 mt-2">{producto.precio.toFixed(2)}€</p>
+      <div className="flex space-x-4 mt-2">
+  <button
+    className="bg-yellow-500 w-10 h-10 flex items-center justify-center rounded-md hover:bg-yellow-600"
+    title="Añadir al carrito"
+    onClick={() => console.log(`Añadir al carrito: ${producto.id}`)}
+  >
+    <ShoppingCart className="text-white" size={20} />
+  </button>
+  <button
+    className="bg-blue-600 w-10 h-10 flex items-center justify-center rounded-md hover:bg-blue-700"
+    title="Información del producto"
+    onClick={() => console.log(`Mostrar información: ${producto.id}`)}
+  >
+    <Info className="text-white" size={20} />
+  </button>
+</div>
+  </div>
+))}
+
               </div>
 
               <div className="flex justify-center mt-6 space-x-2">
