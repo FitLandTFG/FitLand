@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { router, usePage, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
-import { ShoppingCart, Info } from 'lucide-react';
+import { ShoppingCart, Info, X, Plus, Minus } from 'lucide-react';
 
 
 type Producto = {
@@ -10,6 +10,8 @@ type Producto = {
   precio: number;
   imagen: string;
   tipo: string;
+  descripcion?: string;
+  stock?: number;
 };
 
 type PaginationLink = {
@@ -44,19 +46,39 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
     }, { preserveState: true });
   };
 
-  // Efecto para búsqueda reactiva (conserva la página actual)
   useEffect(() => {
-  const delayDebounce = setTimeout(() => {
-    router.get(route('tienda.index'), {
-      buscar,
-      categoria: categoriaSeleccionada,
-      page: currentPage,
-    }, { preserveState: true });
-  }, 300);
+    const delayDebounce = setTimeout(() => {
+      router.get(route('tienda.index'), {
+        buscar,
+        categoria: categoriaSeleccionada,
+        page: currentPage,
+      }, { preserveState: true });
+    }, 300);
 
-  return () => clearTimeout(delayDebounce);
-}, [buscar, categoriaSeleccionada, currentPage]);
+    return () => clearTimeout(delayDebounce);
+  }, [buscar, categoriaSeleccionada, currentPage]);
 
+  const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null);
+  const [cantidad, setCantidad] = useState(1);
+
+  const cerrarModal = () => {
+    setProductoSeleccionado(null);
+    setCantidad(1);
+  };
+
+  const incrementar = () => {
+    if (productoSeleccionado?.stock !== undefined) {
+      if (cantidad < productoSeleccionado.stock) {
+        setCantidad((prev) => prev + 1);
+      }
+    } else {
+      setCantidad((prev) => prev + 1);
+    }
+  };
+
+  const decrementar = () => {
+    setCantidad((prev) => (prev > 1 ? prev - 1 : 1));
+  };
 
   return (
     <>
@@ -104,7 +126,7 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
                 onClick={() => setBuscar('')}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
               >
-                ✕
+                <X size={18} />
               </button>
             )}
           </div>
@@ -113,34 +135,23 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {productos.data.map((producto) => (
-  <div key={producto.id} className="border p-4 rounded flex flex-col items-center">
-    <img
-      src={producto.imagen}
-      alt={producto.nombre}
-      className="w-full h-80 object-contain"
-    />
-    <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
-
-    <p className="text-gray-700 mt-2">{producto.precio.toFixed(2)}€</p>
-      <div className="flex space-x-4 mt-2">
-  <button
-    className="bg-yellow-500 w-10 h-10 flex items-center justify-center rounded-md hover:bg-yellow-600"
-    title="Añadir al carrito"
-    onClick={() => console.log(`Añadir al carrito: ${producto.id}`)}
-  >
-    <ShoppingCart className="text-white" size={20} />
-  </button>
-  <button
-    className="bg-blue-600 w-10 h-10 flex items-center justify-center rounded-md hover:bg-blue-700"
-    title="Información del producto"
-    onClick={() => console.log(`Mostrar información: ${producto.id}`)}
-  >
-    <Info className="text-white" size={20} />
-  </button>
-</div>
-  </div>
-))}
-
+                  <div
+                    key={producto.id}
+                    className="border p-4 rounded flex flex-col items-center cursor-pointer"
+                    onClick={() => setProductoSeleccionado(producto)}
+                  >
+                    <img
+                      src={producto.imagen}
+                      alt={producto.nombre}
+                      className="w-full h-80 object-contain"
+                    />
+                    <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
+                    <p className="text-gray-700 mt-2">{producto.precio.toFixed(2)}€</p>
+                    <div className="flex space-x-4 mt-2">
+                      <Info className="text-white" size={20} />
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="flex justify-center mt-6 space-x-2">
@@ -174,6 +185,92 @@ export default function Tienda({ productos, categorias, filtros }: Props) {
           )}
         </main>
       </div>
+
+      {productoSeleccionado && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-black cursor-pointer"
+              onClick={() => setProductoSeleccionado(null)}
+            >
+              ✕
+            </button>
+            <div className="flex flex-col md:flex-row gap-6">
+              <img
+                src={productoSeleccionado.imagen}
+                alt={productoSeleccionado.nombre}
+                className="w-full md:w-1/2 h-[28rem] object-contain"
+              />
+              <div className="flex flex-col flex-1">
+                <h2 className="text-3xl font-bold mb-3">{productoSeleccionado.nombre}</h2>
+                <p className="text-gray-700 mb-3">{productoSeleccionado.descripcion || 'Sin descripción disponible.'}</p>
+                <p className="text-sm text-gray-500 mb-3">Stock disponible: {productoSeleccionado.stock ?? 'N/D'}</p>
+                <p className="text-2xl font-semibold mb-4">{productoSeleccionado.precio.toFixed(2)}€</p>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                    className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    value={cantidad}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val > 0 && val <= (productoSeleccionado.stock ?? val)) {
+                        setCantidad(val);
+                      }
+                    }}
+                    className="w-16 text-center border rounded py-1 no-arrows"
+                  />
+                  <button
+                    onClick={() =>
+                      setCantidad((prev) =>
+                        productoSeleccionado.stock ? Math.min(productoSeleccionado.stock, prev + 1) : prev + 1
+                      )
+                    }
+                    className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <button
+                    onClick={() => {
+                      const carritoRaw = localStorage.getItem('carrito');
+                      const carrito = carritoRaw ? JSON.parse(carritoRaw) : [];
+
+                      const index = carrito.findIndex((item: any) => item.id === productoSeleccionado.id);
+
+                      if (index !== -1) {
+                        carrito[index].cantidad += cantidad;
+                      } else {
+                        carrito.push({
+                          id: productoSeleccionado.id,
+                          nombre: productoSeleccionado.nombre,
+                          precio: productoSeleccionado.precio,
+                          imagen: productoSeleccionado.imagen,
+                          cantidad: cantidad,
+                        });
+                      }
+
+                      localStorage.setItem('carrito', JSON.stringify(carrito));
+                      alert(`Se ha añadido ${cantidad} "${productoSeleccionado.nombre}" al carrito.`);
+                      setProductoSeleccionado(null);
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mt-2 cursor-pointer"
+                  >
+                    Añadir al carrito
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
