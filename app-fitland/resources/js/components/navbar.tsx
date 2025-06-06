@@ -32,7 +32,7 @@ export default function Navbar() {
     <nav className="h-22 bg-[#222222] text-white px-6 py-3 flex justify-between items-center">
       <div className="flex items-center gap-6">
         {user?.roles === 'admin' && (
-          <a href="/admin" className="text-lg px-5 py-2 hover:underline">
+          <a href="/admin" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
             Panel de administración
           </a>
         )}
@@ -45,22 +45,22 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-6">
-        <Link href="/horario-clases" className="text-lg px-5 py-2 hover:underline">
+        <Link href="/horario-clases" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
           Clases
         </Link>
 
         {user && (
-          <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline">
+          <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
             Inscripciones
           </Link>
         )}
 
-        <Link href="/tienda" className="text-lg px-5 py-2 hover:underline">
+        <Link href="/tienda" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
           Tienda
         </Link>
 
         {user && (
-          <Link href={route('carrito.index')} className="text-lg px-5 py-2 hover:underline">
+          <Link href={route('carrito.index')} className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
             Carrito ({carritoTotal})
           </Link>
         )}
@@ -94,8 +94,8 @@ export default function Navbar() {
           </div>
         ) : (
           <>
-            <Link href="/login" className="text-lg px-5 py-2 hover:underline">Iniciar sesión</Link>
-            <Link href="/register" className="text-lg px-5 py-2 hover:underline">Registrarse</Link>
+            <Link href="/login" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">Iniciar sesión</Link>
+            <Link href="/register" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">Registrarse</Link>
           </>
         )}
       </div>

@@ -77,7 +77,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
           <h2 className="text-xl font-semibold mb-2">Categorías</h2>
           <ul>
             <li
-              className={`cursor-pointer mb-1 ${!categoriaSeleccionada ? 'font-bold' : ''}`}
+              className={`cursor-pointer mb-1 ${!categoriaSeleccionada ? 'font-bold' : ''} hover:underline hover:decoration-[#41A510]`}
               onClick={() => {
                 setCategoriaSeleccionada('');
                 aplicarFiltros(buscar, '');
@@ -88,7 +88,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
             {categorias.map((categoria) => (
               <li
                 key={categoria}
-                className={`cursor-pointer mb-1 ${categoriaSeleccionada === categoria ? 'font-bold' : ''}`}
+                className={`cursor-pointer mb-1 ${categoriaSeleccionada === categoria ? 'font-bold' : ''} hover:underline hover:decoration-[#41A510]`}
                 onClick={() => {
                   setCategoriaSeleccionada(categoria);
                   aplicarFiltros(buscar, categoria);
@@ -147,14 +147,17 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                 {productos.links.map((link, index) => {
                   const label = link.label
                     .replace(/&laquo;|&raquo;/g, '')
-                    .replace('Previous', 'Página anterior')
-                    .replace('Next', 'Página siguiente');
+                    .replace('Previous', 'Anterior')
+                    .replace('Next', 'Siguiente');
 
                   return link.url ? (
                     <Link
                       key={index}
                       href={link.url}
-                      className={`px-3 py-1 border rounded ${link.active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'}`}
+                      className={`px-3 py-1 border rounded ${link.active 
+                        ? 
+                          'bg-[#41A510] text-white border-[#41A510]'
+                        : 'bg-white text-[#41A510] border-[#41A510] hover:bg-[#41A510] hover:text-white'}`}
                     >
                       {label}
                     </Link>
