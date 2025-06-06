@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TiendaController extends Controller
@@ -34,6 +35,7 @@ class TiendaController extends Controller
             'productos' => $productos,
             'categorias' => $categorias,
             'filtros' => $request->only(['categoria', 'buscar']),
+            'user' => Auth::user(),
         ]);
     }
 }

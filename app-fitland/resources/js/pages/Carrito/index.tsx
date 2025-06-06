@@ -1,53 +1,55 @@
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
-
-export type CarritoItem = {
-  id: number;
-  cantidad: number;
-  producto: {
-    id: number;
-    nombre: string;
-    precio: number;
-    imagen_url: string;
-  };
-};
+import type { ItemCarrito } from '@/types';
 
 export default function Carrito() {
-  const [carrito, setCarrito] = useState<CarritoItem[]>([]);
+  const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const saved = localStorage.getItem('carrito');
-    if (saved) {
-      setCarrito(JSON.parse(saved));
-    }
+    const carritoRaw = localStorage.getItem('carrito');
+    const carritoParsed: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
+    setCarrito(carritoParsed);
+    calcularTotal(carritoParsed);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-  }, [carrito]);
-
-  const disminuirCantidad = (id: number) => {
-    setCarrito((prev) =>
-      prev
-        .map(item =>
-          item.id === id
-            ? { ...item, cantidad: item.cantidad - 1 }
-            : item
-        )
-        .filter(item => item.cantidad > 0)
+  const calcularTotal = (items: ItemCarrito[]) => {
+    const totalCalculado = items.reduce(
+      (acc, item) => acc + item.precio * item.cantidad,
+      0
     );
+    setTotal(totalCalculado);
+  };
+
+  const actualizarCarrito = (nuevoCarrito: ItemCarrito[]) => {
+    setCarrito(nuevoCarrito);
+    localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
+    calcularTotal(nuevoCarrito);
+  };
+
+  const modificarCantidad = (id: number, cambio: number) => {
+    const actualizado = carrito
+      .map((item) => {
+        if (item.id === id) {
+          const nuevaCantidad = item.cantidad + cambio;
+          if (nuevaCantidad <= 0) return null;
+          if (item.stock !== undefined && nuevaCantidad > item.stock) return item;
+          return { ...item, cantidad: nuevaCantidad };
+        }
+        return item;
+      })
+      .filter((item): item is ItemCarrito => item !== null);
+
+    actualizarCarrito(actualizado);
   };
 
   const vaciarCarrito = () => {
-    if (confirm('¿Vaciar el carrito?')) {
-      setCarrito([]);
-    }
-  };
+  localStorage.removeItem('carrito');
+  setCarrito([]);
+  setTotal(0);
+  window.dispatchEvent(new Event('carritoActualizado'));
+};
 
-  const total = carrito.reduce(
-    (sum, item) => sum + item.producto.precio * item.cantidad,
-    0
-  );
 
   return (
     <>
@@ -63,20 +65,33 @@ export default function Carrito() {
               {carrito.map((item) => (
                 <li key={item.id} className="flex items-center justify-between border-b pb-2">
                   <div className="flex items-center gap-4">
-                    <img src={item.producto.imagen_url} alt={item.producto.nombre} className="w-20 h-20 object-cover rounded" />
+                    <img
+                      src={item.imagen}
+                      alt={item.nombre}
+                      className="w-20 h-20 object-contain rounded border"
+                    />
                     <div>
-                      <h2 className="text-lg font-semibold">{item.producto.nombre}</h2>
-                      <p>Cantidad: {item.cantidad}</p>
-                      <p>Precio: €{item.producto.precio.toFixed(2)}</p>
+                      <h2 className="text-lg font-semibold">{item.nombre}</h2>
+                      <p>Precio: €{item.precio.toFixed(2)}</p>
+                      <p className="text-sm text-gray-500">Stock: {item.stock ?? 'N/D'}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <button
+                          onClick={() => modificarCantidad(item.id, -1)}
+                          className="bg-gray-300 px-2 rounded text-black hover:bg-gray-400"
+                        >
+                          –
+                        </button>
+                        <span>{item.cantidad}</span>
+                        <button
+                          onClick={() => modificarCantidad(item.id, 1)}
+                          disabled={item.stock !== undefined && item.cantidad >= item.stock}
+                          className="bg-gray-300 px-2 rounded text-black hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => disminuirCantidad(item.id)}
-                    className="text-red-600 text-2xl font-bold"
-                    title="Disminuir cantidad o eliminar"
-                  >
-                    –
-                  </button>
                 </li>
               ))}
             </ul>

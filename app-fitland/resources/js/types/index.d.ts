@@ -55,3 +55,12 @@ export interface User {
   };
   [key: string]: unknown;
 }
+export interface ItemCarrito {
+  id: number;
+  nombre: string;
+  precio: number;
+  imagen: string;
+  cantidad: number;
+  stock?: number;
+}
+

@@ -117,11 +117,12 @@ export default function HorarioClases() {
                     >
                       {clase && (
                         <div
-                          className={`${coloresClase[clase.nombre] || 'bg-gray-500'} text-white text-xs rounded-md h-full w-full flex flex-col justify-center items-center shadow-sm hover:shadow-md transition-shadow`}
-                        >
-                          <div className="font-semibold text-sm">{clase.nombre}</div>
-                          <div className="text-[11px]">{clase.hora} - {clase.aforo} plazas</div>
-                        </div>
+                            className={`${coloresClase[clase.nombre] || 'bg-gray-500'} text-white rounded-md h-full w-full flex flex-col justify-center items-center text-center px-2 py-2 shadow-sm hover:shadow-md transition-shadow`}
+                            >
+                            <div className="font-semibold text-sm leading-snug">{clase.nombre}</div>
+                            <div className="text-xs mt-1">{clase.hora} - {clase.aforo} plazas</div>
+                            </div>
+
                       )}
                     </div>
                   );

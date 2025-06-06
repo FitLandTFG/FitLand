@@ -2,16 +2,31 @@ import AppLogo from './app-logo';
 import { Link, usePage } from '@inertiajs/react';
 import { User } from '@/types';
 import { useState, useRef, useEffect } from 'react';
+import type { ItemCarrito } from '@/types';
+
 
 export default function Navbar() {
   const { auth } = usePage<{ auth: { user: User } }>().props;
   const user = auth.user;
 
   const [openUserMenu, setOpenUserMenu] = useState(false);
-  const [openCarrito, setOpenCarrito] = useState(false);
-
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const carritoRef = useRef<HTMLDivElement>(null);
+
+  const [carritoTotal, setCarritoTotal] = useState(0);
+
+  useEffect(() => {
+    const actualizarTotal = () => {
+      const carritoRaw = localStorage.getItem('carrito');
+      const carrito = carritoRaw ? JSON.parse(carritoRaw) : [];
+      const total = carrito.reduce((acc: number, item: ItemCarrito) => acc + item.cantidad, 0);
+      setCarritoTotal(total);
+    };
+
+    actualizarTotal(); // carga inicial
+
+    window.addEventListener('carritoActualizado', actualizarTotal);
+    return () => window.removeEventListener('carritoActualizado', actualizarTotal);
+  }, []);
 
   return (
     <nav className="h-22 bg-[#222222] text-white px-6 py-3 flex justify-between items-center">
@@ -31,14 +46,22 @@ export default function Navbar() {
 
       <div className="flex items-center gap-6">
         <Link href="/horario-clases" className="text-lg px-5 py-2 hover:underline">
-  Clases
-</Link>
+          Clases
+        </Link>
 
-        <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline">Inscripciones</Link>
-        <Link href="/tienda" className="text-lg px-5 py-2 hover:underline">Tienda</Link>
+        {user && (
+          <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline">
+            Inscripciones
+          </Link>
+        )}
+
+        <Link href="/tienda" className="text-lg px-5 py-2 hover:underline">
+          Tienda
+        </Link>
+
         {user && (
           <Link href={route('carrito.index')} className="text-lg px-5 py-2 hover:underline">
-            Carrito
+            Carrito ({carritoTotal})
           </Link>
         )}
 
