@@ -1,6 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
+import Navbar from '@/components/navbar';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -38,90 +39,94 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Iniciar sesión" description="Introduce tus datos para iniciar sesión">
-            <Head title="Iniciar sesión" />
+        <>
+            <Navbar />
 
-            <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            placeholder="Correo electrónico"
-                        />
-                        <InputError message={errors.email} />
-                    </div>
+            <AuthLayout title="Iniciar sesión" description="Introduce tus datos para iniciar sesión">
+                <Head title="Iniciar sesión" />
 
-                    <div className="grid gap-2">
-                        <div className="flex items-center">
-                            <Label htmlFor="password">Contraseña</Label>
-                            {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                    ¿Olvidaste tu contraseña?
-                                </TextLink>
-                            )}
-                        </div>
-
-                        <div className="relative">
+                <form className="flex flex-col gap-6" onSubmit={submit}>
+                    <div className="grid gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Email</Label>
                             <Input
-                                id="password"
-                                type={showPassword ? 'text' : 'password'}
+                                id="email"
+                                type="email"
                                 required
-                                tabIndex={2}
-                                autoComplete="current-password"
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                placeholder="Contraseña"
-                                className="pr-10"
+                                autoFocus
+                                tabIndex={1}
+                                autoComplete="email"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                placeholder="Correo electrónico"
                             />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground"
-                                tabIndex={-1}
-                            >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </button>
+                            <InputError message={errors.email} />
                         </div>
 
-                        <InputError message={errors.password} />
+                        <div className="grid gap-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="password">Contraseña</Label>
+                                {canResetPassword && (
+                                    <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                        ¿Olvidaste tu contraseña?
+                                    </TextLink>
+                                )}
+                            </div>
+
+                            <div className="relative">
+                                <Input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    required
+                                    tabIndex={2}
+                                    autoComplete="current-password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    placeholder="Contraseña"
+                                    className="pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-3 flex items-center text-muted-foreground"
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+
+                            <InputError message={errors.password} />
+                        </div>
+
+                        <div className="flex items-center space-x-3">
+                            <Checkbox
+                                id="remember"
+                                name="remember"
+                                checked={data.remember}
+                                onClick={() => setData('remember', !data.remember)}
+                                tabIndex={3}
+                            />
+                            <Label htmlFor="remember">Recuérdame</Label>
+                        </div>
+
+                        <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            Iniciar sesión
+                        </Button>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                        <Checkbox
-                            id="remember"
-                            name="remember"
-                            checked={data.remember}
-                            onClick={() => setData('remember', !data.remember)}
-                            tabIndex={3}
-                        />
-                        <Label htmlFor="remember">Recuérdame</Label>
+                    <div className="text-muted-foreground text-center text-sm">
+                        ¿No tienes una cuenta?{' '}
+                        <TextLink href={route('register')} tabIndex={6}>
+                            Registrarse
+                        </TextLink>
                     </div>
+                </form>
 
-                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Iniciar sesión
-                    </Button>
-                </div>
-
-                <div className="text-muted-foreground text-center text-sm">
-                    ¿No tienes una cuenta?{' '}
-                    <TextLink href={route('register')} tabIndex={6}>
-                        Registrarse
-                    </TextLink>
-                </div>
-            </form>
-
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>
-            )}
-        </AuthLayout>
+                {status && (
+                    <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>
+                )}
+            </AuthLayout>
+        </>
     );
 }

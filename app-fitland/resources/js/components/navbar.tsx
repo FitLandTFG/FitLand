@@ -4,14 +4,13 @@ import { User } from '@/types';
 import { useState, useRef, useEffect } from 'react';
 import type { ItemCarrito } from '@/types';
 
-
 export default function Navbar() {
   const { auth } = usePage<{ auth: { user: User } }>().props;
   const user = auth.user;
 
   const [openUserMenu, setOpenUserMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-
   const [carritoTotal, setCarritoTotal] = useState(0);
 
   useEffect(() => {
@@ -22,83 +21,155 @@ export default function Navbar() {
       setCarritoTotal(total);
     };
 
-    actualizarTotal(); // carga inicial
-
+    actualizarTotal();
     window.addEventListener('carritoActualizado', actualizarTotal);
     return () => window.removeEventListener('carritoActualizado', actualizarTotal);
   }, []);
 
   return (
-    <nav className="h-22 bg-[#222222] text-white px-6 py-3 flex justify-between items-center">
-      <div className="flex items-center gap-6">
+    <header className="w-full bg-[#111111] text-white shadow-md z-50 relative">
+      <div className="flex items-center justify-between px-4 py-4 lg:px-8 relative">
         {user?.roles === 'admin' && (
-          <a href="/admin" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
-            Panel de administración
-          </a>
-        )}
-      </div>
-
-      <div className="absolute right-1/2 transform -translate-x-1/2">
-        <Link href="/">
-          <AppLogo />
-        </Link>
-      </div>
-
-      <div className="flex items-center gap-6">
-        <Link href="/horario-clases" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
-          Clases
-        </Link>
-
-        {user && (
-          <Link href="/inscripciones" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
-            Inscripciones
-          </Link>
-        )}
-
-        <Link href="/tienda" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
-          Tienda
-        </Link>
-
-        {user && (
-          <Link href={route('carrito.index')} className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">
-            Carrito ({carritoTotal})
-          </Link>
-        )}
-
-        {/* Usuario */}
-        {user ? (
-          <div className="relative" ref={userMenuRef}>
-            <button onClick={() => setOpenUserMenu(!openUserMenu)} className="focus:outline-none cursor-pointer">
-              <img
-                src={user.avatar}
-                alt="Avatar"
-                className="w-13 h-13 rounded-full border object-cover"
-              />
-            </button>
-
-            {openUserMenu && (
-              <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
-                <Link href="/ajustes" className="block px-4 py-2 hover:bg-gray-100">
-                  Ajustes
-                </Link>
-                <Link
-                  href="/logout"
-                  method="post"
-                  as="button"
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  Cerrar sesión
-                </Link>
-              </div>
-            )}
+          <div className="hidden lg:flex mr-auto">
+            <Link
+              href="/admin"
+              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+            >
+              Panel de administración
+            </Link>
           </div>
-        ) : (
-          <>
-            <Link href="/login" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">Iniciar sesión</Link>
-            <Link href="/register" className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2">Registrarse</Link>
-          </>
         )}
+
+        <div className="lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+          <Link href="/">
+            <AppLogo />
+          </Link>
+        </div>
+
+        <div className="lg:hidden ml-auto">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 hover:bg-gray-800 rounded"
+            aria-label="Menú"
+          >
+            {mobileMenuOpen ? (
+              <span className="text-xl font-bold hover:text-[#41A510]">✕</span>
+            ) : (
+              <span className="text-xl font-bold hover:text-[#41A510]">☰</span>
+            )}
+          </button>
+        </div>
+
+        <div className="hidden lg:flex items-center gap-4">
+          <Link
+            href="/horario-clases"
+            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+          >
+            Clases
+          </Link>
+          {user && (
+            <Link
+              href="/inscripciones"
+              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+            >
+              Inscripciones
+            </Link>
+          )}
+          <Link
+            href="/tienda"
+            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+          >
+            Tienda
+          </Link>
+          {user && (
+            <Link
+              href={route('carrito.index')}
+              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+            >
+              Carrito ({carritoTotal})
+            </Link>
+          )}
+
+          {user ? (
+            <div className="relative" ref={userMenuRef}>
+              <button onClick={() => setOpenUserMenu(!openUserMenu)} className="focus:outline-none">
+                <img
+                  src={user.avatar}
+                  alt="Avatar"
+                  className="w-12 h-12 rounded-full border object-cover"
+                />
+              </button>
+
+              {openUserMenu && (
+                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
+                  <Link href="/ajustes" className="block px-4 py-2 hover:bg-gray-100">
+                    Ajustes
+                  </Link>
+                  <Link
+                    href="/logout"
+                    method="post"
+                    as="button"
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  >
+                    Cerrar sesión
+                  </Link>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/register"
+                className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+              >
+                Registrarse
+              </Link>
+            </>
+          )}
+        </div>
       </div>
-    </nav>
+
+      {mobileMenuOpen && (
+        <div className="flex flex-col items-start gap-2 px-6 py-4 bg-[#111111] border-t border-gray-700">
+          {user?.roles === 'admin' && (
+            <Link href="/admin" className="text-lg py-1 hover:text-[#41A510]">Panel de administración</Link>
+          )}
+          <Link href="/horario-clases" className="text-lg py-1 hover:text-[#41A510]">Clases</Link>
+          {user && (
+            <Link href="/inscripciones" className="text-lg py-1 hover:text-[#41A510]">Inscripciones</Link>
+          )}
+          <Link href="/tienda" className="text-lg py-1 hover:text-[#41A510]">Tienda</Link>
+          {user && (
+            <Link href={route('carrito.index')} className="text-lg py-1 hover:text-[#41A510]">
+              Carrito ({carritoTotal})
+            </Link>
+          )}
+          {user ? (
+            <>
+              <Link href="/ajustes" className="text-lg py-1 hover:text-[#41A510]">Ajustes</Link>
+              <Link
+                href="/logout"
+                method="post"
+                as="button"
+                className="text-lg py-1 text-left hover:text-[#41A510]"
+              >
+                Cerrar sesión
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-lg py-1 hover:text-[#41A510]">Iniciar sesión</Link>
+              <Link href="/register" className="text-lg py-1 hover:text-[#41A510]">Registrarse</Link>
+            </>
+          )}
+        </div>
+      )}
+    </header>
   );
 }

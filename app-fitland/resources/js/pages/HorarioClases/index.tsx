@@ -2,7 +2,6 @@ import React from 'react';
 import { usePage } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 
-// Datos
 const diasSemana: Record<string, string> = {
   Monday: 'Lunes',
   Tuesday: 'Martes',
@@ -58,7 +57,7 @@ export default function HorarioClases() {
 
       <main className="container mx-auto px-4 py-8">
         <section className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Clases</h2>
+          <h2 className="text-3xl font-bold mb-4 text-[#41A510]">Clases</h2>
           <p className="mb-8">Explora todas nuestras clases y actividades disponibles:</p>
 
           <div className="grid gap-12">
@@ -91,7 +90,7 @@ export default function HorarioClases() {
               },
             ].map(({ titulo, descripcion, actividades }) => (
               <div key={titulo}>
-                <h3 className="text-2xl font-bold mb-2">{titulo}</h3>
+                <h3 className="text-2xl font-bold mb-2 text-[#41A510]">{titulo}</h3>
                 <p className="mb-4">{descripcion}</p>
                 <div className="flex flex-wrap justify-center gap-4">
                   {actividades.map(([img, nombre]) => (
