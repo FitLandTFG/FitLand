@@ -27,6 +27,8 @@ export default function Inscribirse() {
   const [fechasFiltradas, setFechasFiltradas] = useState<Clase[]>([]);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(flash?.success ?? null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedInscripcion, setSelectedInscripcion] = useState<Inscripcion | null>(null);
 
   const { data, setData, post, processing, clearErrors } = useForm({
     clase_id: '',
@@ -47,10 +49,10 @@ export default function Inscribirse() {
     }
   }, [nombreSeleccionado, clases, clearErrors, setData]);
   useEffect(() => {
-  if (flash?.success) {
-    setSuccessMessage(flash.success);
-  }
-}, [flash]);
+    if (flash?.success) {
+      setSuccessMessage(flash.success);
+    }
+  }, [flash]);
 
   const nombresUnicos = Array.from(new Set(clases.map((c) => c.nombre)));
 
@@ -98,11 +100,10 @@ export default function Inscribirse() {
 
         <div className="flex border-b mb-6">
           <button
-            className={`px-4 py-2 font-semibold ${
-              tab === 'formulario'
-                ? 'border-b-4 border-green-600 text-green-600'
-                : 'text-gray-500'
-            }`}
+            className={`px-4 py-2 font-semibold ${tab === 'formulario'
+              ? 'border-b-4 border-green-600 text-green-600'
+              : 'text-gray-500 cursor-pointer'
+              }`}
             onClick={() => {
               setTab('formulario');
               setErrorGeneral(null);
@@ -113,11 +114,10 @@ export default function Inscribirse() {
             Inscribirse
           </button>
           <button
-            className={`px-4 py-2 font-semibold ${
-              tab === 'misClases'
-                ? 'border-b-4 border-green-600 text-green-600'
-                : 'text-gray-500'
-            }`}
+            className={`px-4 py-2 font-semibold ${tab === 'misClases'
+              ? 'border-b-4 border-green-600 text-green-600'
+              : 'text-gray-500 cursor-pointer'
+              }`}
             onClick={() => {
               setTab('misClases');
               setErrorGeneral(null);
@@ -165,7 +165,7 @@ export default function Inscribirse() {
                         (i) =>
                           i.clase_id === clase.id &&
                           new Date(i.fecha).toISOString() ===
-                            new Date(clase.fecha).toISOString()
+                          new Date(clase.fecha).toISOString()
                       );
 
                       return (
@@ -175,6 +175,7 @@ export default function Inscribirse() {
                               type="radio"
                               name="clase_id"
                               value={clase.id}
+                              id={`clase-${clase.id}`}
                               onChange={() => {
                                 setData('clase_id', clase.id.toString());
                                 setErrorGeneral(null);
@@ -183,7 +184,24 @@ export default function Inscribirse() {
                               }}
                               checked={data.clase_id === clase.id.toString()}
                               disabled={yaInscritoEnHorario}
+                              className="peer hidden"
                             />
+                            <label
+                              htmlFor={`clase-${clase.id}`}
+                              className={`flex items-center gap-2 cursor-pointer select-none`}
+                            >
+                              <span
+                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition ${data.clase_id === clase.id.toString()
+                                    ? 'border-[#41A510]'
+                                    : 'border-gray-400'
+                                  }`}
+                              >
+                                <span
+                                  className={`w-2 h-2 rounded-full ${data.clase_id === clase.id.toString() ? 'bg-[#41A510]' : ''}`}
+                                ></span>
+                              </span>
+                              {new Date(clase.fecha).toLocaleString()}
+                            </label>
                             {new Date(clase.fecha).toLocaleString()}
                           </label>
                         </li>
@@ -196,11 +214,10 @@ export default function Inscribirse() {
               <button
                 type="submit"
                 disabled={processing || !data.clase_id}
-                className={`px-4 py-2 rounded text-white ${
-                  processing || !data.clase_id
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
+                className={`px-4 py-2 rounded text-white ${processing || !data.clase_id
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+                  }`}
               >
                 {processing ? 'Enviando...' : 'Inscribirse'}
               </button>
@@ -229,13 +246,10 @@ export default function Inscribirse() {
                       </p>
                     </div>
                     <button
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded cursor-pointer"
                       onClick={() => {
-                        if (
-                          confirm('¿Estás seguro de que quieres cancelar esta inscripción?')
-                        ) {
-                          router.delete(route('inscribirse.eliminar', i.id));
-                        }
+                        setSelectedInscripcion(i);
+                        setShowModal(true);
                       }}
                     >
                       Cancelar
@@ -245,6 +259,33 @@ export default function Inscribirse() {
               </ul>
             )}
           </>
+        )}
+        {showModal && selectedInscripcion && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">
+            <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+              <h2 className="text-lg font-semibold mb-4">
+                ¿Estás seguro de que deseas cancelar la inscripción de{' '}
+                <span className="text-green-700">{selectedInscripcion.nombre}</span>?
+              </h2>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 rounded border border-gray-400 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    router.delete(route('inscribirse.eliminar', selectedInscripcion.id));
+                    setShowModal(false);
+                  }}
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </>

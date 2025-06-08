@@ -26,90 +26,42 @@ export default function Navbar() {
     return () => window.removeEventListener('carritoActualizado', actualizarTotal);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <header className="w-full bg-[#111111] text-white shadow-md z-50 relative">
       <div className="flex items-center justify-between px-4 py-4 lg:px-8 relative">
-        {user?.roles === 'admin' && (
-          <div className="hidden lg:flex mr-auto">
-            <Link
-              href="/admin"
-              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
-            >
-              Panel de administración
-            </Link>
-          </div>
-        )}
-
-        <div className="lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
-          <Link href="/">
-            <AppLogo />
-          </Link>
-        </div>
-
-        <div className="lg:hidden ml-auto">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-gray-800 rounded"
-            aria-label="Menú"
-          >
-            {mobileMenuOpen ? (
-              <span className="text-xl font-bold hover:text-[#41A510]">✕</span>
-            ) : (
-              <span className="text-xl font-bold hover:text-[#41A510]">☰</span>
-            )}
-          </button>
-        </div>
 
         <div className="hidden lg:flex items-center gap-4">
-          <Link
-            href="/horario-clases"
-            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
-          >
-            Clases
-          </Link>
-          {user && (
-            <Link
-              href="/inscribirse"
-              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
-            >
-              Inscripciones
-            </Link>
-          )}
-          <Link
-            href="/tienda"
-            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
-          >
-            Tienda
-          </Link>
-          {user && (
-            <Link
-              href={route('carrito.index')}
-              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
-            >
-              Carrito ({carritoTotal})
-            </Link>
-          )}
-
           {user ? (
             <div className="relative" ref={userMenuRef}>
               <button onClick={() => setOpenUserMenu(!openUserMenu)} className="focus:outline-none">
                 <img
                   src={user.avatar}
                   alt="Avatar"
-                  className="w-12 h-12 rounded-full border object-cover"
+                  className={`w-12 h-12 rounded-full object-cover cursor-pointer transition duration-150 border 
+                    ${openUserMenu 
+                      ? 'border-[#41A510] border-[2.5px]'
+                      : 'border-transparent border-[2.5px]'
+                    }
+                  `}
                 />
               </button>
-
               {openUserMenu && (
-                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
-                  <Link href="/ajustes" className="block px-4 py-2 hover:bg-gray-100">
-                    Ajustes
-                  </Link>
+                <div className="absolute left-6 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
                   <Link
                     href="/logout"
                     method="post"
                     as="button"
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   >
                     Cerrar sesión
                   </Link>
@@ -132,6 +84,72 @@ export default function Navbar() {
               </Link>
             </>
           )}
+
+          {user?.roles === 'admin' && (
+            <Link
+              href="/admin"
+              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+            >
+              Panel de administración
+            </Link>
+          )}
+        </div>
+
+        <div className="lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+          <Link href="/">
+            <AppLogo />
+          </Link>
+        </div>
+
+        <div className="lg:hidden ml-auto">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded cursor-pointer hover:text-[#41A510]"
+            aria-label="Menú"
+          >
+            {mobileMenuOpen ? (
+              <span className="text-xl font-bold">✕</span>
+            ) : (
+              <span className="text-xl font-bold">☰</span>
+            )}
+          </button>
+        </div>
+
+        <div className="hidden lg:flex items-center gap-4 ml-auto">
+          <Link
+            href="/horario-clases"
+            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+          >
+            Clases
+          </Link>
+          {user && (
+            <Link
+              href="/inscribirse"
+              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+            >
+              Inscripciones
+            </Link>
+          )}
+          <Link
+            href="/tienda"
+            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+          >
+            Tienda
+          </Link>
+          <Link
+            href="/suscripciones"
+            className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+          >
+            Suscripciones
+          </Link>
+          {user && (
+            <Link
+              href={route('carrito.index')}
+              className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
+            >
+              Carrito ({carritoTotal})
+            </Link>
+          )}
         </div>
       </div>
 
@@ -142,26 +160,24 @@ export default function Navbar() {
           )}
           <Link href="/horario-clases" className="text-lg py-1 hover:text-[#41A510]">Clases</Link>
           {user && (
-            <Link href="/inscripciones" className="text-lg py-1 hover:text-[#41A510]">Inscripciones</Link>
+            <Link href="/inscribirse" className="text-lg py-1 hover:text-[#41A510]">Inscripciones</Link>
           )}
           <Link href="/tienda" className="text-lg py-1 hover:text-[#41A510]">Tienda</Link>
+          <Link href="/suscripciones" className="text-lg py-1 hover:text-[#41A510]">Suscripciones</Link>
           {user && (
             <Link href={route('carrito.index')} className="text-lg py-1 hover:text-[#41A510]">
               Carrito ({carritoTotal})
             </Link>
           )}
           {user ? (
-            <>
-              <Link href="/ajustes" className="text-lg py-1 hover:text-[#41A510]">Ajustes</Link>
-              <Link
-                href="/logout"
-                method="post"
-                as="button"
-                className="text-lg py-1 text-left hover:text-[#41A510]"
-              >
-                Cerrar sesión
-              </Link>
-            </>
+            <Link
+              href="/logout"
+              method="post"
+              as="button"
+              className="text-lg py-1 text-left hover:text-[#41A510] cursor-pointer"
+            >
+              Cerrar sesión
+            </Link>
           ) : (
             <>
               <Link href="/login" className="text-lg py-1 hover:text-[#41A510]">Iniciar sesión</Link>

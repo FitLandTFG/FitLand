@@ -113,6 +113,8 @@ Route::get('/tienda', [TiendaController::class, 'index'])->name('tienda.index');
 
 Route::get('/horario-clases', [HorarioClasesController::class, 'index'])->name('horario.clases');
 
+Route::get('/suscripciones', [SuscripcionesController::class, 'index'])->name('suscripciones.index');
+
 
 Route::middleware(['auth'])->group(function () {
    Route::get('/inscribirse', [InscripcionController::class, 'formularioPublico'])->name('inscribirse.formulario');
