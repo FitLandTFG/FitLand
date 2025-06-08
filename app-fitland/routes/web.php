@@ -113,6 +113,17 @@ Route::get('/tienda', [TiendaController::class, 'index'])->name('tienda.index');
 
 Route::get('/horario-clases', [HorarioClasesController::class, 'index'])->name('horario.clases');
 
+
+Route::middleware(['auth'])->group(function () {
+   Route::get('/inscribirse', [InscripcionController::class, 'formularioPublico'])->name('inscribirse.formulario');
+
+    Route::post('/inscribirse', [InscripcionController::class, 'guardarDesdeFrontend'])->name('inscribirse.guardar');
+});
+Route::delete('/inscribirse/{id}', [InscripcionController::class, 'eliminarDesdeFrontend'])
+    ->middleware('auth')
+    ->name('inscribirse.eliminar');
+
+
 Route::prefix('carrito')->middleware(['auth'])->group(function () {
     Route::get('/', [CarritoController::class, 'vistaUsuario'])->name('carrito.index');
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
+import type { PageProps } from '@/types';
 
 const diasSemana: Record<string, string> = {
   Monday: 'Lunes',
@@ -32,6 +33,7 @@ type Clase = {
   hora: string;
   dia: string;
   aforo: number;
+  inscritos: number;
 };
 
 function formatearRango(fechaInicio: string, fechaFin: string) {
@@ -45,11 +47,13 @@ function formatearRango(fechaInicio: string, fechaFin: string) {
 }
 
 export default function HorarioClases() {
-  const { clases, inicio, fin } = usePage().props as unknown as {
+  const { clases, inicio, fin, auth } = usePage<PageProps & {
     clases: Clase[];
     inicio: string;
     fin: string;
-  };
+  }>().props;
+
+  const estaLogueado = !!auth.user;
 
   return (
     <>
@@ -146,10 +150,17 @@ export default function HorarioClases() {
                       <div key={diaIng + hora} className="bg-white h-20 p-1 border border-gray-300">
                         {clase && (
                           <div
-                            className={`${coloresClase[clase.nombre] || 'bg-gray-500'} text-white rounded-md h-full w-full flex flex-col justify-center items-center text-center px-2 py-2 shadow-sm hover:shadow-md transition-shadow`}
+                            onClick={() => {
+                              window.location.href = estaLogueado
+                                ? '/inscribirse'
+                                : '/login';
+                            }}
+                            className={`${coloresClase[clase.nombre] || 'bg-gray-500'} text-white rounded-md h-full w-full flex flex-col justify-center items-center text-center px-2 py-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
                           >
                             <div className="font-semibold text-sm leading-snug">{clase.nombre}</div>
-                            <div className="text-xs mt-1">{clase.hora} - {clase.aforo} plazas</div>
+                            <div className="text-xs mt-1">
+                              {clase.hora} - {clase.aforo - clase.inscritos} de {clase.aforo} plazas
+                            </div>
                           </div>
                         )}
                       </div>

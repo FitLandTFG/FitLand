@@ -69,7 +69,7 @@ export default function Navbar() {
           </Link>
           {user && (
             <Link
-              href="/inscripciones"
+              href="/inscribirse"
               className="text-lg px-5 py-2 hover:underline hover:decoration-[#41A510] hover:decoration-2"
             >
               Inscripciones

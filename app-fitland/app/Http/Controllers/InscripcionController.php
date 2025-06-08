@@ -115,4 +115,108 @@ class InscripcionController extends Controller
 
         return redirect()->route('admin.inscripciones.index');
     }
+
+//Frontend
+public function formularioPublico()
+{
+    $usuarioId = auth()->id();
+
+    // Obtener clases con conteo de inscripciones (aforo se valida en backend, no en frontend)
+    $clases = Clase::all()->map(function ($clase) {
+        return [
+            'id' => $clase->id,
+            'nombre' => $clase->nombre,
+            'fecha' => $clase->horario,
+        ];
+    });
+
+    // Devolver solo los datos necesarios de las inscripciones del usuario
+   $inscripciones = Inscripcion::with('clase:id,nombre,horario')
+    ->where('usuario_id', $usuarioId)
+    ->get()
+    ->map(function ($i) {
+        return [
+            'id' => $i->id, // <- AÑADIDO
+            'clase_id' => $i->clase_id,
+            'fecha' => $i->clase->horario,
+            'nombre' => $i->clase->nombre,
+
+        ];
+    });
+
+
+    return Inertia::render('Inscribirse/index', [
+        'clases' => $clases,
+        'inscripciones' => $inscripciones,
+    ]);
+}
+
+
+
+
+public function guardarDesdeFrontend(Request $request)
+{
+    $request->validate([
+        'clase_id' => 'required|exists:clases,id',
+    ]);
+
+    $user = auth()->user();
+
+    // Verificar si ya está inscrito en esta clase
+    $yaInscrito = Inscripcion::where('usuario_id', $user->id)
+        ->where('clase_id', $request->clase_id)
+        ->exists();
+
+    if ($yaInscrito) {
+        return back()->withErrors(['general' => 'Ya estás inscrito en esta clase.']);
+    }
+
+    $clase = \App\Models\Clase::findOrFail($request->clase_id);
+
+    // Validar que la clase no sea en el pasado
+    if (now()->gt($clase->horario)) {
+        return back()->withErrors(['clase_id' => 'Esta clase ya ha ocurrido.']);
+    }
+
+    // Validar aforo
+    if ($clase->aforo <= 0) {
+        return back()->withErrors(['clase_id' => 'No hay plazas disponibles en esta clase.']);
+    }
+
+    // Disminuir aforo y guardar inscripción
+    $clase->decrement('aforo');
+
+    Inscripcion::create([
+        'usuario_id' => $user->id,
+        'clase_id' => $request->clase_id,
+        'fecha_inscripcion' => $clase->horario,
+    ]);
+
+    return redirect()->route('inscribirse.formulario')->with('success', 'Inscripción realizada con éxito.');
+
+}
+public function eliminarDesdeFrontend($id)
+{
+    $user = auth()->user();
+
+    $inscripcion = Inscripcion::where('id', $id)
+        ->where('usuario_id', $user->id)
+        ->firstOrFail();
+
+    $clase = $inscripcion->clase;
+    $clase->increment('aforo');
+
+    $inscripcion->delete();
+
+    return redirect()->route('inscribirse.formulario')->with('success', 'Te has dado de baja de la clase.');
+}
+public function destroy($id)
+{
+    $inscripcion = Inscripcion::findOrFail($id);
+    $inscripcion->delete();
+
+    return back()->with('success', 'Inscripción cancelada con éxito.');
+}
+
+
 }
