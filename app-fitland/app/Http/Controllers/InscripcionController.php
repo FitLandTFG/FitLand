@@ -46,6 +46,19 @@ class InscripcionController extends Controller
     if ($yaInscrito) {
         return back()->withErrors(['general' => 'Este usuario ya está inscrito en esta clase.']);
     }
+    $suscripcion = \App\Models\Suscripcion::where('usuario_id', $request->usuario_id)
+    ->where('estado', 'activa')
+    ->whereDate('fecha_inicio', '<=', now())
+    ->whereDate('fecha_fin', '>=', now())
+    ->with('plan')
+    ->first();
+
+if (!$suscripcion || !in_array($suscripcion->plan->tipo, ['Gold', 'Diamond'])) {
+    return back()->withErrors([
+        'general' => 'Necesitas una suscripción Gold o Diamond para inscribirte en las clases.',
+    ]);
+}
+
 
     $clase = Clase::withCount('inscripciones')->findOrFail($request->clase_id);
 
@@ -170,7 +183,22 @@ public function guardarDesdeFrontend(Request $request)
 
     if ($yaInscrito) {
         return back()->withErrors(['general' => 'Ya estás inscrito en esta clase.']);
+
     }
+
+    $suscripcion = \App\Models\Suscripcion::where('usuario_id', $user->id)
+    ->where('estado', 'activa')
+    ->whereDate('fecha_inicio', '<=', now())
+    ->whereDate('fecha_fin', '>=', now())
+    ->with('plan')
+    ->first();
+
+if (!$suscripcion || !in_array($suscripcion->plan->tipo, ['Gold', 'Diamond'])) {
+    return back()->withErrors([
+        'general' => 'Necesitas una suscripción Gold o Diamond para inscribirte en las clases.',
+    ]);
+}
+
 
     $clase = \App\Models\Clase::findOrFail($request->clase_id);
 

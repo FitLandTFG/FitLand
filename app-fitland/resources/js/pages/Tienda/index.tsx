@@ -5,7 +5,6 @@ import { Info, X } from 'lucide-react';
 import type { User, ItemCarrito } from '@/types';
 
 
-
 type Producto = {
   id: number;
   nombre: string;
@@ -154,8 +153,8 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                     <Link
                       key={index}
                       href={link.url}
-                      className={`px-3 py-1 border rounded ${link.active 
-                        ? 
+                      className={`px-3 py-1 border rounded ${link.active
+                        ?
                           'bg-[#41A510] text-white border-[#41A510]'
                         : 'bg-white text-[#41A510] border-[#41A510] hover:bg-[#41A510] hover:text-white'}`}
                     >

@@ -72,6 +72,11 @@ ALTER SEQUENCE suscripciones_id_seq RESTART WITH 14;
 -- Semana del 2 al 8 de junio (lunes a domingo), 10 clases por día
 -- ID del 1 al 70
 
+TRUNCATE TABLE
+  clases
+RESTART IDENTITY
+CASCADE;
+
 INSERT INTO public.clases VALUES (1, 'Zumba', '2025-06-16 08:00:00', 20, NULL, NULL);
 INSERT INTO public.clases VALUES (2, 'Pilates', '2025-06-16 09:20:00', 18, NULL, NULL);
 INSERT INTO public.clases VALUES (3, 'GAP', '2025-06-16 10:40:00', 15, NULL, NULL);

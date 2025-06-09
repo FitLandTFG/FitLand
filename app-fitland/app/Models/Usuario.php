@@ -33,4 +33,14 @@ class Usuario extends Authenticatable implements MustVerifyEmail
     {
         return $this->roles === 'admin';
     }
+    // App\Models\Usuario.php
+
+public function suscripcionActiva()
+{
+    return $this->hasOne(\App\Models\Suscripcion::class)
+        ->where('estado', 'activa')
+        ->whereDate('fecha_inicio', '<=', now())
+        ->whereDate('fecha_fin', '>=', now());
+}
+
 }
