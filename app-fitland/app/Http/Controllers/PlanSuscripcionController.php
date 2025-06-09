@@ -33,7 +33,6 @@ class PlanSuscripcionController extends Controller
         [
             'nombre.max' => 'El nombre no puede tener más de 50 caracteres.',
         ]);
-          // Verificar unicidad sin distinguir mayúsculas/minúsculas
         $existe = PlanSuscripcion::whereRaw('LOWER(nombre) = ?', [strtolower($request->nombre)])->exists();
 
         if ($existe) {
@@ -61,8 +60,6 @@ class PlanSuscripcionController extends Controller
             'duracion_dias' => 'required|integer|min:1',
         ]);
 
-
-    // Verificar si ya existe otro plan con el mismo nombre (sin distinguir mayúsculas)
     $existe = PlanSuscripcion::whereRaw('LOWER(nombre) = ?', [strtolower($request->nombre)])
     ->where('id', '!=', $plan->id)
     ->exists();
@@ -77,22 +74,30 @@ class PlanSuscripcionController extends Controller
     }
 
    public function eliminar(PlanSuscripcion $plan)
-{
-    try {
-        $plan->delete();
+    {
+        try {
+            $plan->delete();
 
-        return redirect()->route('admin.planes_suscripcion.index')
-            ->with('success', 'Plan eliminado correctamente.');
-    } catch (\Illuminate\Database\QueryException $e) {
-        if ($e->getCode() === '23503') {
+            return redirect()->route('admin.planes_suscripcion.index')
+                ->with('success', 'Plan eliminado correctamente.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23503') {
+                return redirect()->back()
+                    ->withErrors(['general' => 'No se puede eliminar este plan porque está asociado a una o más usuarios suscritos.
+                                                Elimine las suscripciones asociadas para poder eliminar el plan.']);
+            }
+
             return redirect()->back()
-                ->withErrors(['general' => 'No se puede eliminar este plan porque está asociado a una o más usuarios suscritos.
-                                            Elimine las suscripciones asociadas para poder eliminar el plan.']);
+                ->withErrors(['general' => 'Ocurrió un error al intentar eliminar el plan.']);
         }
-
-        return redirect()->back()
-            ->withErrors(['general' => 'Ocurrió un error al intentar eliminar el plan.']);
     }
-}
 
+    public function publicIndex()
+    {
+        $planes = PlanSuscripcion::orderBy('precio')->get();
+
+        return Inertia::render('Suscripciones/index', [
+            'planes' => $planes
+        ]);
+    }
 }
