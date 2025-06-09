@@ -114,12 +114,12 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
               const claseSeleccionada = clases.find(
                 (c) =>
                   c.nombre === data.nombre_clase &&
-                  dayjs.utc(c.horario).format('YYYY-MM-DD HH:mm:ss') === e.target.value
+                  dayjs(c.horario).format('YYYY-MM-DD HH:mm:ss') === e.target.value
               );
 
               if (claseSeleccionada) {
                 setData('clase_id', claseSeleccionada.id);
-                setData('fecha_inscripcion', dayjs.utc(claseSeleccionada.horario).format('YYYY-MM-DD HH:mm:ss'));
+                setData('fecha_inscripcion', dayjs(claseSeleccionada.horario).format('YYYY-MM-DD HH:mm:ss'));
               }
             }}
             className="w-full border rounded px-3 py-2"
@@ -133,12 +133,12 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
                 .filter(
                   (c) =>
                     c.nombre === data.nombre_clase &&
-                    dayjs.utc(c.horario).isAfter(dayjs())
+                    dayjs(c.horario).isAfter(dayjs())
                 )
                 .sort((a, b) => dayjs.utc(a.horario).unix() - dayjs.utc(b.horario).unix())
                 .map((c) => {
-                  const valor = dayjs.utc(c.horario).format('YYYY-MM-DD HH:mm:ss');
-                  const texto = dayjs.utc(c.horario).format('dddd, DD MMMM YYYY - HH:mm');
+                  const valor = dayjs(c.horario).format('YYYY-MM-DD HH:mm:ss');
+                  const texto = dayjs(c.horario).format('dddd, DD MMMM YYYY - HH:mm');
                   const capitalizado = texto.charAt(0).toUpperCase() + texto.slice(1);
                   return (
                     <option key={c.id} value={valor}>

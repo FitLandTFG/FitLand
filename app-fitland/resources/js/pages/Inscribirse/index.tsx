@@ -200,9 +200,9 @@ export default function Inscribirse() {
                                   className={`w-2 h-2 rounded-full ${data.clase_id === clase.id.toString() ? 'bg-[#41A510]' : ''}`}
                                 ></span>
                               </span>
-                              {new Date(clase.fecha).toLocaleString()}
                             </label>
-                            {new Date(clase.fecha).toLocaleString()}
+                            {new Date(clase.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}, {new Date(clase.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })}
+
                           </label>
                         </li>
                       );
@@ -242,7 +242,8 @@ export default function Inscribirse() {
                         <strong>Clase:</strong> {i.nombre}
                       </p>
                       <p>
-                        <strong>Fecha:</strong> {new Date(i.fecha).toLocaleString()}
+                        <strong>Fecha:</strong> {new Date(i.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}, {new Date(i.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })}
+
                       </p>
                     </div>
                     <button

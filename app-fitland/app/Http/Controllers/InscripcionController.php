@@ -30,7 +30,7 @@ class InscripcionController extends Controller
         ]);
     }
 
-    public function guardar(Request $request)
+   public function guardar(Request $request)
 {
     $request->validate([
         'usuario_id' => 'required|exists:usuarios,id',
@@ -47,18 +47,21 @@ class InscripcionController extends Controller
         return back()->withErrors(['general' => 'Este usuario ya está inscrito en esta clase.']);
     }
 
-    $clase = Clase::findOrFail($request->clase_id);
+    $clase = Clase::withCount('inscripciones')->findOrFail($request->clase_id);
 
-    if ($clase->aforo <= 0) {
-        return back()->withErrors(['clase_id' => 'No hay plazas disponibles en esta clase.']);
+    // Validar aforo disponible (aforo - inscritos)
+    if ($clase->inscripciones_count >= $clase->aforo) {
+        return back()->withErrors(['general' => 'No puedes inscribirte a esta clase porque ya no hay plazas disponibles.']);
+
+
     }
 
+    // Validar que la fecha no sea en el pasado
     if (now()->gt($request->fecha_inscripcion)) {
         return back()->withErrors(['fecha_inscripcion' => 'No puedes inscribirte a una clase en el pasado.']);
     }
 
-    $clase->decrement('aforo');
-
+    // Guardar inscripción sin modificar aforo
     Inscripcion::create([
         'usuario_id' => $request->usuario_id,
         'clase_id' => $request->clase_id,
@@ -152,8 +155,6 @@ public function formularioPublico()
 }
 
 
-
-
 public function guardarDesdeFrontend(Request $request)
 {
     $request->validate([
@@ -178,14 +179,13 @@ public function guardarDesdeFrontend(Request $request)
         return back()->withErrors(['clase_id' => 'Esta clase ya ha ocurrido.']);
     }
 
-    // Validar aforo
-    if ($clase->aforo <= 0) {
-        return back()->withErrors(['clase_id' => 'No hay plazas disponibles en esta clase.']);
+    // Validar aforo actual en tiempo real
+    $inscritos = Inscripcion::where('clase_id', $clase->id)->count();
+    if ($inscritos >= $clase->aforo) {
+        return back()->withErrors(['clase_id' => 'No puedes inscribirte a esta clase porque ya no hay plazas disponibles.']);
     }
 
-    // Disminuir aforo y guardar inscripción
-    $clase->decrement('aforo');
-
+    // Guardar inscripción (sin tocar el aforo)
     Inscripcion::create([
         'usuario_id' => $user->id,
         'clase_id' => $request->clase_id,
@@ -193,8 +193,8 @@ public function guardarDesdeFrontend(Request $request)
     ]);
 
     return redirect()->route('inscribirse.formulario')->with('success', 'Inscripción realizada con éxito.');
-
 }
+
 public function eliminarDesdeFrontend($id)
 {
     $user = auth()->user();
