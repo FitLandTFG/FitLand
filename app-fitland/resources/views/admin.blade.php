@@ -8,14 +8,14 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <header class="bg-blue-600 text-white p-4">
+    <header class="text-white p-4" style="background-color: #111111;">
         <div class="container mx-auto flex items-center justify-between relative">
             <div>
-                <a href="/" style="background-color: #4EB11F;" class="inline-block text-white px-4 py-2 rounded-full">
+                <a href="/" class="inline-block text-white px-5 py-2 rounded-full text-lg font-normal hover:underline">
                     Volver al inicio
                 </a>
             </div>
-
+    
             <h1 class="absolute left-1/2 transform -translate-x-1/2 text-2xl font-semibold">
                 Administrador
             </h1>

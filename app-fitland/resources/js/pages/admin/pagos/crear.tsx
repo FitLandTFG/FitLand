@@ -23,13 +23,30 @@ interface Compra {
   productos: Producto[];
 }
 
-interface Props extends PageProps {
-  compras: Compra[];
+interface Suscripcion {
+  id: number;
+  fecha_inicio: string;
+  usuario: {
+    id: number;
+    nombre_completo: string;
+  };
+  plan: {
+    nombre: string;
+    precio: number;
+  };
+  precio: number;
 }
 
-const Crear: React.FC<Props> = ({ compras }) => {
+interface Props extends PageProps {
+  compras: Compra[];
+  suscripciones: Suscripcion[];
+}
+
+const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
   const { data, setData, post, processing, errors } = useForm({
+    tipo: 'compra', // nuevo
     compra_id: '',
+    suscripcion_id: '',
     fecha_pago: '',
     metodo_pago: '',
     transaccion_id: '',
@@ -39,17 +56,21 @@ const Crear: React.FC<Props> = ({ compras }) => {
   const [montoCalculado, setMontoCalculado] = useState(0);
 
   useEffect(() => {
-    const compra = compras.find((c) => c.id === Number(data.compra_id));
-    if (compra) {
-      const total = compra.productos.reduce((sum, p) => {
-        const cantidad = p.pivot?.cantidad ?? 0;
-        return sum + p.precio * cantidad;
-      }, 0);
-      setMontoCalculado(total);
+    if (data.tipo === 'compra') {
+      const compra = compras.find((c) => c.id === Number(data.compra_id));
+      if (compra) {
+        const total = compra.productos.reduce((sum, p) => {
+          return sum + p.precio * (p.pivot?.cantidad ?? 0);
+        }, 0);
+        setMontoCalculado(total);
+      } else {
+        setMontoCalculado(0);
+      }
     } else {
-      setMontoCalculado(0);
+      const suscripcion = suscripciones.find((s) => s.id === Number(data.suscripcion_id));
+      setMontoCalculado(suscripcion?.precio ?? 0);
     }
-  }, [data.compra_id, compras]);
+  }, [data.tipo, data.compra_id, data.suscripcion_id, compras, suscripciones]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,23 +82,55 @@ const Crear: React.FC<Props> = ({ compras }) => {
       <h1 className="text-2xl font-bold mb-6">Registrar Pago</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Compra */}
+        {/* Tipo de pago */}
         <div>
-          <label className="block mb-1 font-semibold">Compra</label>
+          <label className="block mb-1 font-semibold">Tipo de Pago</label>
           <select
-            value={data.compra_id}
-            onChange={(e) => setData('compra_id', e.target.value)}
+            value={data.tipo}
+            onChange={(e) => setData('tipo', e.target.value)}
             className="w-full border rounded px-3 py-2"
           >
-            <option value="">Seleccionar compra</option>
-            {compras.map((c) => (
-              <option key={c.id} value={c.id}>
-                #{c.id} - {c.fecha_compra} - {c.usuario?.nombre_completo}
-              </option>
-            ))}
+            <option value="compra">Compra</option>
+            <option value="suscripcion">Suscripción</option>
           </select>
-          {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
         </div>
+
+        {/* Compra o suscripción */}
+        {data.tipo === 'compra' ? (
+          <div>
+            <label className="block mb-1 font-semibold">Compra</label>
+            <select
+              value={data.compra_id}
+              onChange={(e) => setData('compra_id', e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">Seleccionar compra</option>
+              {compras.map((c) => (
+                <option key={c.id} value={c.id}>
+                  #{c.id} - {c.fecha_compra} - {c.usuario?.nombre_completo}
+                </option>
+              ))}
+            </select>
+            {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
+          </div>
+        ) : (
+          <div>
+            <label className="block mb-1 font-semibold">Suscripción</label>
+            <select
+              value={data.suscripcion_id}
+              onChange={(e) => setData('suscripcion_id', e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">Seleccionar suscripción</option>
+              {suscripciones.map((s) => (
+                <option key={s.id} value={s.id}>
+                  #{s.id} - {s.usuario?.nombre_completo} - {s.plan?.nombre}
+                </option>
+              ))}
+            </select>
+            {errors.suscripcion_id && <p className="text-red-600 text-sm">{errors.suscripcion_id}</p>}
+          </div>
+        )}
 
         {/* Monto calculado */}
         <div>

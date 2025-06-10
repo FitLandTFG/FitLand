@@ -55,7 +55,11 @@ export default function SuscripcionesIndex() {
             <Navbar />
             <Head title="Planes de Suscripción" />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
-                <h1 className="text-4xl font-bold mb-8 text-center">Planes de Suscripción</h1>
+                <h1 className="text-4xl font-bold mb-4 text-center">Planes de Suscripción</h1>
+                <p className="text-lg text-center text-gray-700 mb-12">
+                    Disfruta de cualquier suscripción sin ningún tipo de permanencia ni pago automático, evitando que pagues de más.
+                </p>
+
                 <div className="overflow-x-auto mb-12">
                     <table className="min-w-full border-collapse">
                         <thead>
@@ -103,27 +107,55 @@ export default function SuscripcionesIndex() {
                         </tbody>
                     </table>
                 </div>
+
                 <div className="grid grid-cols-1 gap-10 mt-12">
-                    {planes.map((plan) => (
-                        <div
-                            key={plan.id}
-                            className="flex flex-col md:flex-row items-center bg-white shadow-lg rounded-xl p-6 border border-gray-200"
-                        >
-                            <div className="w-full md:w-1/4 mb-6 md:mb-0 md:mr-8">
-                                <img
-                                    src={`/images/Planes suscripciones/${plan.tipo}.png`}
-                                    alt={`Imagen del plan ${plan.tipo}`}
-                                    className="w-full h-auto object-cover"
-                                />
+                    {['Prueba', 'Silver', 'Gold', 'Diamond'].map((tipo) => {
+                        const planMensual = planes.find(p => p.tipo === tipo && p.duracion_dias === 30);
+                        const planAnual = planes.find(p => p.tipo === tipo && p.duracion_dias === 365);
+
+                        if (!planMensual) return null;
+
+                        return (
+                            <div
+                                key={tipo}
+                                className="flex flex-col md:flex-row items-center bg-white shadow-lg rounded-xl p-6 border border-gray-200"
+                            >
+                                <div className="w-full md:w-1/4 mb-6 md:mb-0 md:mr-8">
+                                    <img
+                                        src={`/images/Planes suscripciones/${tipo}.png`}
+                                        alt={`Imagen del plan ${tipo}`}
+                                        className="w-full h-auto object-cover"
+                                    />
+                                </div>
+                                <div className="w-full md:w-3/4">
+                                    <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                                        {tipo === 'Prueba' ? 'Plan de prueba' : `Suscripción ${tipo}`}
+                                    </h2>
+                                    <p className="text-lg leading-relaxed text-gray-800 mb-6">
+                                        {descripciones[tipo]}
+                                    </p>
+
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <button
+                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition duration-200"
+                                            onClick={() => console.log(`Agregar ${tipo} mensual`)}
+                                        >
+                                            {tipo === 'Prueba' ? 'Obtener plan de prueba' : 'Suscripción mensual'}
+                                        </button>
+
+                                        {tipo !== 'Prueba' && planAnual && (
+                                            <button
+                                                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded transition duration-200"
+                                                onClick={() => console.log(`Agregar ${tipo} anual`)}
+                                            >
+                                                Suscripción anual
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="w-full md:w-3/4">
-                                <h2 className="text-3xl font-bold text-gray-900 mb-4">{plan.nombre}</h2>
-                                <p className="text-lg leading-relaxed text-gray-800">
-                                    {descripciones[plan.tipo]}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </>
