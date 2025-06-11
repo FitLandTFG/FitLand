@@ -40,7 +40,7 @@ export interface User {
     email: string;
     password: string;
     imagen: string;
-    roles: 'user' | 'admin'; // Basado en tu enum rolesusuarios_enum
+    roles: 'user' | 'admin';
     email_verified_at: string | null;
     remember_token: string | null;
     created_at?: string;

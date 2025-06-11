@@ -19,8 +19,8 @@ use App\Http\Controllers\StripeController;
 
 
 Route::get('/', function () {
-    return Inertia::render('dashboard');
-})->name('dashboard');
+    return Inertia::render('inicio');
+})->name('inicio');
 
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
 Route::middleware('auth')->get('/carrito/obtener', [CarritoController::class, 'obtener']);

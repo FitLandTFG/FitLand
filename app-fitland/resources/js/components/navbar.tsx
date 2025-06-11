@@ -43,25 +43,31 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-4">
           {user ? (
             <div className="relative" ref={userMenuRef}>
-              <button onClick={() => setOpenUserMenu(!openUserMenu)} className="focus:outline-none">
+              <button onClick={() => setOpenUserMenu(!openUserMenu)} className="focus:outline-none relative w-14 h-14">
                 <img
                   src={user.avatar}
                   alt="Avatar"
-                  className={`w-12 h-12 rounded-full object-cover cursor-pointer transition duration-150 border 
-                    ${openUserMenu 
+                  className={`w-14 h-14 rounded-full object-cover cursor-pointer transition duration-150 border 
+                  ${openUserMenu
                       ? 'border-[#41A510] border-[2.5px]'
-                      : 'border-transparent border-[2.5px]'
+                      : 'border-white border-[1.5px]'
                     }
-                  `}
-                />
+                `}
+              />
               </button>
               {openUserMenu && (
-                <div className="absolute left-6 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
+                <div className="absolute left-6 mt-1 w-40 bg-white text-black rounded shadow-md z-50">
+                  <Link
+                    href="/mi-cuenta"
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded cursor-pointer"
+                  >
+                    Mi cuenta
+                  </Link>
                   <Link
                     href="/logout"
                     method="post"
                     as="button"
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     Cerrar sesión
                   </Link>
@@ -170,14 +176,21 @@ export default function Navbar() {
             </Link>
           )}
           {user ? (
-            <Link
+            <><Link
+              href="/mi-cuenta"
+              method="post"
+              as="button"
+              className="text-lg py-1 text-left hover:text-[#41A510] cursor-pointer"
+            >
+              Mi cuenta
+            </Link><Link
               href="/logout"
               method="post"
               as="button"
               className="text-lg py-1 text-left hover:text-[#41A510] cursor-pointer"
             >
-              Cerrar sesión
-            </Link>
+                Cerrar sesión
+              </Link></>
           ) : (
             <>
               <Link href="/login" className="text-lg py-1 hover:text-[#41A510]">Iniciar sesión</Link>
