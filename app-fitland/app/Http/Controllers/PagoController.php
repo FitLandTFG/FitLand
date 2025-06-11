@@ -9,9 +9,13 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class PagoController extends Controller
 {
+
+
     public function index()
     {
         $pagos = Pago::with(['usuario', 'compra'])->orderBy('id', 'desc')->get();
@@ -44,14 +48,14 @@ class PagoController extends Controller
             'estado'          => 'required|in:pendiente,completado,fallido',
             'transaccion_id'  => 'nullable|string|max:100',
         ]);
-    
+
         if (!$request->compra_id && !$request->suscripcion_id) {
             return back()->withErrors('Debes seleccionar una compra o una suscripción.');
         }
-    
+
         $usuario_id = null;
         $monto = 0;
-    
+
         DB::transaction(function () use ($request, &$usuario_id, &$monto) {
             if ($request->compra_id) {
                 $compra = Compra::with(['usuario', 'productos'])->findOrFail($request->compra_id);
@@ -64,7 +68,7 @@ class PagoController extends Controller
                 $usuario_id = $suscripcion->usuario_id;
                 $monto = $suscripcion->precio;
             }
-        
+
             Pago::create([
                 'usuario_id'      => $usuario_id,
                 'compra_id'       => $request->compra_id,
@@ -75,7 +79,7 @@ class PagoController extends Controller
                 'estado'          => $request->estado,
                 'transaccion_id'  => $request->transaccion_id ?? null,
             ]);
-        
+
             if (isset($compra) && $request->estado === 'completado' && !$compra->stock_descargado) {
                 foreach ($compra->productos as $producto) {
                     $cantidad = $producto->pivot->cantidad;
@@ -85,7 +89,7 @@ class PagoController extends Controller
                 $compra->save();
             }
         });
-    
+
         return redirect()->route('admin.pagos.index');
     }
 
@@ -169,4 +173,7 @@ class PagoController extends Controller
 
         return redirect()->route('admin.pagos.index');
     }
+    //frontend
+
+
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
 import type { ItemCarrito } from '@/types';
-
 export default function Carrito() {
   const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
   const [total, setTotal] = useState(0);
@@ -95,16 +94,19 @@ export default function Carrito() {
                 </li>
               ))}
             </ul>
+<div className="mt-6 text-right">
+  <p className="text-xl font-semibold mb-4">Total: €{total.toFixed(2)}</p>
 
-            <div className="mt-6 text-right">
-              <p className="text-xl font-semibold mb-4">Total: €{total.toFixed(2)}</p>
-              <button
-                onClick={vaciarCarrito}
-                className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded"
-              >
-                Vaciar carrito
-              </button>
-            </div>
+  <button
+    onClick={vaciarCarrito}
+    className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded"
+  >
+    Vaciar carrito
+  </button>
+
+
+</div>
+
           </>
         )}
       </div>

@@ -15,6 +15,7 @@ use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\HorarioClasesController;
+use App\Http\Controllers\StripeController;
 
 
 Route::get('/', function () {
@@ -120,10 +121,19 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/inscribirse', [InscripcionController::class, 'formularioPublico'])->name('inscribirse.formulario');
 
     Route::post('/inscribirse', [InscripcionController::class, 'guardarDesdeFrontend'])->name('inscribirse.guardar');
+
+
+Route::post('/api/crear-sesion-checkout', [StripeController::class, 'crearSesionCheckout']);
+
 });
 Route::delete('/inscribirse/{id}', [InscripcionController::class, 'eliminarDesdeFrontend'])
     ->middleware('auth')
     ->name('inscribirse.eliminar');
+
+
+Route::get('/pago-simple', [PagoController::class, 'pagoSimple']);
+Route::get('/pago-simple-exito', fn() => '✅ ¡Pago completado con éxito!');
+Route::get('/pago-simple-cancelado', fn() => '❌ Pago cancelado.');
 
 
 Route::prefix('carrito')->middleware(['auth'])->group(function () {
