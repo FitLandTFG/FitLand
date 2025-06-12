@@ -62,6 +62,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
+            'esDiamond' => $request->user()?->suscripcion?->plan_id === 5 || $request->user()?->suscripcion?->plan_id === 6,
         ]);
     }
 }

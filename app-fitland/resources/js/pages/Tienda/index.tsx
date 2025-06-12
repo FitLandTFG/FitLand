@@ -32,11 +32,14 @@ type Props = {
     buscar?: string;
   };
   user: User | null;
+  suscripcion: string | null;
 };
 
 export default function Tienda({ productos, categorias, filtros, user }: Props) {
   const [buscar, setBuscar] = useState(filtros.buscar || '');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(filtros.categoria || '');
+
+  const esDiamond = (usePage().props as any).esDiamond ?? false;
 
   const { url } = usePage();
   const currentPage = new URLSearchParams(url.split('?')[1] || '').get('page') || 1;
@@ -135,7 +138,22 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                       className="w-full h-80 object-contain"
                     />
                     <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
-                    <p className="text-gray-700 mt-2">{producto.precio.toFixed(2)}€</p>
+                    <p className="text-gray-700 mt-2">
+                      <p className="text-gray-700 mt-2">
+                        {esDiamond ? (
+                          <>
+                            <span className="line-through text-gray-500 mr-2">
+                              {producto.precio.toFixed(2)}€
+                            </span>
+                            <span className="text-[#41A510] font-semibold">
+                              {(producto.precio * 0.9).toFixed(2)}€
+                            </span>
+                          </>
+                        ) : (
+                          `${producto.precio.toFixed(2)}€`
+                        )}
+                      </p>  
+                    </p>
                     <div className="flex space-x-4 mt-2">
                       <Info className="text-white" size={20} />
                     </div>
@@ -203,7 +221,20 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                 <h2 className="text-3xl font-bold mb-3">{productoSeleccionado.nombre}</h2>
                 <p className="text-gray-700 mb-3">{productoSeleccionado.descripcion || 'Sin descripción disponible.'}</p>
                 <p className="text-sm text-gray-500 mb-3">Stock disponible: {productoSeleccionado.stock ?? 'N/D'}</p>
-                <p className="text-2xl font-semibold mb-4">{productoSeleccionado.precio.toFixed(2)}€</p>
+                <p className="text-2xl font-semibold mb-4">
+                  {esDiamond ? (
+                    <>
+                      <span className="line-through text-gray-500 mr-2 text-xl">
+                        {productoSeleccionado.precio.toFixed(2)}€
+                      </span>
+                      <span className="text-[#41A510]">
+                        {(productoSeleccionado.precio * 0.9).toFixed(2)}€
+                      </span>
+                    </>
+                  ) : (
+                    `${productoSeleccionado.precio.toFixed(2)}€`
+                  )}
+                </p>
 
                 <div className="flex items-center gap-2">
                   <button

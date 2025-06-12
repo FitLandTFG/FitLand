@@ -76,7 +76,7 @@ export default function Inicio() {
             ¡Llegamos a Madrid! Apertura próximamente: Junio 2025.
           </p>
           <p className="mb-4 text-lg">
-            Ha llegado el gimnasio con la <b>sala fitness más grande de Madrid</b>. En FitLand encontrarás un espacio de más de 4.000m2 donde podrás llevar a cabo tu entrenamiento con instalaciones equipadas con <b>lo último en maquinaria, innovación
+            Ha llegado el gimnasio con la <b>sala fitness más grande de Madrid</b>. En FitLand encontrarás un espacio de más de 4.000m<sup>2</sup> donde podrás llevar a cabo tu entrenamiento con instalaciones equipadas con <b>lo último en maquinaria, innovación
               y tecnología fitness</b>.
           </p>
           <p className="text-lg">
@@ -111,7 +111,7 @@ export default function Inicio() {
                   <img
                     src={t.img}
                     alt={t.nombre}
-                    className="w-16 h-16 mx-auto rounded-full mb-4 object-cover"
+                    className="w-20 h-20 mx-auto rounded-full mb-5 object-cover"
                   />
                   <p className="text-sm text-gray-700 italic mb-2">"{t.texto}"</p>
                   <p className="font-semibold">{t.nombre}</p>
