@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use Illuminate\Support\Facades\Auth;
 
 class PagoController extends Controller
 {
@@ -174,6 +175,52 @@ class PagoController extends Controller
         return redirect()->route('admin.pagos.index');
     }
     //frontend
+    public function crearSesion(Request $request)
+    {
+        $productos = $request->input('carrito', []);
 
+        if (empty($productos)) {
+            return response()->json(['error' => 'El carrito está vacío'], 400);
+        }
 
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $lineItems = collect($productos)->map(function ($producto) {
+            return [
+                'price_data' => [
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => $producto['nombre'],
+                    ],
+                    'unit_amount' => intval($producto['precio'] * 100), // euros a céntimos
+                ],
+                'quantity' => $producto['cantidad'],
+            ];
+        })->toArray();
+
+        $session = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => route('pago.exito'),
+            'cancel_url' => route('pago.cancelado'),
+        ]);
+
+        return response()->json(['url' => $session->url]);
+    }
+    public function registrarDesdeStripe(Request $request)
+{
+    $pago = new Pago();
+    $pago->usuario_id = Auth::id();
+    $pago->compra_id = $request->input('compra_id');
+    $pago->metodo_pago = $request->input('metodo_pago', 'stripe');
+    $pago->estado = $request->input('estado', 'completado');
+    $pago->monto = $request->input('monto');
+    $pago->transaccion_id = $request->input('transaccion_id');
+    $pago->created_at = now();
+    $pago->updated_at = now();
+    $pago->save();
+
+    return response()->json(['message' => 'Pago registrado correctamente']);
+}
 }

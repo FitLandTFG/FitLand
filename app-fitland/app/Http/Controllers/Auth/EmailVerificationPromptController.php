@@ -14,7 +14,7 @@ class EmailVerificationPromptController extends Controller
     {
         // Si el usuario ya verificó su correo, lo redirige al dashboard
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('inicio', absolute: false));
         }
 
         // Si aún no se ha enviado en esta sesión, lo enviamos

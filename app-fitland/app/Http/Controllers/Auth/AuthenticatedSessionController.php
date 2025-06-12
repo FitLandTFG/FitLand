@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate(); // Valida y autentica
         $request->session()->regenerate(); // Regenera la sesión
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('inicio', absolute: false));
     }
 
     // Cierra sesión del usuario

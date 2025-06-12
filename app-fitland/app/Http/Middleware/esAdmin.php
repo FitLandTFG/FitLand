@@ -16,7 +16,7 @@ class esAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->user() || auth()->user()->roles !== 'admin') {
-            return redirect()->route('dashboard');
+            return redirect()->route('inicio');
         }
 
         return $next($request);

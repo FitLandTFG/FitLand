@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CompraController extends Controller
 {
@@ -156,4 +157,42 @@ class CompraController extends Controller
             return redirect()->back()->with('error', 'Ocurrió un error al eliminar la compra.');
         }
     }
+
+public function crearDesdeCarritoStripe(Request $request)
+{
+    $carrito = $request->input('carrito', []);
+    if (empty($carrito)) {
+        return response()->json(['error' => 'Carrito vacío'], 400);
+    }
+
+    $usuarioId = Auth::id();
+
+    // Crear la compra
+    $compra = new Compra();
+    $compra->usuario_id = $usuarioId;
+    $compra->created_at = now();
+    $compra->updated_at = now();
+    $compra->save();
+
+    $total = 0;
+
+    foreach ($carrito as $item) {
+        $detalle = new DetalleCompra();
+        $detalle->compra_id = $compra->id;
+        $detalle->producto_id = $item['id'];
+        $detalle->cantidad = $item['cantidad'];
+        $detalle->created_at = now();
+        $detalle->updated_at = now();
+        $detalle->save();
+
+        $total += $item['precio'] * $item['cantidad'];
+    }
+
+    return response()->json([
+        'message' => 'Compra registrada',
+        'compra_id' => $compra->id,
+        'total' => $total
+    ]);
+}
+
 }

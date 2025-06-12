@@ -15,7 +15,6 @@ use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\HorarioClasesController;
-use App\Http\Controllers\StripeController;
 
 
 Route::get('/', function () {
@@ -118,22 +117,24 @@ Route::get('/suscripciones', [PlanSuscripcionController::class, 'PublicIndex'])-
 
 
 Route::middleware(['auth'])->group(function () {
-   Route::get('/inscribirse', [InscripcionController::class, 'formularioPublico'])->name('inscribirse.formulario');
-
+    Route::get('/inscribirse', [InscripcionController::class, 'formularioPublico'])->name('inscribirse.formulario');
     Route::post('/inscribirse', [InscripcionController::class, 'guardarDesdeFrontend'])->name('inscribirse.guardar');
+Route::post('pago/crear-sesion', [PagoController::class, 'crearSesion'])->name('pago.crearSesion');
+Route::get('/pago/exito', fn () => Inertia::render('Pago/PagoExito'))->name('pago.exito');
+Route::get('/pago/cancelado', fn () => Inertia::render('Pago/PagoCancelado'))->name('pago.cancelado');
+Route::post('/compras/crear-desde-carrito', [CompraController::class, 'crearDesdeCarritoStripe'])
+    ->name('compras.crearDesdeCarritoStripe');
+
+    Route::post('/pagos/registrar', [PagoController::class, 'registrarDesdeStripe'])->name('pagos.registrarDesdeStripe');
 
 
-Route::post('/api/crear-sesion-checkout', [StripeController::class, 'crearSesionCheckout']);
+
 
 });
 Route::delete('/inscribirse/{id}', [InscripcionController::class, 'eliminarDesdeFrontend'])
     ->middleware('auth')
     ->name('inscribirse.eliminar');
 
-
-Route::get('/pago-simple', [PagoController::class, 'pagoSimple']);
-Route::get('/pago-simple-exito', fn() => '✅ ¡Pago completado con éxito!');
-Route::get('/pago-simple-cancelado', fn() => '❌ Pago cancelado.');
 
 
 Route::prefix('carrito')->middleware(['auth'])->group(function () {

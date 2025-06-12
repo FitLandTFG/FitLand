@@ -48,6 +48,53 @@ export default function Carrito() {
   setTotal(0);
   window.dispatchEvent(new Event('carritoActualizado'));
 };
+const handlePago = async () => {
+  try {
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    // 1. Registrar la compra
+    const crearCompra = await fetch('/compras/crear-desde-carrito', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': token ?? '',
+      },
+      body: JSON.stringify({ carrito }),
+    });
+
+    if (!crearCompra.ok) {
+      alert('Error al registrar la compra antes del pago');
+      return;
+    }
+
+    const compraData = await crearCompra.json();
+
+    // ✅ GUARDAR compra_id y monto antes de redirigir
+    localStorage.setItem('compra_id', compraData.compra_id.toString());
+    localStorage.setItem('monto_total', compraData.total.toString());
+
+    // 2. Crear la sesión de Stripe
+    const response = await fetch('/pago/crear-sesion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': token ?? '',
+      },
+      body: JSON.stringify({ carrito }),
+    });
+
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('No se pudo iniciar el pago.');
+    }
+  } catch (error) {
+    console.error('Error al procesar el pago:', error);
+    alert('Ocurrió un error al procesar el pago.');
+  }
+};
 
 
   return (
@@ -104,7 +151,12 @@ export default function Carrito() {
     Vaciar carrito
   </button>
 
-
+<button
+  onClick={handlePago}
+  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded ml-4"
+>
+  Pagar
+</button>
 </div>
 
           </>

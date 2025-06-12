@@ -13,7 +13,7 @@ class EmailVerificationNotificationController extends Controller
     {
         // Si el correo ya está verificado, redirige al dashboard
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('inicio', absolute: false));
         }
 
         // Envía el enlace de verificación
