@@ -1,3 +1,4 @@
+import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
 import type { ItemCarrito } from '@/types';
@@ -52,7 +53,6 @@ const handlePago = async () => {
   try {
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    // 1. Registrar la compra
     const crearCompra = await fetch('/compras/crear-desde-carrito', {
       method: 'POST',
       headers: {
@@ -69,11 +69,9 @@ const handlePago = async () => {
 
     const compraData = await crearCompra.json();
 
-    // ✅ GUARDAR compra_id y monto antes de redirigir
     localStorage.setItem('compra_id', compraData.compra_id.toString());
     localStorage.setItem('monto_total', compraData.total.toString());
 
-    // 2. Crear la sesión de Stripe
     const response = await fetch('/pago/crear-sesion', {
       method: 'POST',
       headers: {
@@ -100,6 +98,7 @@ const handlePago = async () => {
   return (
     <>
       <Navbar />
+      <Head title="Carrito" />
       <div className="max-w-4xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Tu carrito</h1>
 
@@ -123,7 +122,7 @@ const handlePago = async () => {
                       <div className="flex items-center gap-2 mt-1">
                         <button
                           onClick={() => modificarCantidad(item.id, -1)}
-                          className="bg-gray-300 px-2 rounded text-black hover:bg-gray-400"
+                          className="bg-gray-300 px-2 rounded text-black hover:bg-gray-400 cursor-pointer"
                         >
                           –
                         </button>
@@ -131,7 +130,7 @@ const handlePago = async () => {
                         <button
                           onClick={() => modificarCantidad(item.id, 1)}
                           disabled={item.stock !== undefined && item.cantidad >= item.stock}
-                          className="bg-gray-300 px-2 rounded text-black hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-gray-300 px-2 rounded text-black hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         >
                           +
                         </button>
@@ -146,14 +145,14 @@ const handlePago = async () => {
 
   <button
     onClick={vaciarCarrito}
-    className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded"
+    className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded cursor-pointer"
   >
     Vaciar carrito
   </button>
 
 <button
   onClick={handlePago}
-  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded ml-4"
+  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded ml-4 cursor-pointer"
 >
   Pagar
 </button>

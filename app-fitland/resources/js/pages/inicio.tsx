@@ -53,8 +53,25 @@ export default function Inicio() {
           </Swiper>
         </section>
 
+        <section className="w-full bg-[#41A510] text-white py-20 mt-12 px-4 md:px-8">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              ¡Transforma tu cuerpo con FitLand!
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl mb-8">
+              Únete hoy y entrena en el gimnasio más completo de Madrid.
+            </p>
+            <a
+              href="/suscripciones"
+              className="inline-block bg-white text-[#41A510] px-8 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-gray-100 transition"
+            >
+              Ver planes de suscripción
+            </a>
+          </div>
+        </section>
+
         <section className="max-w-5xl mx-auto py-12 px-4">
-          <h2 className="text-3xl font-bold mb-6 text-center text-[#41A510]">Descripción</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center text-[#41A510]">FitLand</h2>
           <p className="mb-4 text-lg">
             ¡Llegamos a Madrid! Apertura próximamente: Junio 2025.
           </p>
@@ -67,6 +84,41 @@ export default function Inicio() {
             sala de recuperación con sauna y pozo de agua fría, además de solárium y grandes vestuarios equipados con taquillas individuales y secadores. Además de salas dirigidas al entrenamiento de artes marciales (boxeo, kickboxing, muay thai, etc.)
             para todas las edades.
           </p>
+        </section>
+
+        <section className="bg-white py-12">
+          <div className="max-w-5xl mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold text-[#41A510] mb-10">Lo que opinan nuestros clientes</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  nombre: 'María López',
+                  texto: 'Las clases son geniales y el ambiente muy motivador. ¡Lo recomiendo al 100%!',
+                  img: '/images/Opiniones/María López.avif',
+                },
+                {
+                  nombre: 'Carlos Gómez',
+                  texto: 'Maquinaria moderna y mucho espacio. Es el mejor gimnasio en el que he estado.',
+                  img: '/images/Opiniones/Carlos Gómez.avif',
+                },
+                {
+                  nombre: 'Laura Ruiz',
+                  texto: '¡Las artes marciales para niños son una maravilla! Mi hijo está encantado.',
+                  img: '/images/Opiniones/Laura Ruiz.avif',
+                },
+              ].map((t, i) => (
+                <div key={i} className="bg-gray-50 p-6 rounded-lg shadow-md">
+                  <img
+                    src={t.img}
+                    alt={t.nombre}
+                    className="w-16 h-16 mx-auto rounded-full mb-4 object-cover"
+                  />
+                  <p className="text-sm text-gray-700 italic mb-2">"{t.texto}"</p>
+                  <p className="font-semibold">{t.nombre}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="bg-gray-50 py-12">

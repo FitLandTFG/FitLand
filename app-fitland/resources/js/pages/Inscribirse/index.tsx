@@ -1,4 +1,4 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import type { PageProps } from '@/types';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
@@ -73,6 +73,7 @@ export default function Inscribirse() {
   return (
     <>
       <Navbar />
+      <Head title="Inscripciones" />
 
       <div className="max-w-3xl mx-auto p-6 text-black">
         {(successMessage || errorGeneral || Object.keys(errors).length > 0) && (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { router, usePage, Link } from '@inertiajs/react';
+import { Head, router, usePage, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import { Info, X } from 'lucide-react';
 import type { User, ItemCarrito } from '@/types';
@@ -71,6 +71,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
   return (
     <>
       <Navbar />
+      <Head title="Tienda" />
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4">
         <aside className="md:w-1/4 mb-4 md:mb-0">
           <h2 className="text-xl font-semibold mb-2">Categorías</h2>
@@ -207,7 +208,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                    className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                    className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 cursor-pointer"
                   >
                     -
                   </button>
@@ -228,7 +229,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                         productoSeleccionado.stock ? Math.min(productoSeleccionado.stock, prev + 1) : prev + 1
                       )
                     }
-                    className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                    className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 cursor-pointer"
                   >
                     +
                   </button>

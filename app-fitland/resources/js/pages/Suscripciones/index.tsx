@@ -131,13 +131,24 @@ export default function SuscripcionesIndex() {
                                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
                                         {tipo === 'Prueba' ? 'Plan de prueba' : `Suscripción ${tipo}`}
                                     </h2>
-                                    <p className="text-lg leading-relaxed text-gray-800 mb-6">
+                                    <p className="text-lg leading-relaxed text-gray-800 mb-4">
                                         {descripciones[tipo]}
                                     </p>
 
+                                    <div className="text-gray-700 font-medium text-base mb-6">
+                                        {tipo === 'Prueba' ? (
+                                            <span>30 días de prueba gratuitos</span>
+                                        ) : (
+                                            <>
+                                                {planMensual && <p>Mensual: {planMensual.precio.toFixed(2)} €</p>}
+                                                {planAnual && <p>Anual: {planAnual.precio.toFixed(2)} €</p>}
+                                            </>
+                                        )}
+                                    </div>
+
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <button
-                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition duration-200"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition duration-200 cursor-pointer"
                                             onClick={() => console.log(`Agregar ${tipo} mensual`)}
                                         >
                                             {tipo === 'Prueba' ? 'Obtener plan de prueba' : 'Suscripción mensual'}
@@ -145,7 +156,7 @@ export default function SuscripcionesIndex() {
 
                                         {tipo !== 'Prueba' && planAnual && (
                                             <button
-                                                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded transition duration-200"
+                                                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded transition duration-200 cursor-pointer"
                                                 onClick={() => console.log(`Agregar ${tipo} anual`)}
                                             >
                                                 Suscripción anual

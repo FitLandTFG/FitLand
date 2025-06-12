@@ -174,7 +174,7 @@ class PagoController extends Controller
 
         return redirect()->route('admin.pagos.index');
     }
-    //frontend
+    
     public function crearSesion(Request $request)
     {
         $productos = $request->input('carrito', []);
@@ -192,7 +192,7 @@ class PagoController extends Controller
                     'product_data' => [
                         'name' => $producto['nombre'],
                     ],
-                    'unit_amount' => intval($producto['precio'] * 100), // euros a céntimos
+                    'unit_amount' => intval($producto['precio'] * 100),
                 ],
                 'quantity' => $producto['cantidad'],
             ];
@@ -208,19 +208,20 @@ class PagoController extends Controller
 
         return response()->json(['url' => $session->url]);
     }
-    public function registrarDesdeStripe(Request $request)
-{
-    $pago = new Pago();
-    $pago->usuario_id = Auth::id();
-    $pago->compra_id = $request->input('compra_id');
-    $pago->metodo_pago = $request->input('metodo_pago', 'stripe');
-    $pago->estado = $request->input('estado', 'completado');
-    $pago->monto = $request->input('monto');
-    $pago->transaccion_id = $request->input('transaccion_id');
-    $pago->created_at = now();
-    $pago->updated_at = now();
-    $pago->save();
 
-    return response()->json(['message' => 'Pago registrado correctamente']);
-}
+    public function registrarDesdeStripe(Request $request)
+    {
+        $pago = new Pago();
+        $pago->usuario_id = Auth::id();
+        $pago->compra_id = $request->input('compra_id');
+        $pago->metodo_pago = $request->input('metodo_pago', 'stripe');
+        $pago->estado = $request->input('estado', 'completado');
+        $pago->monto = $request->input('monto');
+        $pago->transaccion_id = $request->input('transaccion_id');
+        $pago->created_at = now();
+        $pago->updated_at = now();
+        $pago->save();
+
+        return response()->json(['message' => 'Pago registrado correctamente']);
+    }
 }

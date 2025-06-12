@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import type { PageProps } from '@/types';
 
@@ -58,10 +58,20 @@ export default function HorarioClases() {
   return (
     <>
       <Navbar />
+      <Head title="Clases" />
 
       <main className="container mx-auto px-4 py-8">
         <section className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-[#41A510]">Clases</h2>
+          <div className="max-w-3xl mx-auto bg-[#F0FDF4] border border-[#41A510] rounded-lg p-4 mb-6 flex flex-col items-center text-center shadow-sm space-y-3">
+            <div className="flex gap-2">
+              <img src="/images/Planes suscripciones/Gold.png" alt="Icono Gold" className="w-12 h-12" />
+              <img src="/images/Planes suscripciones/Diamond.png" alt="Icono Diamond" className="w-12 h-12" />
+            </div>
+            <p className="text-lg font-medium text-gray-700">
+              <span className="text-[#41A510] font-semibold">¿Tienes una suscripción Gold o Diamond?</span> Disfruta de acceso <strong>ilimitado</strong> a todas nuestras clases y actividades del gimnasio. ¡Entrena sin límites!
+            </p>
+          </div>
           <p className="mb-8">Explora todas nuestras clases y actividades disponibles:</p>
 
           <div className="grid gap-12">
@@ -93,19 +103,24 @@ export default function HorarioClases() {
                 ],
               },
             ].map(({ titulo, descripcion, actividades }) => (
-              <div key={titulo}>
+              <div key={titulo} className="bg-white shadow-sm rounded-lg p-6">
                 <h3 className="text-2xl font-bold mb-2 text-[#41A510]">{titulo}</h3>
-                <p className="mb-4">{descripcion}</p>
+                <p className="mb-4 text-gray-600">{descripcion}</p>
                 <div className="flex flex-wrap justify-center gap-4">
                   {actividades.map(([img, nombre]) => (
-                    <div className="card w-48 shadow rounded overflow-hidden" key={nombre}>
-                      <img
-                        src={`/images/Clases/${img}`}
-                        alt={nombre}
-                        className="h-32 w-full object-cover"
-                      />
-                      <div className="p-2">
-                        <h4 className="font-bold text-center">{nombre}</h4>
+                    <div
+                      key={nombre}
+                      className="w-48 bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-xl cursor-pointer group"
+                    >
+                      <div className="overflow-hidden h-32">
+                        <img
+                          src={`/images/Clases/${img}`}
+                          alt={nombre}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-3 flex flex-col items-center">
+                        <h4 className="font-semibold text-[#41A510] text-center mb-1">{nombre}</h4>
                       </div>
                     </div>
                   ))}
@@ -151,11 +166,13 @@ export default function HorarioClases() {
                         {clase && (
                           <div
                             onClick={() => {
-                              window.location.href = estaLogueado
-                                ? '/inscribirse'
-                                : '/login';
+                              window.location.href = estaLogueado ? '/inscribirse' : '/login';
                             }}
-                            className={`${coloresClase[clase.nombre] || 'bg-gray-500'} text-white rounded-md h-full w-full flex flex-col justify-center items-center text-center px-2 py-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+                            className={`
+                              ${coloresClase[clase.nombre] || 'bg-gray-500'}
+                              text-white rounded-md h-full w-full flex flex-col justify-center items-center text-center px-2 py-2
+                              shadow-sm hover:shadow-lg hover:brightness-110 transition duration-200 cursor-pointer
+                            `}
                           >
                             <div className="font-semibold text-sm leading-snug">{clase.nombre}</div>
                             <div className="text-xs mt-1">
