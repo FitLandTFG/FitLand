@@ -130,6 +130,7 @@ Route::prefix('carrito')->middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mi-cuenta', [MiCuentaController::class, 'index'])->name('mi-cuenta.index');
+    Route::post('/mi-cuenta/actualizar-imagen', [MiCuentaController::class, 'actualizarImagen'])->name('mi-cuenta.imagen');
 });
 
 require __DIR__.'/settings.php';

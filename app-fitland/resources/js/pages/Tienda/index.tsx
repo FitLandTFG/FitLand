@@ -138,20 +138,20 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                       className="w-full h-80 object-contain"
                     />
                     <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
-                   <div className="text-gray-700 mt-2">
-  {esDiamond ? (
-    <>
-      <span className="line-through text-gray-500 mr-2">
-        {producto.precio.toFixed(2)}€
-      </span>
-      <span className="text-[#41A510] font-semibold">
-        {(producto.precio * 0.9).toFixed(2)}€
-      </span>
-    </>
-  ) : (
-    `${producto.precio.toFixed(2)}€`
-  )}
-</div>
+                    <div className="text-gray-700 mt-2">
+                      {esDiamond ? (
+                        <>
+                          <span className="line-through text-gray-500 mr-2">
+                            {producto.precio.toFixed(2)}€
+                          </span>
+                          <span className="text-[#41A510] font-semibold">
+                            {(producto.precio * 0.9).toFixed(2)}€
+                          </span>
+                        </>
+                      ) : (
+                        `${producto.precio.toFixed(2)}€`
+                      )}
+                    </div>
 
                     <div className="flex space-x-4 mt-2">
                       <Info className="text-white" size={20} />
@@ -173,7 +173,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                       href={link.url}
                       className={`px-3 py-1 border rounded ${link.active
                         ?
-                          'bg-[#41A510] text-white border-[#41A510]'
+                        'bg-[#41A510] text-white border-[#41A510]'
                         : 'bg-white text-[#41A510] border-[#41A510] hover:bg-[#41A510] hover:text-white'}`}
                     >
                       {label}
@@ -196,14 +196,14 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
       </div>
 
       {productoSeleccionado && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
-    onClick={cerrarModal}
-  >
-    <div
-      className="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl relative"
-      onClick={(e) => e.stopPropagation()}
-    >
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+          onClick={cerrarModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-black cursor-pointer"
               onClick={() => setProductoSeleccionado(null)}
@@ -274,9 +274,9 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                       }
 
                       const carritoRaw = localStorage.getItem('carrito');
-                    const carrito: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
+                      const carrito: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
 
-                    const index = carrito.findIndex((item) => item.id === productoSeleccionado.id);
+                      const index = carrito.findIndex((item) => item.id === productoSeleccionado.id);
 
                       if (index !== -1) {
                         carrito[index].cantidad += cantidad;

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\PlanSuscripcion;
+use App\Models\Suscripcion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PlanSuscripcionController extends Controller
@@ -92,12 +94,22 @@ class PlanSuscripcionController extends Controller
         }
     }
 
+    
     public function publicIndex()
     {
         $planes = PlanSuscripcion::orderBy('precio')->get();
 
+        $tieneSuscripcionActiva = false;
+
+        if (Auth::check()) {
+            $tieneSuscripcionActiva = Suscripcion::where('usuario_id', Auth::id())
+                ->where('estado', 'activa')
+                ->exists();
+        }
+
         return Inertia::render('Suscripciones/index', [
-            'planes' => $planes
+            'planes' => $planes,
+            'tieneSuscripcionActiva' => $tieneSuscripcionActiva,
         ]);
     }
 }

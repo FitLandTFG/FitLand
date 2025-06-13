@@ -33,7 +33,6 @@ class Usuario extends Authenticatable implements MustVerifyEmail
     {
         return $this->roles === 'admin';
     }
-    // App\Models\Usuario.php
 
 public function suscripcionActiva()
 {

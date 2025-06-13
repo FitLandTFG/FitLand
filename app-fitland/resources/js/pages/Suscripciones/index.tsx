@@ -1,6 +1,6 @@
-
 import Navbar from '@/components/navbar';
 import { Head, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 interface Plan {
     id: number;
@@ -11,7 +11,9 @@ interface Plan {
 }
 
 export default function SuscripcionesIndex() {
-    const { planes } = usePage().props as unknown as { planes: Plan[] };
+    const { planes, tieneSuscripcionActiva } = usePage().props as unknown as { planes: Plan[], tieneSuscripcionActiva: boolean };
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     const caracteristicas = [
         {
@@ -51,58 +53,61 @@ export default function SuscripcionesIndex() {
     };
 
     const handleSuscripcion = async (planId: number, precio: number) => {
-  const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (tieneSuscripcionActiva) {
+            setModalVisible(true);
+            return;
+        }
 
-  try {
-    const res = await fetch('/suscripciones/crear-desde-frontend', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token ?? '',
-      },
-      body: JSON.stringify({ plan_id: planId }),
-    });
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    if (!res.ok) {
-      alert('Error al crear la suscripción');
-      return;
-    }
+        try {
+            const res = await fetch('/suscripciones/crear-desde-frontend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token ?? '',
+                },
+                body: JSON.stringify({ plan_id: planId }),
+            });
 
-    const data = await res.json();
+            if (!res.ok) {
+                alert('Error al crear la suscripción');
+                return;
+            }
 
-    if (precio === 0) {
-      alert('Suscripción activada con éxito.');
-      return;
-    }
+            const data = await res.json();
 
-    // Guardar suscripcion y precio
-    localStorage.setItem('suscripcion_id', data.suscripcion_id.toString());
-    localStorage.setItem('monto_total', precio.toString());
+            if (precio === 0) {
+                alert('Suscripción activada con éxito.');
+                return;
+            }
+            
+            localStorage.setItem('suscripcion_id', data.suscripcion_id.toString());
+            localStorage.setItem('monto_total', precio.toString());
 
-    // Crear sesión de pago
-    const pagoRes = await fetch('/pago/crear-sesion', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token ?? '',
-      },
-      body: JSON.stringify({
-        carrito: [{ nombre: `Suscripción plan ${planId}`, precio: precio, cantidad: 1 }],
-      }),
-    });
+            const pagoRes = await fetch('/pago/crear-sesion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token ?? '',
+                },
+                body: JSON.stringify({
+                    carrito: [{ nombre: `Suscripción plan ${planId}`, precio: precio, cantidad: 1 }],
+                }),
+            });
 
-    const pagoData = await pagoRes.json();
+            const pagoData = await pagoRes.json();
 
-    if (pagoData.url) {
-      window.location.href = pagoData.url;
-    } else {
-      alert('No se pudo iniciar el pago.');
-    }
-  } catch (error) {
-    console.error('Error en la suscripción:', error);
-    alert('Error inesperado al procesar la suscripción.');
-  }
-};
+            if (pagoData.url) {
+                window.location.href = pagoData.url;
+            } else {
+                alert('No se pudo iniciar el pago.');
+            }
+        } catch (error) {
+            console.error('Error en la suscripción:', error);
+            alert('Error inesperado al procesar la suscripción.');
+        }
+    };
 
     return (
         <>
@@ -225,6 +230,30 @@ export default function SuscripcionesIndex() {
                     })}
                 </div>
             </div>
+
+            {modalVisible && (
+                <div
+                    className="fixed inset-0 flex items-center justify-center z-50"
+                    style={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                    }}
+                >
+                    <div className="bg-white rounded-lg p-8 max-w-md text-center shadow-lg">
+                        <h2 className="text-2xl font-bold text-red-600 mb-4">Ya tienes una suscripción activa</h2>
+                        <p className="text-gray-700 mb-6">
+                            Para adquirir una nueva suscripción, primero debes cancelar la actual.
+                        </p>
+                        <button
+                            onClick={() => setModalVisible(false)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

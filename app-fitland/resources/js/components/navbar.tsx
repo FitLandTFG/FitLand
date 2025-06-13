@@ -35,7 +35,7 @@ export default function Navbar() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  
   return (
     <header className="w-full bg-[#111111] text-white shadow-md z-50 relative">
       <div className="flex items-center justify-between px-4 py-4 lg:px-8 relative">
@@ -45,7 +45,7 @@ export default function Navbar() {
             <div className="relative" ref={userMenuRef}>
               <button onClick={() => setOpenUserMenu(!openUserMenu)} className="focus:outline-none relative w-14 h-14">
                 <img
-                  src={user.avatar}
+                  src={`${user.avatar}`}
                   alt="Avatar"
                   className={`w-14 h-14 rounded-full object-cover cursor-pointer transition duration-150 border 
                   ${openUserMenu

@@ -10,6 +10,20 @@ class UsuarioController extends Controller
 {
     public function index()
     {
+        $usuarios = Usuario::all()->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'nombre_completo' => $user->nombre_completo,
+                'email' => $user->email,
+                'password' => $user->password,
+                'documentacion' => $user->documentacion,
+                'domicilio' => $user->domicilio,
+                'imagen' => $user->imagen_url,
+                'roles' => $user->roles,
+                'email_verified_at' => $user->email_verified_at,
+            ];
+        });
+
         $usuarios = Usuario::orderBy('id', 'desc')->get();
 
         return Inertia::render('admin/usuarios/index', [
@@ -136,24 +150,22 @@ class UsuarioController extends Controller
     }
 
 
- public function eliminar(Usuario $usuario)
-{
-    try {
-        $usuario->delete();
+    public function eliminar(Usuario $usuario)
+    {
+        try {
+            $usuario->delete();
 
-        return redirect()->route('admin.usuarios.index')
-            ->with('success', 'Usuario eliminado correctamente.');
-    } catch (\Illuminate\Database\QueryException $e) {
-        if ($e->getCode() === '23503') {
+            return redirect()->route('admin.usuarios.index')
+                ->with('success', 'Usuario eliminado correctamente.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23503') {
+                return redirect()->back()
+                    ->withErrors(['general' => 'No se puede eliminar este usuario porque está asociado a otros registros como compras, pagos o suscripciones.
+                                                Elimine los registros asociados para poder eliminar al usuario.']);
+            }
+
             return redirect()->back()
-                ->withErrors(['general' => 'No se puede eliminar este usuario porque está asociado a otros registros como compras, pagos o suscripciones.
-                                            Elimine los registros asociados para poder eliminar al usuario.']);
+                ->withErrors(['general' => 'Ocurrió un error al intentar eliminar el usuario.']);
         }
-
-        return redirect()->back()
-            ->withErrors(['general' => 'Ocurrió un error al intentar eliminar el usuario.']);
     }
-}
-
-
 }

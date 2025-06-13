@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import Navbar from '@/components/navbar';
+import { CheckCircle } from 'lucide-react'; // ícono moderno
 
 export default function PagoExito() {
   useEffect(() => {
@@ -17,11 +18,8 @@ export default function PagoExito() {
       try {
         let pagoData = null;
 
-        // 🛒 Si es compra
         if (carritoRaw) {
           const carrito = JSON.parse(carritoRaw);
-
-          // Crear compra
           const compraRes = await fetch('/compras/crear-desde-carrito', {
             method: 'POST',
             headers: {
@@ -33,7 +31,6 @@ export default function PagoExito() {
 
           const compra = await compraRes.json();
 
-          // Crear pago
           pagoData = {
             compra_id: compra.compra_id,
             monto: parseFloat(monto),
@@ -43,7 +40,6 @@ export default function PagoExito() {
           };
         }
 
-        // 🧾 Si es suscripción
         if (planId) {
           const suscripcionRes = await fetch('/suscripciones/crear-desde-frontend', {
             method: 'POST',
@@ -83,7 +79,6 @@ export default function PagoExito() {
           console.log('Pago registrado correctamente');
         }
 
-        // Limpiar todo
         localStorage.removeItem('monto_total');
         localStorage.removeItem('carrito');
         localStorage.removeItem('plan_id');
@@ -100,9 +95,16 @@ export default function PagoExito() {
   return (
     <>
       <Navbar />
-      <div className="max-w-xl mx-auto p-6 text-center">
-        <h1 className="text-3xl font-bold text-green-600 mb-4">¡Pago realizado con éxito!</h1>
-        <p className="text-lg">Gracias por tu compra. Te enviaremos un correo con los detalles.</p>
+      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center px-4 text-center bg-white">
+        <CheckCircle size={64} className="text-green-500 mb-4" />
+        <h1 className="text-3xl font-extrabold text-green-600 mb-2">¡Pago realizado con éxito!</h1>
+        <p className="text-gray-700 text-lg mb-6">Gracias por tu compra. Te hemos enviado un correo con los detalles.</p>
+        <a
+          href="/tienda"
+          className="bg-[#41A510] hover:bg-green-700 text-white font-semibold px-6 py-2 rounded transition"
+        >
+          Volver a la tienda
+        </a>
       </div>
     </>
   );

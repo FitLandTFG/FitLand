@@ -41,7 +41,6 @@ class SuscripcionController extends Controller
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
         ]);
 
-        // Verificar si el usuario ya tiene una suscripción activa
     $yaTieneActiva = \App\Models\Suscripcion::where('usuario_id', $request->usuario_id)
     ->where('estado', 'activa')
     ->exists();
