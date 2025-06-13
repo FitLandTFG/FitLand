@@ -63,7 +63,7 @@ const handlePago = async () => {
     });
 
     if (!crearCompra.ok) {
-      alert('Error al registrar la compra antes del pago');
+      alert('Error al registrar el pago antes de la compra');
       return;
     }
 
