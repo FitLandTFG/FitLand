@@ -114,6 +114,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pago/exito', fn () => Inertia::render('Pago/PagoExito'))->name('pago.exito');
     Route::get('/pago/cancelado', fn () => Inertia::render('Pago/PagoCancelado'))->name('pago.cancelado');
     Route::post('/compras/crear-desde-carrito', [CompraController::class, 'crearDesdeCarritoStripe'])->name('compras.crearDesdeCarritoStripe');
+    Route::post('/suscripciones/crear-desde-frontend', [SuscripcionController::class, 'crearDesdeFrontend'])
+    ->name('suscripciones.crearDesdeFrontend');
 
     Route::post('/pagos/registrar', [PagoController::class, 'registrarDesdeStripe'])->name('pagos.registrarDesdeStripe');
 });

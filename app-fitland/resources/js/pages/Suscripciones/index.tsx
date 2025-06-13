@@ -1,4 +1,4 @@
-import { PageProps } from '@/types';
+
 import Navbar from '@/components/navbar';
 import { Head, usePage } from '@inertiajs/react';
 
@@ -49,6 +49,60 @@ export default function SuscripcionesIndex() {
         Diamond:
             'Incluye todos los beneficios del plan Gold. Además, obtienes un 10% de descuento en todos los productos de la tienda y puedes invitar a una persona a entrenar contigo sin límites presentando ambos DNI en recepción.',
     };
+
+    const handleSuscripcion = async (planId: number, precio: number) => {
+  const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+  try {
+    const res = await fetch('/suscripciones/crear-desde-frontend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': token ?? '',
+      },
+      body: JSON.stringify({ plan_id: planId }),
+    });
+
+    if (!res.ok) {
+      alert('Error al crear la suscripción');
+      return;
+    }
+
+    const data = await res.json();
+
+    if (precio === 0) {
+      alert('Suscripción activada con éxito.');
+      return;
+    }
+
+    // Guardar suscripcion y precio
+    localStorage.setItem('suscripcion_id', data.suscripcion_id.toString());
+    localStorage.setItem('monto_total', precio.toString());
+
+    // Crear sesión de pago
+    const pagoRes = await fetch('/pago/crear-sesion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': token ?? '',
+      },
+      body: JSON.stringify({
+        carrito: [{ nombre: `Suscripción plan ${planId}`, precio: precio, cantidad: 1 }],
+      }),
+    });
+
+    const pagoData = await pagoRes.json();
+
+    if (pagoData.url) {
+      window.location.href = pagoData.url;
+    } else {
+      alert('No se pudo iniciar el pago.');
+    }
+  } catch (error) {
+    console.error('Error en la suscripción:', error);
+    alert('Error inesperado al procesar la suscripción.');
+  }
+};
 
     return (
         <>
@@ -149,7 +203,8 @@ export default function SuscripcionesIndex() {
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <button
                                             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition duration-200 cursor-pointer"
-                                            onClick={() => console.log(`Agregar ${tipo} mensual`)}
+                                            onClick={() => handleSuscripcion(planMensual.id, planMensual.precio)}
+
                                         >
                                             {tipo === 'Prueba' ? 'Obtener plan de prueba' : 'Suscripción mensual'}
                                         </button>
@@ -157,7 +212,8 @@ export default function SuscripcionesIndex() {
                                         {tipo !== 'Prueba' && planAnual && (
                                             <button
                                                 className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded transition duration-200 cursor-pointer"
-                                                onClick={() => console.log(`Agregar ${tipo} anual`)}
+                                                onClick={() => handleSuscripcion(planAnual.id, planAnual.precio)}
+
                                             >
                                                 Suscripción anual
                                             </button>

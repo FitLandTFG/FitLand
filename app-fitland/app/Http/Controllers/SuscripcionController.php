@@ -7,6 +7,8 @@ use App\Models\Usuario;
 use App\Models\PlanSuscripcion;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+
 
 class SuscripcionController extends Controller
 {
@@ -101,4 +103,25 @@ class SuscripcionController extends Controller
 
         return redirect()->route('admin.suscripciones.index');
     }
+
+
+    public function crearDesdeFrontend(Request $request)
+{
+    $usuarioId = Auth::id();
+    $planId = $request->input('plan_id');
+
+    $plan = PlanSuscripcion::findOrFail($planId);
+
+    $suscripcion = new Suscripcion();
+    $suscripcion->usuario_id = $usuarioId;
+    $suscripcion->plan_id = $plan->id;
+    $suscripcion->precio = $plan->precio;
+    $suscripcion->fecha_inicio = now();
+    $suscripcion->fecha_fin = now()->addDays($plan->duracion_dias);
+    $suscripcion->created_at = now();
+    $suscripcion->updated_at = now();
+    $suscripcion->save();
+
+    return response()->json(['suscripcion_id' => $suscripcion->id]);
+}
 }
