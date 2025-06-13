@@ -138,22 +138,21 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                       className="w-full h-80 object-contain"
                     />
                     <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
-                    <p className="text-gray-700 mt-2">
-                      <p className="text-gray-700 mt-2">
-                        {esDiamond ? (
-                          <>
-                            <span className="line-through text-gray-500 mr-2">
-                              {producto.precio.toFixed(2)}€
-                            </span>
-                            <span className="text-[#41A510] font-semibold">
-                              {(producto.precio * 0.9).toFixed(2)}€
-                            </span>
-                          </>
-                        ) : (
-                          `${producto.precio.toFixed(2)}€`
-                        )}
-                      </p>  
-                    </p>
+                   <div className="text-gray-700 mt-2">
+  {esDiamond ? (
+    <>
+      <span className="line-through text-gray-500 mr-2">
+        {producto.precio.toFixed(2)}€
+      </span>
+      <span className="text-[#41A510] font-semibold">
+        {(producto.precio * 0.9).toFixed(2)}€
+      </span>
+    </>
+  ) : (
+    `${producto.precio.toFixed(2)}€`
+  )}
+</div>
+
                     <div className="flex space-x-4 mt-2">
                       <Info className="text-white" size={20} />
                     </div>

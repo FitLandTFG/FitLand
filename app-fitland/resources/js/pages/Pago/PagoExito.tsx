@@ -2,53 +2,100 @@ import { useEffect } from 'react';
 import Navbar from '@/components/navbar';
 
 export default function PagoExito() {
-useEffect(() => {
-  const registrarPago = async () => {
-    const compraId = localStorage.getItem('compra_id');
-    const monto = localStorage.getItem('monto_total');
-    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  useEffect(() => {
+    const registrar = async () => {
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      const monto = localStorage.getItem('monto_total');
+      const carritoRaw = localStorage.getItem('carrito');
+      const planId = localStorage.getItem('plan_id');
 
-    if (!compraId || !monto) {
-      console.warn('No hay datos de compra en localStorage');
-      return;
-    }
-
-    try {
-      const response = await fetch('/pagos/registrar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': token ?? '',
-        },
-        body: JSON.stringify({
-          compra_id: parseInt(compraId),
-          monto: parseFloat(monto),
-          metodo_pago: 'stripe',
-          estado: 'completado',
-          transaccion_id: null,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error('Error al registrar el pago:', await response.text());
+      if (!monto || (!carritoRaw && !planId)) {
+        console.warn('Faltan datos en localStorage');
         return;
       }
 
-      console.log('Pago registrado correctamente');
+      try {
+        let pagoData = null;
 
-      // Limpiar después
-      localStorage.removeItem('compra_id');
-      localStorage.removeItem('monto_total');
-      localStorage.removeItem('carrito');
-      window.dispatchEvent(new Event('carritoActualizado'));
-    } catch (error) {
-      console.error('Error al enviar el pago:', error);
-    }
-  };
+        // 🛒 Si es compra
+        if (carritoRaw) {
+          const carrito = JSON.parse(carritoRaw);
 
-  registrarPago();
-}, []);
+          // Crear compra
+          const compraRes = await fetch('/compras/crear-desde-carrito', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': token ?? '',
+            },
+            body: JSON.stringify({ carrito }),
+          });
 
+          const compra = await compraRes.json();
+
+          // Crear pago
+          pagoData = {
+            compra_id: compra.compra_id,
+            monto: parseFloat(monto),
+            metodo_pago: 'stripe',
+            estado: 'completado',
+            transaccion_id: null,
+          };
+        }
+
+        // 🧾 Si es suscripción
+        if (planId) {
+          const suscripcionRes = await fetch('/suscripciones/crear-desde-frontend', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': token ?? '',
+            },
+            body: JSON.stringify({ plan_id: parseInt(planId) }),
+          });
+
+          const suscripcion = await suscripcionRes.json();
+
+          pagoData = {
+            suscripcion_id: suscripcion.suscripcion_id,
+            monto: parseFloat(monto),
+            metodo_pago: 'stripe',
+            estado: 'completado',
+            transaccion_id: null,
+          };
+        }
+
+        if (pagoData) {
+          const response = await fetch('/pagos/registrar', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': token ?? '',
+            },
+            body: JSON.stringify(pagoData),
+          });
+
+          if (!response.ok) {
+            console.error('Error al registrar el pago:', await response.text());
+            return;
+          }
+
+          console.log('Pago registrado correctamente');
+        }
+
+        // Limpiar todo
+        localStorage.removeItem('monto_total');
+        localStorage.removeItem('carrito');
+        localStorage.removeItem('plan_id');
+        window.dispatchEvent(new Event('carritoActualizado'));
+
+      } catch (error) {
+        console.error('Error al registrar el pago:', error);
+      }
+    };
+
+    registrar();
+  }, []);
 
   return (
     <>
