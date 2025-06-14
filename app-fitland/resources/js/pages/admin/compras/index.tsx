@@ -72,7 +72,9 @@ const Index: React.FC<Props> = ({ compras, flash }) => {
                     ? c.productos.map((p) => `${p.nombre} x${p.pivot.cantidad}`).join(', ')
                     : '—'}
                 </td>
-                <td className="px-4 py-2">{c.fecha_compra}</td>
+                <td className="px-4 py-2">
+  {c.fecha_compra?.slice(0, 19).replace('T', ' ')}
+</td>
                 <td className="px-4 py-2 space-x-2">
                   <Link
                     href={`/admin/compras/${c.id}/editar`}

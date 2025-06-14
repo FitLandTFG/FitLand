@@ -103,11 +103,12 @@ const Editar: React.FC<Props> = (props) => {
         <div>
           <label className="block mb-1 font-semibold">Fecha de Compra</label>
           <input
-            type="date"
-            value={data.fecha_compra}
-            onChange={(e) => setData('fecha_compra', e.target.value)}
-            className="w-full border rounded px-3 py-2"
-          />
+  type="datetime-local"
+  value={data.fecha_compra?.slice(0, 16)}
+  onChange={(e) => setData('fecha_compra', e.target.value)}
+  className="w-full border rounded px-3 py-2"
+/>
+
           {errors.fecha_compra && <p className="text-red-600 text-sm">{errors.fecha_compra}</p>}
         </div>
 

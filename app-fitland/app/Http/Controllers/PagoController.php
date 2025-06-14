@@ -12,19 +12,47 @@ use Inertia\Inertia;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
 class PagoController extends Controller
 {
 
 
-    public function index()
-    {
-        $pagos = Pago::with(['usuario', 'compra'])->orderBy('id', 'desc')->get();
 
-        return Inertia::render('admin/pagos/index', [
-            'pagos' => $pagos
-        ]);
-    }
+public function index()
+{
+    $pagos = Pago::with(['usuario', 'compra', 'suscripcion.plan'])
+        ->orderByDesc('fecha_pago')
+        ->get()
+        ->map(function ($pago) {
+            return [
+                'id' => $pago->id,
+                'monto' => $pago->monto,
+                'fecha_pago' => Carbon::parse($pago->fecha_pago)->format('Y-m-d H:i:s'),
+                'metodo_pago' => $pago->metodo_pago,
+                'estado' => $pago->estado,
+                'transaccion_id' => $pago->transaccion_id,
+                'usuario' => [
+                    'id' => $pago->usuario->id,
+                    'nombre_completo' => $pago->usuario->nombre_completo,
+                ],
+                'compra' => $pago->compra ? [
+                    'id' => $pago->compra->id,
+                    'fecha_compra' => Carbon::parse($pago->compra->fecha_compra)->format('Y-m-d H:i:s'),
+                ] : null,
+                'suscripcion' => $pago->suscripcion ? [
+                    'id' => $pago->suscripcion->id,
+                    'created_at' => Carbon::parse($pago->suscripcion->created_at)->format('Y-m-d H:i:s'),
+                    'plan' => [
+                        'nombre' => $pago->suscripcion->plan->nombre,
+                    ],
+                ] : null,
+            ];
+        });
+
+    return Inertia::render('admin/pagos/index', [
+        'pagos' => $pagos,
+    ]);
+}
 
     public function crear()
     {
@@ -215,7 +243,7 @@ class PagoController extends Controller
     $pago->usuario_id = Auth::id();
     $pago->compra_id = $request->input('compra_id'); // puede ser null
     $pago->suscripcion_id = $request->input('suscripcion_id'); // también puede ser null
-    $pago->metodo_pago = $request->input('metodo_pago', 'stripe');
+    $pago->metodo_pago = $request->input('metodo_pago', 'Tarjeta Credito/Debito');
     $pago->estado = $request->input('estado', 'completado');
     $pago->monto = $request->input('monto');
     $pago->transaccion_id = $request->input('transaccion_id');

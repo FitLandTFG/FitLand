@@ -143,17 +143,18 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           />
         </div>
 
-        {/* Fecha */}
-        <div>
-          <label className="block mb-1 font-semibold">Fecha de Pago</label>
-          <input
-            type="date"
-            value={data.fecha_pago}
-            onChange={(e) => setData('fecha_pago', e.target.value)}
-            className="w-full border rounded px-3 py-2"
-          />
-          {errors.fecha_pago && <p className="text-red-600 text-sm">{errors.fecha_pago}</p>}
-        </div>
+       {/* Fecha y hora */}
+<div>
+  <label className="block mb-1 font-semibold">Fecha y hora de Pago</label>
+  <input
+    type="datetime-local"
+    value={data.fecha_pago.slice(0, 16)}
+    onChange={(e) => setData('fecha_pago', e.target.value)}
+    className="w-full border rounded px-3 py-2"
+  />
+  {errors.fecha_pago && <p className="text-red-600 text-sm">{errors.fecha_pago}</p>}
+</div>
+
 
         {/* Método */}
         <div>

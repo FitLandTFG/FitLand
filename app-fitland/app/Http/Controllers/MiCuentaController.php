@@ -87,8 +87,12 @@ public function actualizarImagen(Request $request)
         mkdir($carpetaDestino, 0755, true);
     }
 
-    // Borrar imagen anterior si existe
-    if ($user->imagen && file_exists(public_path($user->imagen))) {
+    // ⚠️ Solo borramos si la imagen NO es la imagen por defecto
+    if (
+        $user->imagen &&
+        $user->imagen !== '/images/defaults/avatar.jpg' &&
+        file_exists(public_path($user->imagen))
+    ) {
         unlink(public_path($user->imagen));
     }
 

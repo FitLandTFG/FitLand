@@ -33,50 +33,45 @@ class CompraController extends Controller
     }
 
     public function guardar(Request $request)
-{
-    $request->validate([
-        'usuario_id' => 'required|exists:usuarios,id',
-        'fecha_compra' => 'required|date',
-        'productos' => 'required|array|min:1',
-        'productos.*.id' => 'required|exists:productos,id',
-        'productos.*.cantidad' => 'required|integer|min:1',
-    ]);
+    {
+        $request->validate([
+            'usuario_id' => 'required|exists:usuarios,id',
+            'productos' => 'required|array|min:1',
+            'productos.*.id' => 'required|exists:productos,id',
+            'productos.*.cantidad' => 'required|integer|min:1',
+        ]);
 
-    try {
-        DB::transaction(function () use ($request) {
-            foreach ($request->productos as $producto) {
-                $productoBD = Producto::findOrFail($producto['id']);
-                $cantidadSolicitada = $producto['cantidad'];
-
-                if ($productoBD->stock < $cantidadSolicitada) {
-                    throw new \Exception("La cantidad solicitada supera el stock disponible del producto: {$productoBD->nombre}");
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->productos as $producto) {
+                    $productoBD = Producto::findOrFail($producto['id']);
+                    if ($productoBD->stock < $producto['cantidad']) {
+                        throw new \Exception("La cantidad solicitada supera el stock disponible del producto: {$productoBD->nombre}");
+                    }
                 }
-            }
 
-            $compra = Compra::create([
-                'usuario_id' => $request->usuario_id,
-                'fecha_compra' => $request->fecha_compra,
-            ]);
-
-            foreach ($request->productos as $producto) {
-                DetalleCompra::create([
-                    'compra_id' => $compra->id,
-                    'producto_id' => $producto['id'],
-                    'cantidad' => $producto['cantidad'],
+                $compra = Compra::create([
+                    'usuario_id' => $request->usuario_id,
+                    // No se envía 'fecha_compra' porque ahora se rellena automáticamente
                 ]);
 
-                Producto::where('id', $producto['id'])->decrement('stock', $producto['cantidad']);
-            }
-        });
+                foreach ($request->productos as $producto) {
+                    DetalleCompra::create([
+                        'compra_id' => $compra->id,
+                        'producto_id' => $producto['id'],
+                        'cantidad' => $producto['cantidad'],
+                    ]);
 
-        return redirect()->route('admin.compras.index');
+                    Producto::where('id', $producto['id'])->decrement('stock', $producto['cantidad']);
+                }
+            });
 
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->route('admin.compras.index');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
-}
-
-
 
     public function editar(Compra $compra)
     {
@@ -90,77 +85,70 @@ class CompraController extends Controller
     }
 
     public function actualizar(Request $request, Compra $compra)
-{
-    $request->validate([
-        'usuario_id' => 'required|exists:usuarios,id',
-        'fecha_compra' => 'required|date',
-        'productos' => 'required|array|min:1',
-        'productos.*.id' => 'required|exists:productos,id',
-        'productos.*.cantidad' => 'required|integer|min:1',
-    ]);
+    {
+        $request->validate([
+            'usuario_id' => 'required|exists:usuarios,id',
+            'fecha_compra' => 'required|date',
+            'productos' => 'required|array|min:1',
+            'productos.*.id' => 'required|exists:productos,id',
+            'productos.*.cantidad' => 'required|integer|min:1',
+        ]);
 
-    try {
-        DB::transaction(function () use ($request, $compra) {
-            // Restaurar stock anterior
-            foreach ($compra->detalles as $detalle) {
-                Producto::where('id', $detalle->producto_id)->increment('stock', $detalle->cantidad);
-            }
-
-            $compra->update([
-                'usuario_id' => $request->usuario_id,
-                'fecha_compra' => $request->fecha_compra,
-            ]);
-
-            // Eliminar los detalles antiguos
-            $compra->detalles()->delete();
-
-            // Validar stock para los nuevos productos
-            foreach ($request->productos as $producto) {
-                $productoBD = Producto::findOrFail($producto['id']);
-
-                if ($productoBD->stock < $producto['cantidad']) {
-                    throw new \Exception("No hay suficiente stock para el producto: {$productoBD->nombre}");
+        try {
+            DB::transaction(function () use ($request, $compra) {
+                // Restaurar stock anterior
+                foreach ($compra->detalles as $detalle) {
+                    Producto::where('id', $detalle->producto_id)->increment('stock', $detalle->cantidad);
                 }
-            }
 
-            // Insertar los nuevos detalles y descontar stock
-            foreach ($request->productos as $producto) {
-                DetalleCompra::create([
-                    'compra_id' => $compra->id,
-                    'producto_id' => $producto['id'],
-                    'cantidad' => $producto['cantidad'],
+                $compra->update([
+                    'usuario_id' => $request->usuario_id,
+                    'fecha_compra' => $request->fecha_compra,
                 ]);
 
-                Producto::where('id', $producto['id'])->decrement('stock', $producto['cantidad']);
-            }
-        });
+                $compra->detalles()->delete();
 
-        return redirect()->route('admin.compras.index');
+                foreach ($request->productos as $producto) {
+                    $productoBD = Producto::findOrFail($producto['id']);
 
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', $e->getMessage());
+                    if ($productoBD->stock < $producto['cantidad']) {
+                        throw new \Exception("No hay suficiente stock para el producto: {$productoBD->nombre}");
+                    }
+                }
+
+                foreach ($request->productos as $producto) {
+                    DetalleCompra::create([
+                        'compra_id' => $compra->id,
+                        'producto_id' => $producto['id'],
+                        'cantidad' => $producto['cantidad'],
+                    ]);
+
+                    Producto::where('id', $producto['id'])->decrement('stock', $producto['cantidad']);
+                }
+            });
+
+            return redirect()->route('admin.compras.index');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
-}
-
 
     public function eliminar(Compra $compra)
-{
-    try {
-        // Primero eliminamos los detalles de la compra
-        $compra->detalles()->delete();
+    {
+        try {
+            $compra->detalles()->delete();
+            $compra->delete();
 
-        // Luego eliminamos la compra
-        $compra->delete();
+            return redirect()->route('admin.compras.index');
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23503') {
+                return redirect()->back()->with('error', 'No se puede eliminar la compra porque tiene un pago asociado. Elimine el pago asociado para poder eliminar la compra.');
+            }
 
-        return redirect()->route('admin.compras.index');
-    } catch (QueryException $e) {
-        if ($e->getCode() === '23503') {
-            return redirect()->back()->with('error', 'No se puede eliminar la compra porque tiene un pago asociado. Elimine el pago asociado para poder eliminar la compra.');
+            return redirect()->back()->with('error', 'Ocurrió un error al eliminar la compra.');
         }
-
-        return redirect()->back()->with('error', 'Ocurrió un error al eliminar la compra.');
     }
-}
 
     public function crearDesdeCarritoStripe(Request $request)
     {
@@ -172,10 +160,10 @@ class CompraController extends Controller
         $usuarioId = Auth::id();
 
         $compra = Compra::where('usuario_id', $usuarioId)
-        ->whereDoesntHave('pago')
-        ->whereDate('created_at', today())
-        ->latest()
-        ->first();
+            ->whereDoesntHave('pago')
+            ->whereDate('created_at', today())
+            ->latest()
+            ->first();
 
         if (!$compra) {
             $compra = new Compra();

@@ -13,10 +13,17 @@ interface Pago {
     id: number;
     nombre_completo: string;
   };
-  compra: {
+  compra?: {
     id: number;
     fecha_compra: string;
-  };
+  } | null;
+  suscripcion?: {
+    id: number;
+    created_at: string;
+    plan: {
+      nombre: string;
+    };
+  } | null;
 }
 
 interface Props extends PageProps {
@@ -49,7 +56,7 @@ const Index: React.FC<Props> = ({ pagos }) => {
             <tr>
               <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Compra</th>
+              <th className="px-4 py-2">Asociado a</th>
               <th className="px-4 py-2">Fecha</th>
               <th className="px-4 py-2">Método</th>
               <th className="px-4 py-2">Monto (€)</th>
@@ -62,9 +69,22 @@ const Index: React.FC<Props> = ({ pagos }) => {
               <tr key={p.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2">{p.id}</td>
                 <td className="px-4 py-2">{p.usuario?.nombre_completo ?? '—'}</td>
-                <td className="px-4 py-2">#{p.compra?.id ?? '—'}</td>
-                <td className="px-4 py-2">{p.fecha_pago}</td>
-                <td className="px-4 py-2">{p.metodo_pago}</td>
+                <td className="px-4 py-2">
+                  {p.compra
+                    ? `Compra #${p.compra.id}`
+                    : p.suscripcion
+                    ? `Suscripción (${p.suscripcion.plan.nombre})`
+                    : '—'}
+                </td>
+                <td className="px-4 py-2">
+  {(p.compra?.fecha_compra ??
+    p.suscripcion?.created_at ??
+    p.fecha_pago
+  ).slice(0, 19).replace('T', ' ')}
+</td>
+
+
+                <td className="px-4 py-2 capitalize">{p.metodo_pago}</td>
                 <td className="px-4 py-2">{p.monto.toFixed(2)} €</td>
                 <td className="px-4 py-2">
                   <span
