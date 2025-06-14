@@ -17,9 +17,10 @@ class Clase extends Model
     protected $casts = [
         'horario' => 'datetime',
     ];
+    
     public function inscripciones()
-{
-    return $this->hasMany(Inscripcion::class);
-}
+    {
+        return $this->hasMany(Inscripcion::class);
+    }
 
 }

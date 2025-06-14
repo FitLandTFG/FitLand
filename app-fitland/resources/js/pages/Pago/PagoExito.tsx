@@ -100,10 +100,10 @@ export default function PagoExito() {
         <h1 className="text-3xl font-extrabold text-green-600 mb-2">¡Pago realizado con éxito!</h1>
         <p className="text-gray-700 text-lg mb-6">Gracias por tu compra. Te hemos enviado un correo con los detalles.</p>
         <a
-          href="/tienda"
+          href="/"
           className="bg-[#41A510] hover:bg-green-700 text-white font-semibold px-6 py-2 rounded transition"
         >
-          Volver a la tienda
+          Volver a FitLand
         </a>
       </div>
     </>

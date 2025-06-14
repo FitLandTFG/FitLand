@@ -167,11 +167,21 @@ class CompraController extends Controller
 
         $usuarioId = Auth::id();
 
-        $compra = new Compra();
-        $compra->usuario_id = $usuarioId;
-        $compra->created_at = now();
-        $compra->updated_at = now();
-        $compra->save();
+        $compra = Compra::where('usuario_id', $usuarioId)
+        ->whereDoesntHave('pago')
+        ->whereDate('created_at', today())
+        ->latest()
+        ->first();
+
+        if (!$compra) {
+            $compra = new Compra();
+            $compra->usuario_id = $usuarioId;
+            $compra->created_at = now();
+            $compra->updated_at = now();
+            $compra->save();
+        } else {
+            $compra->detalles()->delete();
+        }
 
         $total = 0;
 

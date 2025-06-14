@@ -6,13 +6,23 @@ import { PageProps } from '@/types';
 interface Suscripcion {
   fecha_inicio: string;
   fecha_fin: string;
+  plan: {
+    nombre: string;
+  };
 }
 
 interface Compra {
   id: number;
-  producto: string;
   fecha: string;
-  coste: number;
+  productos: {
+    nombre: string;
+    imagen_url: string | null;
+    precio: number;
+    cantidad: number;
+  }[];
+  pago: {
+    monto: number;
+  };
 }
 
 interface Inscripcion {
@@ -20,7 +30,6 @@ interface Inscripcion {
   fecha: string;
   clase: {
     nombre: string;
-    imagen_url: string;
   };
 }
 
@@ -31,18 +40,21 @@ interface Usuario {
   domicilio: string;
   documentacion: string;
   foto_perfil_url: string;
-  suscripcion_id: Suscripcion | null;
+  suscripcionActiva: Suscripcion | null;
   compras: Compra[];
   inscripciones: Inscripcion[];
 }
 
 interface CuentaPageProps extends PageProps {
   usuario: Usuario;
+  suscripcionActiva: Suscripcion | null;
+  compras: Compra[];
+  inscripciones: Inscripcion[];
 }
-  
+
 
 export default function Cuenta() {
-  const { usuario } = usePage<CuentaPageProps>().props;
+  const { usuario, suscripcionActiva, compras, inscripciones } = usePage<CuentaPageProps>().props;
 
   const [tab, setTab] = useState<'info' | 'suscripcion' | 'contrasena' | 'historial'>('info');
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,14 +68,14 @@ export default function Cuenta() {
   const [cambiandoPass, setCambiandoPass] = useState(false);
   const [mensajePass, setMensajePass] = useState<string | null>(null);
 
-  const diasRestantes = usuario.suscripcion_id
+  const diasRestantes = suscripcionActiva
     ? Math.max(
-        0,
-        Math.ceil(
-          (new Date(usuario.suscripcion_id.fecha_fin).getTime() - new Date().getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
+      0,
+      Math.ceil(
+        (new Date(suscripcionActiva.fecha_fin).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
       )
+    )
     : 0;
 
   const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -139,7 +151,12 @@ export default function Cuenta() {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': token ?? '',
         },
-        body: JSON.stringify({ actual: actualPass, nueva: nuevaPass }),
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          contrasena_actual: actualPass,
+          nueva_contrasena: nuevaPass,
+          nueva_contrasena_confirmation: nuevaPass,
+        }),
       });
 
       if (res.ok) {
@@ -148,9 +165,14 @@ export default function Cuenta() {
         setNuevaPass('');
       } else if (res.status === 422) {
         const data = await res.json();
-        setMensajePass(data.message || 'Error en la actualización.');
-      } else {
-        setMensajePass('La contraseña actual introducida no es correcta.');
+        const errores = data.errors;
+        if (errores?.contrasena_actual) {
+          setMensajePass(errores.contrasena_actual.join(' '));
+        } else if (errores?.nueva_contrasena) {
+          setMensajePass(errores.nueva_contrasena.join(' '));
+        } else {
+          setMensajePass(data.message || 'Error en la validación. La contraseña actual introducida es incorrecta');
+        }
       }
     } catch {
       setMensajePass('Error inesperado al actualizar contraseña.');
@@ -164,25 +186,24 @@ export default function Cuenta() {
       <Head title="Mi cuenta" />
       <Navbar />
       <div className="max-w-5xl mx-auto p-6 text-gray-900">
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-12">
           <div
-            className="relative w-40 h-40 rounded-full overflow-hidden cursor-pointer group"
+            className="relative w-40 h-40 rounded-full overflow-hidden cursor-pointer group ring-4 ring-[#41A510]/30 shadow-lg transition"
             onClick={triggerInputFile}
           >
             <img
               src={fotoPreview}
               alt="Foto de perfil"
-              className="object-cover w-full h-full transition duration-300 group-hover:brightness-110"
+              className={`object-cover w-full h-full ${subiendoFoto ? 'opacity-60' : ''} transition duration-300`}
               draggable={false}
             />
             <div className="absolute inset-0 bg-white bg-opacity-30 opacity-0 group-hover:opacity-60 flex items-center justify-center transition duration-300">
               <svg
-                className="w-10 h-10 text-gray-700"
+                className="w-10 h-10 text-white"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -205,171 +226,185 @@ export default function Cuenta() {
           <p className="text-center text-red-600 mb-6 font-semibold">{errorFoto}</p>
         )}
 
-        <nav className="flex justify-center space-x-6 mb-12 border-b border-gray-300">
-          <button
-            className={`pb-2 font-semibold text-lg ${
-              tab === 'info' ? 'border-b-4 border-[#41A510] text-[#41A510] cursor-pointer' : 'text-gray-600 hover:text-[#41A510] cursor-pointer'
-            }`}
-            onClick={() => setTab('info')}
-          >
-            Información
-          </button>
-          <button
-            className={`pb-2 font-semibold text-lg ${
-              tab === 'suscripcion' ? 'border-b-4 border-[#41A510] text-[#41A510] cursor-pointer' : 'text-gray-600 hover:text-[#41A510] cursor-pointer'
-            }`}
-            onClick={() => setTab('suscripcion')}
-          >
-            Suscripción
-          </button>
-          <button
-            className={`pb-2 font-semibold text-lg ${
-              tab === 'contrasena' ? 'border-b-4 border-[#41A510] text-[#41A510] cursor-pointer' : 'text-gray-600 hover:text-[#41A510] cursor-pointer'
-            }`}
-            onClick={() => setTab('contrasena')}
-          >
-            Contraseña
-          </button>
-          <button
-            className={`pb-2 font-semibold text-lg ${
-              tab === 'historial' ? 'border-b-4 border-[#41A510] text-[#41A510] cursor-pointer' : 'text-gray-600 hover:text-[#41A510] cursor-pointer'
-            }`}
-            onClick={() => setTab('historial')}
-          >
-            Historial
-          </button>
+        <nav className="flex justify-center space-x-10 mb-12 border-b border-gray-200">
+          {['info', 'suscripcion', 'contrasena', 'historial'].map((item) => (
+            <button
+              key={item}
+              onClick={() => setTab(item as typeof tab)}
+              className={`relative pb-3 text-lg font-semibold transition-all duration-300 cursor-pointer ${tab === item
+                  ? 'text-[#41A510] after:absolute after:bottom-0 after:left-0 after:w-full after:h-1 after:bg-[#41A510]'
+                  : 'text-gray-500 hover:text-[#41A510]'
+                }`}
+            >
+              {{
+                info: 'Información',
+                suscripcion: 'Suscripción',
+                contrasena: 'Contraseña',
+                historial: 'Historial'
+              }[item]}
+            </button>
+          ))}
         </nav>
 
         <div>
           {tab === 'info' && (
-            <div className="space-y-4 text-gray-800 max-w-xl mx-auto">
-              <p>
-                <strong>Nombre:</strong> {usuario.nombre_completo}
-              </p>
-              <p>
-                <strong>Email:</strong> {usuario.email}
-              </p>
-              <p>
-                <strong>DNI:</strong> {usuario.documentacion}
-              </p>
-              <p>
-                <strong>Domicilio:</strong> {usuario.domicilio}
-              </p>
-              <p>
-                <strong>Suscripción activa:</strong>{' '}
-                {usuario.suscripcion_id ? 'Sí' : 'Ninguna'}
-              </p>
+            <div className="bg-white rounded-xl shadow p-6 space-y-4 max-w-xl mx-auto border border-gray-200">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-600">Nombre:</span>
+                <span>{usuario.nombre_completo}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-600">Email:</span>
+                <span>{usuario.email}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-600">DNI:</span>
+                <span>{usuario.documentacion}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-600">Domicilio:</span>
+                <span>{usuario.domicilio}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-600">Suscripción activa:</span>
+                <span className={`font-bold ${suscripcionActiva ? 'text-[#41A510]' : 'text-gray-400'}`}>
+                  {suscripcionActiva ? 'Sí' : 'Ninguna'}
+                </span>
+              </div>
             </div>
           )}
 
           {tab === 'suscripcion' && (
-            <div className="max-w-xl mx-auto space-y-6 text-gray-800">
-              {usuario.suscripcion_id ? (
-                <>
+            <div className="max-w-xl mx-auto text-gray-800">
+              {suscripcionActiva ? (
+                <div className="bg-white border border-gray-200 rounded-xl shadow-md p-6 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <p className="text-xl font-semibold text-[#41A510]">
+                      {suscripcionActiva.plan.nombre}
+                    </p>
+                    <span className="text-sm bg-[#41A510]/10 text-[#41A510] px-3 py-1 rounded-full">
+                      Activa
+                    </span>
+                  </div>
                   <p>
-                    <strong>Fecha de inicio:</strong>{' '}
-                    {new Date(usuario.suscripcion_id.fecha_inicio).toLocaleDateString()}
+                    <strong>Inicio:</strong> {new Date(suscripcionActiva.fecha_inicio).toLocaleDateString()}
                   </p>
                   <p>
-                    <strong>Fecha final:</strong>{' '}
-                    {new Date(usuario.suscripcion_id.fecha_fin).toLocaleDateString()} (
-                    {diasRestantes} días restantes)
+                    <strong>Finaliza:</strong> {new Date(suscripcionActiva.fecha_fin).toLocaleDateString()}
+                    <span className="text-sm text-gray-500 ml-2">
+                      ({diasRestantes} días restantes)
+                    </span>
                   </p>
                   <button
                     onClick={() => setModalVisible(true)}
-                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                    className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition cursor-pointer"
                   >
-                    Dar de baja mi suscripción
+                    Cancelar suscripción
                   </button>
-                </>
+                </div>
               ) : (
-                <p>No tienes ninguna suscripción activa actualmente.</p>
+                <div className="text-center text-gray-500 py-6 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                  No tienes ninguna suscripción activa.
+                </div>
               )}
             </div>
           )}
 
           {tab === 'contrasena' && (
-            <form onSubmit={cambiarContrasena} className="max-w-md mx-auto space-y-4 text-gray-800">
+            <form onSubmit={cambiarContrasena} className="max-w-md mx-auto space-y-4 bg-white p-6 rounded-xl shadow border border-gray-200">
               <div>
-                <label className="block font-semibold">Contraseña actual</label>
+                <label className="block font-medium mb-1 text-gray-700">Contraseña actual</label>
                 <input
                   type="password"
                   value={actualPass}
                   onChange={(e) => setActualPass(e.target.value)}
                   required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#41A510]/50 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block font-semibold">Nueva contraseña</label>
+                <label className="block font-medium mb-1 text-gray-700">Nueva contraseña</label>
                 <input
                   type="password"
                   value={nuevaPass}
                   onChange={(e) => setNuevaPass(e.target.value)}
                   required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#41A510]/50 focus:outline-none"
                 />
               </div>
               <button
                 type="submit"
                 disabled={cambiandoPass}
-                className="bg-[#41A510] text-white px-4 py-2 rounded hover:bg-[#3B940E] transition cursor-pointer"
+                className="w-full bg-[#41A510] text-white py-2 rounded hover:bg-[#3B940E] transition cursor-pointer"
               >
                 {cambiandoPass ? 'Actualizando...' : 'Actualizar contraseña'}
               </button>
               {mensajePass && (
-                <p className="text-sm mt-2 text-center text-gray-700">{mensajePass}</p>
+                <p className={`text-sm mt-2 text-center ${mensajePass.includes('correctamente') ? 'text-green-600' : 'text-red-600'}`}>
+                  {mensajePass}
+                </p>
               )}
             </form>
           )}
 
           {tab === 'historial' && (
-            <div className="space-y-8 max-w-3xl mx-auto text-gray-800">
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Compras</h3>
-                {usuario.compras.length > 0 ? (
-                  <ul className="space-y-2">
-                    {usuario.compras.map((compra) => (
-                      <li
-                        key={compra.id}
-                        className="flex justify-between border-b border-gray-200 py-2"
-                      >
-                        <span>{compra.producto}</span>
-                        <span>{new Date(compra.fecha).toLocaleDateString()}</span>
-                        <span>{compra.coste.toFixed(2)} €</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto text-gray-800">
+              <div className="bg-white shadow rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-6 text-[#41A510]">Compras</h3>
+                {compras.length > 0 ? (
+                  <ul className="space-y-6">
+                    {compras.map((compra) => (
+                      <li key={compra.id} className="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                        <p className="text-sm text-gray-500 mb-2">
+                          <strong>Fecha:</strong>{' '}
+                          {new Date(compra.fecha).toLocaleDateString()}
+                        </p>
+                        <ul className="divide-y divide-gray-200">
+                          {compra.productos.map((producto, index) => (
+                            <li key={index} className="flex items-center py-2 gap-3">
+                              <img
+                                src={producto.imagen_url ?? '/images/productos/producto-generico.png'}
+                                alt={producto.nombre}
+                                className="w-14 h-14 object-cover border rounded"
+                              />
+                              <div className="flex-1">
+                                <p className="font-medium">{producto.nombre}</p>
+                                <p className="text-sm text-gray-500">
+                                  {producto.precio.toFixed(2)} € x {producto.cantidad}
+                                </p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-right mt-4 font-semibold text-[#41A510]">
+                          Total: {compra.pago?.monto?.toFixed(2) ?? '0.00'} €
+                        </p>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p>No hay compras registradas.</p>
+                  <p className="text-gray-600">No hay compras registradas.</p>
                 )}
               </div>
 
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Inscripciones</h3>
-                {usuario.inscripciones.length > 0 ? (
-                  <ul className="space-y-4">
-                    {usuario.inscripciones.map((inscripcion) => (
+              <div className="bg-white shadow rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-6 text-[#41A510]">Inscripciones</h3>
+                {inscripciones.length > 0 ? (
+                  <ul className="space-y-6">
+                    {inscripciones.map((inscripcion) => (
                       <li
                         key={inscripcion.id}
-                        className="flex items-center space-x-4 border-b border-gray-200 pb-2"
+                        className="bg-gray-50 border rounded-lg p-4 shadow-sm"
                       >
-                        <img
-                          src={inscripcion.clase.imagen_url}
-                          alt={inscripcion.clase.nombre}
-                          className="w-16 h-16 object-cover rounded"
-                        />
-                        <div>
-                          <p className="font-semibold">{inscripcion.clase.nombre}</p>
-                          <p className="text-sm text-gray-600">
-                            {new Date(inscripcion.fecha).toLocaleDateString()}
-                          </p>
-                        </div>
+                        <p className="font-medium text-lg">{inscripcion.clase.nombre}</p>
+                        <p className="text-sm text-gray-500">
+                          Fecha: {new Date(inscripcion.fecha).toLocaleDateString()}
+                        </p>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p>No hay inscripciones registradas.</p>
+                  <p className="text-gray-600">No hay inscripciones registradas.</p>
                 )}
               </div>
             </div>
@@ -386,13 +421,13 @@ export default function Cuenta() {
             <div className="flex justify-end space-x-4 mt-6">
               <button
                 onClick={() => setModalVisible(false)}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 onClick={cancelarSuscripcion}
-                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded cursor-pointer"
               >
                 Confirmar cancelación
               </button>

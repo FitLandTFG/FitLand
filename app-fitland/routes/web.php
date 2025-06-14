@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\DetalleCompraController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\MiCuentaController;
 use App\Http\Controllers\PagoController;
@@ -131,6 +132,7 @@ Route::prefix('carrito')->middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mi-cuenta', [MiCuentaController::class, 'index'])->name('mi-cuenta.index');
     Route::post('/mi-cuenta/actualizar-imagen', [MiCuentaController::class, 'actualizarImagen'])->name('mi-cuenta.imagen');
+    Route::post('/mi-cuenta/cambiar-contrasena', [MiCuentaController::class, 'cambiarContrasena'])->name('mi-cuenta.password');
 });
 
 require __DIR__.'/settings.php';
