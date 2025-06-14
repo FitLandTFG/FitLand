@@ -133,6 +133,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mi-cuenta', [MiCuentaController::class, 'index'])->name('mi-cuenta.index');
     Route::post('/mi-cuenta/actualizar-imagen', [MiCuentaController::class, 'actualizarImagen'])->name('mi-cuenta.imagen');
     Route::post('/mi-cuenta/cambiar-contrasena', [MiCuentaController::class, 'cambiarContrasena'])->name('mi-cuenta.password');
+      Route::post('/mi-cuenta/cancelar-suscripcion', [MiCuentaController::class, 'cancelarSuscripcion'])->name('mi-cuenta.cancelar-suscripcion');
 });
 
 require __DIR__.'/settings.php';

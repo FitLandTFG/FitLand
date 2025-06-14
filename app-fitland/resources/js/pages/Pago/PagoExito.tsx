@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Navbar from '@/components/navbar';
-import { CheckCircle } from 'lucide-react'; // ícono moderno
+import { CheckCircle } from 'lucide-react';
 
 export default function PagoExito() {
   useEffect(() => {
@@ -16,10 +16,10 @@ export default function PagoExito() {
       }
 
       try {
-        let pagoData = null;
-
-        if (carritoRaw) {
+        // 1. Procesar compra SOLO si hay productos en el carrito
+        if (carritoRaw && JSON.parse(carritoRaw).length > 0) {
           const carrito = JSON.parse(carritoRaw);
+
           const compraRes = await fetch('/compras/crear-desde-carrito', {
             method: 'POST',
             headers: {
@@ -31,15 +31,31 @@ export default function PagoExito() {
 
           const compra = await compraRes.json();
 
-          pagoData = {
+          const pagoCompra = {
             compra_id: compra.compra_id,
             monto: parseFloat(monto),
             metodo_pago: 'stripe',
             estado: 'completado',
             transaccion_id: null,
           };
+
+          const resPagoCompra = await fetch('/pagos/registrar', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': token ?? '',
+            },
+            body: JSON.stringify(pagoCompra),
+          });
+
+          if (!resPagoCompra.ok) {
+            console.error('Error al registrar el pago de la compra:', await resPagoCompra.text());
+          } else {
+            console.log('Pago de la compra registrado correctamente');
+          }
         }
 
+        // 2. Procesar suscripción si hay planId
         if (planId) {
           const suscripcionRes = await fetch('/suscripciones/crear-desde-frontend', {
             method: 'POST',
@@ -52,37 +68,41 @@ export default function PagoExito() {
 
           const suscripcion = await suscripcionRes.json();
 
-          pagoData = {
+          const pagoSuscripcion = {
             suscripcion_id: suscripcion.suscripcion_id,
             monto: parseFloat(monto),
             metodo_pago: 'stripe',
             estado: 'completado',
             transaccion_id: null,
           };
-        }
 
-        if (pagoData) {
-          const response = await fetch('/pagos/registrar', {
+          const resPagoSuscripcion = await fetch('/pagos/registrar', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'X-CSRF-TOKEN': token ?? '',
             },
-            body: JSON.stringify(pagoData),
+            body: JSON.stringify(pagoSuscripcion),
           });
 
-          if (!response.ok) {
-            console.error('Error al registrar el pago:', await response.text());
-            return;
+          if (!resPagoSuscripcion.ok) {
+            console.error('Error al registrar el pago de la suscripción:', await resPagoSuscripcion.text());
+          } else {
+            console.log('Pago de la suscripción registrado correctamente');
           }
-
-          console.log('Pago registrado correctamente');
         }
 
+        // 3. Limpiar localStorage
         localStorage.removeItem('monto_total');
-        localStorage.removeItem('carrito');
-        localStorage.removeItem('plan_id');
-        window.dispatchEvent(new Event('carritoActualizado'));
+
+        if (carritoRaw) {
+          localStorage.removeItem('carrito');
+          window.dispatchEvent(new Event('carritoActualizado'));
+        }
+
+        if (planId) {
+          localStorage.removeItem('plan_id');
+        }
 
       } catch (error) {
         console.error('Error al registrar el pago:', error);

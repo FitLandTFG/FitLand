@@ -15,7 +15,7 @@
                     Volver al inicio
                 </a>
             </div>
-    
+
             <h1 class="absolute left-1/2 transform -translate-x-1/2 text-2xl font-semibold">
                 Administrador
             </h1>
@@ -78,12 +78,6 @@
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Detalle de Compra</h3>
             <p class="text-gray-600 mb-4">Gestiona los productos asociados a cada compra.</p>
             <a href="/admin/detalle-compras" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">Carrito</h3>
-                <p class="text-gray-600 mb-4">Gestiona los productos añadidos al carrito por los usuarios.</p>
-                <a href="/admin/carritos" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Ver opciones</a>
             </div>
 
             <div class="flex flex-col justify-end h-40">

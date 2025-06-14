@@ -3,6 +3,10 @@ import { type BreadcrumbItem, type User } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Link } from '@inertiajs/react';
+
+
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -61,12 +65,12 @@ export default function Inicio() {
             <p className="text-lg sm:text-xl md:text-2xl mb-8">
               Únete hoy y entrena en el gimnasio más completo de Madrid.
             </p>
-            <a
-              href="/suscripciones"
-              className="inline-block bg-white text-[#41A510] px-8 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-gray-100 transition"
-            >
-              Ver planes de suscripción
-            </a>
+           <Link
+  href="/suscripciones"
+  className="inline-block bg-white text-[#41A510] px-8 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-gray-100 transition"
+>
+  Ver planes de suscripción
+</Link>
           </div>
         </section>
 

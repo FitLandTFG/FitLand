@@ -53,24 +53,12 @@ const handlePago = async () => {
   try {
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    const crearCompra = await fetch('/compras/crear-desde-carrito', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token ?? '',
-      },
-      body: JSON.stringify({ carrito }),
-    });
+    // Eliminar cualquier suscripción anterior pendiente
+    localStorage.removeItem('plan_id');
 
-    if (!crearCompra.ok) {
-      alert('Error al registrar el pago antes de la compra');
-      return;
-    }
-
-    const compraData = await crearCompra.json();
-
-    localStorage.setItem('compra_id', compraData.compra_id.toString());
-    localStorage.setItem('monto_total', compraData.total.toString());
+    // Guardamos el carrito y el monto, pero no creamos la compra aún
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    localStorage.setItem('monto_total', total.toString());
 
     const response = await fetch('/pago/crear-sesion', {
       method: 'POST',
@@ -93,6 +81,7 @@ const handlePago = async () => {
     alert('Ocurrió un error al procesar el pago.');
   }
 };
+
 
 
   return (

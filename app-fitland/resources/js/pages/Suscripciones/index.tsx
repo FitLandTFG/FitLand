@@ -58,55 +58,46 @@ export default function SuscripcionesIndex() {
             return;
         }
 
-        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+       try {
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-        try {
-            const res = await fetch('/suscripciones/crear-desde-frontend', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token ?? '',
+    // Eliminar cualquier carrito antiguo para evitar pagos duplicados
+    localStorage.removeItem('carrito');
+
+    // Guardamos los datos necesarios SOLO para el registro posterior del pago
+    localStorage.setItem('plan_id', planId.toString());
+    localStorage.setItem('monto_total', precio.toString());
+
+    const pagoRes = await fetch('/pago/crear-sesion', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token ?? '',
+        },
+        body: JSON.stringify({
+            carrito: [
+                {
+                    nombre: `Suscripción plan ${planId}`,
+                    precio: precio,
+                    cantidad: 1,
                 },
-                body: JSON.stringify({ plan_id: planId }),
-            });
+            ],
+        }),
+    });
 
-            if (!res.ok) {
-                alert('Error al crear la suscripción');
-                return;
-            }
+    const pagoData = await pagoRes.json();
 
-            const data = await res.json();
+    if (pagoData.url) {
+        window.location.href = pagoData.url;
+    } else {
+        alert('No se pudo iniciar el pago.');
+    }
+} catch (error) {
+    console.error('Error en la suscripción:', error);
+    alert('Error inesperado al procesar la suscripción.');
+}
 
-            if (precio === 0) {
-                alert('Suscripción activada con éxito.');
-                return;
-            }
-            
-            localStorage.setItem('suscripcion_id', data.suscripcion_id.toString());
-            localStorage.setItem('monto_total', precio.toString());
 
-            const pagoRes = await fetch('/pago/crear-sesion', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token ?? '',
-                },
-                body: JSON.stringify({
-                    carrito: [{ nombre: `Suscripción plan ${planId}`, precio: precio, cantidad: 1 }],
-                }),
-            });
-
-            const pagoData = await pagoRes.json();
-
-            if (pagoData.url) {
-                window.location.href = pagoData.url;
-            } else {
-                alert('No se pudo iniciar el pago.');
-            }
-        } catch (error) {
-            console.error('Error en la suscripción:', error);
-            alert('Error inesperado al procesar la suscripción.');
-        }
     };
 
     return (

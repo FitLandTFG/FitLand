@@ -174,7 +174,7 @@ class PagoController extends Controller
 
         return redirect()->route('admin.pagos.index');
     }
-    
+
     public function crearSesion(Request $request)
     {
         $productos = $request->input('carrito', []);
@@ -209,19 +209,21 @@ class PagoController extends Controller
         return response()->json(['url' => $session->url]);
     }
 
-    public function registrarDesdeStripe(Request $request)
-    {
-        $pago = new Pago();
-        $pago->usuario_id = Auth::id();
-        $pago->compra_id = $request->input('compra_id');
-        $pago->metodo_pago = $request->input('metodo_pago', 'stripe');
-        $pago->estado = $request->input('estado', 'completado');
-        $pago->monto = $request->input('monto');
-        $pago->transaccion_id = $request->input('transaccion_id');
-        $pago->created_at = now();
-        $pago->updated_at = now();
-        $pago->save();
+   public function registrarDesdeStripe(Request $request)
+{
+    $pago = new Pago();
+    $pago->usuario_id = Auth::id();
+    $pago->compra_id = $request->input('compra_id'); // puede ser null
+    $pago->suscripcion_id = $request->input('suscripcion_id'); // también puede ser null
+    $pago->metodo_pago = $request->input('metodo_pago', 'stripe');
+    $pago->estado = $request->input('estado', 'completado');
+    $pago->monto = $request->input('monto');
+    $pago->transaccion_id = $request->input('transaccion_id');
+    $pago->created_at = now();
+    $pago->updated_at = now();
+    $pago->save();
 
-        return response()->json(['message' => 'Pago registrado correctamente']);
-    }
+    return response()->json(['message' => 'Pago registrado correctamente']);
+}
+
 }

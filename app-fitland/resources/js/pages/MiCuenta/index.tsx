@@ -113,6 +113,7 @@ export default function Cuenta() {
       const data = await res.json();
       setFotoPreview(data.foto_perfil_url);
       setSubiendoFoto(false);
+      window.location.reload();
     } catch (error) {
       setErrorFoto('Error inesperado al subir la foto');
       setSubiendoFoto(false);
@@ -192,11 +193,16 @@ export default function Cuenta() {
             onClick={triggerInputFile}
           >
             <img
-              src={fotoPreview}
-              alt="Foto de perfil"
-              className={`object-cover w-full h-full ${subiendoFoto ? 'opacity-60' : ''} transition duration-300`}
-              draggable={false}
-            />
+                    src={fotoPreview}
+                    alt={
+                        fotoPreview.includes('/images/defaults/avatar.jpg')
+                        ? 'Avatar por defecto'
+                        : `Foto de perfil de ${usuario.nombre_completo}`
+                    }
+                    className={`object-cover w-full h-full ${subiendoFoto ? 'opacity-60' : ''} transition duration-300`}
+                    draggable={false}
+                    />
+
             <div className="absolute inset-0 bg-white bg-opacity-30 opacity-0 group-hover:opacity-60 flex items-center justify-center transition duration-300">
               <svg
                 className="w-10 h-10 text-white"

@@ -144,19 +144,23 @@ class CompraController extends Controller
 
 
     public function eliminar(Compra $compra)
-    {
-        try {
-            $compra->delete();
-            return redirect()->route('admin.compras.index');
-        } catch (QueryException $e) {
-            if ($e->getCode() === '23503') {
-                return redirect()->back()->with('error', 'No se puede eliminar la compra porque tiene un pago asociado.
-                                                          Elimine el pago asociado para poder eliminar la compra.');
-            }
+{
+    try {
+        // Primero eliminamos los detalles de la compra
+        $compra->detalles()->delete();
 
-            return redirect()->back()->with('error', 'Ocurrió un error al eliminar la compra.');
+        // Luego eliminamos la compra
+        $compra->delete();
+
+        return redirect()->route('admin.compras.index');
+    } catch (QueryException $e) {
+        if ($e->getCode() === '23503') {
+            return redirect()->back()->with('error', 'No se puede eliminar la compra porque tiene un pago asociado. Elimine el pago asociado para poder eliminar la compra.');
         }
+
+        return redirect()->back()->with('error', 'Ocurrió un error al eliminar la compra.');
     }
+}
 
     public function crearDesdeCarritoStripe(Request $request)
     {
