@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Head, usePage } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import AppLayout from '@/layouts/app-layout';
 import { PageProps } from '@/types';
 
 interface Suscripcion {
@@ -183,9 +183,8 @@ export default function Cuenta() {
   };
 
   return (
-    <>
+    <AppLayout>
       <Head title="Mi cuenta" />
-      <Navbar />
       <div className="max-w-5xl mx-auto p-6 text-gray-900">
         <div className="flex justify-center mb-12">
           <div
@@ -441,6 +440,6 @@ export default function Cuenta() {
           </div>
         </div>
       )}
-    </>
+    </AppLayout>
   );
 }

@@ -1,4 +1,4 @@
-import Navbar from '@/components/navbar';
+import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import type { User } from '@/types';
@@ -75,11 +75,8 @@ const user = auth.user;
      try {
         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    // Eliminar cualquier carrito antiguo para evitar pagos duplicados
-    // Eliminar cualquier carrito antiguo
         localStorage.removeItem('carrito');
 
-        // Guardamos solo el plan_id para luego registrar la suscripción tras el pago
         localStorage.setItem('plan_id', planId.toString());
 
         const pagoRes = await fetch('/pago/crear-sesion', {
@@ -89,7 +86,7 @@ const user = auth.user;
                 'X-CSRF-TOKEN': token ?? '',
             },
             body: JSON.stringify({
-                suscripcion: true, // indicamos que es una suscripción
+                suscripcion: true,
                 plan_id: planId,
             }),
         });
@@ -110,8 +107,7 @@ const user = auth.user;
     };
 
     return (
-        <>
-            <Navbar />
+        <AppLayout>
             <Head title="Planes de Suscripción" />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
                 <h1 className="text-4xl font-bold mb-4 text-center">Planes de Suscripción</h1>
@@ -254,6 +250,6 @@ const user = auth.user;
                     </div>
                 </div>
             )}
-        </>
+        </AppLayout>
     );
 }

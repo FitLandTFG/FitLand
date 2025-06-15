@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, usePage } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import AppLayout from '@/layouts/app-layout';
 import type { PageProps } from '@/types';
 
 const diasSemana: Record<string, string> = {
@@ -56,8 +56,7 @@ export default function HorarioClases() {
   const estaLogueado = !!auth.user;
 
   return (
-    <>
-      <Navbar />
+    <AppLayout>
       <Head title="Clases" />
 
       <main className="container mx-auto px-4 py-8">
@@ -189,6 +188,6 @@ export default function HorarioClases() {
           </div>
         </section>
       </main>
-    </>
+    </AppLayout>
   );
 }

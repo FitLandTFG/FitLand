@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router, usePage, Link } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
+import AppLayout from '@/layouts/app-layout';
 import { Info, X } from 'lucide-react';
 import type { User, ItemCarrito } from '@/types';
 
@@ -71,8 +71,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
   };
 
   return (
-    <>
-      <Navbar />
+    <AppLayout>
       <Head title="Tienda" />
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4">
         <aside className="md:w-1/4 mb-4 md:mb-0">
@@ -139,7 +138,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                     <h3 className="text-lg font-semibold text-center mt-2">{producto.nombre}</h3>
                     <div className="text-gray-700 mt-2">
 
-                        {producto.precio.toFixed(2)}€
+                      {producto.precio.toFixed(2)}€
 
                     </div>
 
@@ -212,7 +211,7 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
                 <p className="text-sm text-gray-500 mb-3">Stock disponible: {productoSeleccionado.stock ?? 'N/D'}</p>
                 <p className="text-2xl font-semibold mb-4">
 
-                    {productoSeleccionado.precio.toFixed(2)}€
+                  {productoSeleccionado.precio.toFixed(2)}€
 
                 </p>
 
@@ -248,50 +247,49 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
 
                 <div className="mt-4">
                   <button
-  onClick={() => {
-    if (!user) {
-      router.visit('/login');
-      return;
-    }
+                    onClick={() => {
+                      if (!user) {
+                        router.visit('/login');
+                        return;
+                      }
 
-    const stockDisponible = productoSeleccionado.stock ?? 0;
+                      const stockDisponible = productoSeleccionado.stock ?? 0;
 
-    const carritoRaw = localStorage.getItem('carrito');
-    const carrito: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
+                      const carritoRaw = localStorage.getItem('carrito');
+                      const carrito: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
 
-    const index = carrito.findIndex((item) => item.id === productoSeleccionado.id);
+                      const index = carrito.findIndex((item) => item.id === productoSeleccionado.id);
 
-    if (index !== -1) {
-      const nuevaCantidad = carrito[index].cantidad + cantidad;
-      if (nuevaCantidad > stockDisponible) {
-        carrito[index].cantidad = stockDisponible;
-      } else {
-        carrito[index].cantidad = nuevaCantidad;
-      }
-    } else {
-      carrito.push({
-        id: productoSeleccionado.id,
-        nombre: productoSeleccionado.nombre,
-        precio: productoSeleccionado.precio,
-        imagen: productoSeleccionado.imagen,
-        cantidad: Math.min(cantidad, stockDisponible),
-        stock: stockDisponible,
-      });
-    }
+                      if (index !== -1) {
+                        const nuevaCantidad = carrito[index].cantidad + cantidad;
+                        if (nuevaCantidad > stockDisponible) {
+                          carrito[index].cantidad = stockDisponible;
+                        } else {
+                          carrito[index].cantidad = nuevaCantidad;
+                        }
+                      } else {
+                        carrito.push({
+                          id: productoSeleccionado.id,
+                          nombre: productoSeleccionado.nombre,
+                          precio: productoSeleccionado.precio,
+                          imagen: productoSeleccionado.imagen,
+                          cantidad: Math.min(cantidad, stockDisponible),
+                          stock: stockDisponible,
+                        });
+                      }
 
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    window.dispatchEvent(new Event('carritoActualizado'));
-    setProductoSeleccionado(null);
-  }}
-  disabled={productoSeleccionado.stock === 0}
-  className={`${
-    productoSeleccionado.stock === 0
-      ? 'bg-gray-400 cursor-not-allowed'
-      : 'bg-green-600 hover:bg-green-700 cursor-pointer'
-  } text-white px-4 py-2 rounded mt-2`}
->
-  {productoSeleccionado.stock === 0 ? 'Sin stock' : 'Añadir al carrito'}
-</button>
+                      localStorage.setItem('carrito', JSON.stringify(carrito));
+                      window.dispatchEvent(new Event('carritoActualizado'));
+                      setProductoSeleccionado(null);
+                    }}
+                    disabled={productoSeleccionado.stock === 0}
+                    className={`${productoSeleccionado.stock === 0
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+                      } text-white px-4 py-2 rounded mt-2`}
+                  >
+                    {productoSeleccionado.stock === 0 ? 'Sin stock' : 'Añadir al carrito'}
+                  </button>
 
                 </div>
               </div>
@@ -299,6 +297,6 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
           </div>
         </div>
       )}
-    </>
+    </AppLayout>
   );
 }

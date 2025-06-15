@@ -1,7 +1,7 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import type { PageProps } from '@/types';
 import { useEffect, useState } from 'react';
-import Navbar from '@/components/navbar';
+import AppLayout from '@/layouts/app-layout';
 import { router } from '@inertiajs/react';
 
 type Clase = {
@@ -71,8 +71,7 @@ export default function Inscribirse() {
   };
 
   return (
-    <>
-      <Navbar />
+    <AppLayout>
       <Head title="Inscripciones" />
 
       <div className="max-w-3xl mx-auto p-6 text-black">
@@ -290,6 +289,6 @@ export default function Inscribirse() {
           </div>
         )}
       </div>
-    </>
+    </AppLayout>
   );
 }
