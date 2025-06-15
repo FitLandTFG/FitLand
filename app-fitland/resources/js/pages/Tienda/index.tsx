@@ -248,38 +248,51 @@ export default function Tienda({ productos, categorias, filtros, user }: Props) 
 
                 <div className="mt-4">
                   <button
-                    onClick={() => {
-                      if (!user) {
-                        router.visit('/login');
-                        return;
-                      }
+  onClick={() => {
+    if (!user) {
+      router.visit('/login');
+      return;
+    }
 
-                      const carritoRaw = localStorage.getItem('carrito');
-                      const carrito: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
+    const stockDisponible = productoSeleccionado.stock ?? 0;
 
-                      const index = carrito.findIndex((item) => item.id === productoSeleccionado.id);
+    const carritoRaw = localStorage.getItem('carrito');
+    const carrito: ItemCarrito[] = carritoRaw ? JSON.parse(carritoRaw) : [];
 
-                      if (index !== -1) {
-                        carrito[index].cantidad += cantidad;
-                      } else {
-                        carrito.push({
-                          id: productoSeleccionado.id,
-                          nombre: productoSeleccionado.nombre,
-                          precio: productoSeleccionado.precio,
-                          imagen: productoSeleccionado.imagen,
-                          cantidad: cantidad,
-                          stock: productoSeleccionado.stock,
-                        });
-                      }
+    const index = carrito.findIndex((item) => item.id === productoSeleccionado.id);
 
-                      localStorage.setItem('carrito', JSON.stringify(carrito));
-                      window.dispatchEvent(new Event('carritoActualizado'));
-                      setProductoSeleccionado(null);
-                    }}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mt-2 cursor-pointer"
-                  >
-                    Añadir al carrito
-                  </button>
+    if (index !== -1) {
+      const nuevaCantidad = carrito[index].cantidad + cantidad;
+      if (nuevaCantidad > stockDisponible) {
+        carrito[index].cantidad = stockDisponible;
+      } else {
+        carrito[index].cantidad = nuevaCantidad;
+      }
+    } else {
+      carrito.push({
+        id: productoSeleccionado.id,
+        nombre: productoSeleccionado.nombre,
+        precio: productoSeleccionado.precio,
+        imagen: productoSeleccionado.imagen,
+        cantidad: Math.min(cantidad, stockDisponible),
+        stock: stockDisponible,
+      });
+    }
+
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    window.dispatchEvent(new Event('carritoActualizado'));
+    setProductoSeleccionado(null);
+  }}
+  disabled={productoSeleccionado.stock === 0}
+  className={`${
+    productoSeleccionado.stock === 0
+      ? 'bg-gray-400 cursor-not-allowed'
+      : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+  } text-white px-4 py-2 rounded mt-2`}
+>
+  {productoSeleccionado.stock === 0 ? 'Sin stock' : 'Añadir al carrito'}
+</button>
+
                 </div>
               </div>
             </div>

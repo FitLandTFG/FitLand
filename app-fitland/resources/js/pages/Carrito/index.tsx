@@ -67,17 +67,8 @@ export default function Carrito() {
     // Eliminar cualquier suscripción anterior pendiente
     localStorage.removeItem('plan_id');
 
-    // Guardamos el carrito tal cual está, sin modificar precios
+    // Guardamos el carrito tal cual está, sin modificar precios ni total
     localStorage.setItem('carrito', JSON.stringify(carrito));
-
-    // Calculamos el monto total con o sin descuento
-    const montoFinal = carrito.reduce(
-      (acc, item) => acc + item.precio * item.cantidad,
-      0
-    ) * (tieneDescuento ? 0.9 : 1);
-
-    // Guardamos solo el monto final con descuento (si aplica)
-    localStorage.setItem('monto_total', montoFinal.toFixed(2));
 
     const response = await fetch('/pago/crear-sesion', {
       method: 'POST',
@@ -85,8 +76,7 @@ export default function Carrito() {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': token ?? '',
       },
-      body: JSON.stringify({ carrito, monto_total: montoFinal.toFixed(2) }),
-
+      body: JSON.stringify({ carrito }), // ya no enviamos monto_total
     });
 
     const data = await response.json();

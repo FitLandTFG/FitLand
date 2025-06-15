@@ -60,49 +60,51 @@ const user = auth.user;
             'Incluye todos los beneficios del plan Gold. Además, obtienes un 10% de descuento en todos los productos de la tienda y puedes invitar a una persona a entrenar contigo sin límites presentando ambos DNI en recepción.',
     };
 
-    const handleSuscripcion = async (planId: number, precio: number) => {
-            if (!user) {
+    const handleSuscripcion = async (planId: number) => {
+    if (!user) {
         window.location.href = '/login';
         return;
     }
-        if (tieneSuscripcionActiva) {
-            setModalVisible(true);
-            return;
-        }
 
-       try {
-    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (tieneSuscripcionActiva) {
+        setModalVisible(true);
+        return;
+    }
+
+
+     try {
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
     // Eliminar cualquier carrito antiguo para evitar pagos duplicados
-    localStorage.removeItem('carrito');
+    // Eliminar cualquier carrito antiguo
+        localStorage.removeItem('carrito');
 
-    // Guardamos los datos necesarios SOLO para el registro posterior del pago
-    localStorage.setItem('plan_id', planId.toString());
-    localStorage.setItem('monto_total', precio.toString());
+        // Guardamos solo el plan_id para luego registrar la suscripción tras el pago
+        localStorage.setItem('plan_id', planId.toString());
 
-   const pagoRes = await fetch('/pago/crear-sesion', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token ?? '',
-    },
-    body: JSON.stringify({
-        plan_nombre: `Plan ${planId}`,
-        precio: precio,
-    }),
-});
+        const pagoRes = await fetch('/pago/crear-sesion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token ?? '',
+            },
+            body: JSON.stringify({
+                suscripcion: true, // indicamos que es una suscripción
+                plan_id: planId,
+            }),
+        });
 
-    const pagoData = await pagoRes.json();
+   const pagoData = await pagoRes.json();
 
-    if (pagoData.url) {
-        window.location.href = pagoData.url;
-    } else {
-        alert('No se pudo iniciar el pago.');
+        if (pagoData.url) {
+            window.location.href = pagoData.url;
+        } else {
+            alert('No se pudo iniciar el pago.');
+        }
+    } catch (error) {
+        console.error('Error en la suscripción:', error);
+        alert('Error inesperado al procesar la suscripción.');
     }
-} catch (error) {
-    console.error('Error en la suscripción:', error);
-    alert('Error inesperado al procesar la suscripción.');
-}
 
 
     };
@@ -206,7 +208,7 @@ const user = auth.user;
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <button
                                             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition duration-200 cursor-pointer"
-                                            onClick={() => handleSuscripcion(planMensual.id, planMensual.precio)}
+                                            onClick={() => handleSuscripcion(planMensual.id)}
 
                                         >
                                             {tipo === 'Prueba' ? 'Obtener plan de prueba' : 'Suscripción mensual'}
@@ -215,7 +217,7 @@ const user = auth.user;
                                         {tipo !== 'Prueba' && planAnual && (
                                             <button
                                                 className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded transition duration-200 cursor-pointer"
-                                                onClick={() => handleSuscripcion(planAnual.id, planAnual.precio)}
+                                                onClick={() => handleSuscripcion(planAnual.id)}
 
                                             >
                                                 Suscripción anual

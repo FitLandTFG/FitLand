@@ -134,6 +134,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/mi-cuenta/actualizar-imagen', [MiCuentaController::class, 'actualizarImagen'])->name('mi-cuenta.imagen');
     Route::post('/mi-cuenta/cambiar-contrasena', [MiCuentaController::class, 'cambiarContrasena'])->name('mi-cuenta.password');
       Route::post('/mi-cuenta/cancelar-suscripcion', [MiCuentaController::class, 'cancelarSuscripcion'])->name('mi-cuenta.cancelar-suscripcion');
+      Route::get('/factura/pdf', [\App\Http\Controllers\FacturaController::class, 'generarPDF'])->name('factura.pdf');
+
+
 });
 
 require __DIR__.'/settings.php';

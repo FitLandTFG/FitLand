@@ -6,6 +6,7 @@ use App\Models\Compra;
 use App\Models\Pago;
 use App\Models\Suscripcion;
 use App\Models\Usuario;
+use App\Models\PlanSuscripcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 class PagoController extends Controller
 {
 
@@ -149,25 +151,27 @@ public function index()
     }
 
 
-    public function actualizar(Request $request, Pago $pago)
-    {
-        $request->validate([
-            'compra_id'      => 'required|exists:compras,id',
-            'fecha_pago'     => 'required|date',
-            'metodo_pago'    => 'required|string|max:50',
-            'estado'         => 'required|in:pendiente,completado,fallido',
-            'transaccion_id' => 'nullable|string|max:100',
-        ]);
+ public function actualizar(Request $request, Pago $pago)
+{
+    $request->validate([
+        'compra_id'      => 'required|exists:compras,id',
+        'fecha_pago'     => 'required|date',
+        'metodo_pago'    => 'required|string|max:50',
+        'estado'         => 'required|in:pendiente,completado,fallido',
+        'transaccion_id' => 'nullable|string|max:100',
+    ]);
 
-        $compra = Compra::with(['usuario', 'productos'])->findOrFail($request->compra_id);
-        $usuario_id = $compra->usuario_id;
+    $compra = Compra::with(['usuario', 'productos'])->findOrFail($request->compra_id);
+    $usuario_id = $compra->usuario_id;
 
-        $monto = $compra->productos->sum(function ($producto) {
-            return $producto->precio * $producto->pivot->cantidad;
-        });
+    $monto = $compra->productos->sum(function ($producto) {
+        return $producto->precio * $producto->pivot->cantidad;
+    });
 
-        $estadoAnterior = $pago->getOriginal('estado');
+    $estadoAnterior = $pago->getOriginal('estado');
 
+    DB::transaction(function () use ($pago, $request, $usuario_id, $compra, $monto, $estadoAnterior) {
+        // Actualizar el pago
         $pago->update([
             'usuario_id'     => $usuario_id,
             'compra_id'      => $compra->id,
@@ -178,8 +182,11 @@ public function index()
             'transaccion_id' => $request->transaccion_id ?? null,
         ]);
 
+        // 1. Descontar stock si pasa a completado y aún no se ha descontado
         if (
-            $estadoAnterior !== 'completado' && $request->estado === 'completado' && !$compra->stock_descargado
+            $estadoAnterior !== 'completado' &&
+            $request->estado === 'completado' &&
+            !$compra->stock_descargado
         ) {
             foreach ($compra->productos as $producto) {
                 $cantidad = $producto->pivot->cantidad;
@@ -194,7 +201,26 @@ public function index()
             $compra->stock_descargado = true;
             $compra->save();
         }
-    }
+
+        // 2. Devolver stock si pasa de completado a pendiente o fallido
+        if (
+            $estadoAnterior === 'completado' &&
+            in_array($request->estado, ['pendiente', 'fallido']) &&
+            $compra->stock_descargado
+        ) {
+            foreach ($compra->productos as $producto) {
+                $cantidad = $producto->pivot->cantidad;
+                $producto->increment('stock', $cantidad);
+            }
+
+            $compra->stock_descargado = false;
+            $compra->save();
+        }
+    });
+
+    return redirect()->route('admin.pagos.index');
+}
+
 
     public function eliminar(Pago $pago)
     {
@@ -202,61 +228,80 @@ public function index()
 
         return redirect()->route('admin.pagos.index');
     }
-
 public function crearSesion(Request $request)
 {
+    $usuario = Auth::user();
+
+    // Caso 1: es una suscripción
+    if ($request->boolean('suscripcion')) {
+        $planId = $request->input('plan_id');
+        $plan = \App\Models\PlanSuscripcion::findOrFail($planId);
+
+$precio = $plan->precio;
+$unitAmount = intval(bcmul($precio, '100', 2));
+
+        // 🔒 NO aplicar descuento al COMPRAR una suscripción, ni aunque sea Diamond
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => "Suscripción {$plan->nombre}",
+                    ],
+                    'unit_amount' => $unitAmount,
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => route('pago.exito'),
+            'cancel_url' => route('pago.cancelado'),
+        ]);
+
+        return response()->json(['url' => $session->url]);
+    }
+
+    // Caso 2: es una compra normal con carrito
+    $productos = $request->input('carrito', []);
+    if (empty($productos)) {
+        return response()->json(['error' => 'El carrito está vacío'], 400);
+    }
+
+    $ids = collect($productos)->pluck('id')->unique()->toArray();
+    $productosDB = \App\Models\Producto::whereIn('id', $ids)->get()->keyBy('id');
+
+    $total = 0;
+    foreach ($productos as $item) {
+        $producto = $productosDB->get($item['id']);
+        $cantidad = intval($item['cantidad']);
+        if ($producto && $cantidad > 0) {
+            $total = bcadd($total, bcmul($producto->precio, $cantidad, 2), 2);
+        }
+    }
+
+    // ✅ Solo aplicar descuento si el usuario YA tiene una suscripción Diamond activa
+    $tieneDescuento = $usuario?->suscripcionActiva()?->exists() &&
+                      str_contains(strtolower($usuario->suscripcionActiva->plan->nombre ?? ''), 'diamond');
+
+    if ($tieneDescuento) {
+        $total *= 0.90;
+    }
+
     Stripe::setApiKey(env('STRIPE_SECRET'));
 
-    // 🛒 CASO 1: Compra de productos desde el carrito
-    if ($request->has('carrito') && $request->has('monto_total')) {
-        $productos = $request->input('carrito');
-        $montoTotal = $request->input('monto_total');
-
-        if (empty($productos) || !$montoTotal) {
-            return response()->json(['error' => 'El carrito está vacío o falta el monto total'], 400);
-        }
-
-        $lineItems = [[
-            'price_data' => [
-                'currency' => 'eur',
-                'product_data' => [
-                    'name' => 'Compra FitLand',
-                ],
-                'unit_amount' => intval(floatval($montoTotal) * 100), // en céntimos
-            ],
-            'quantity' => 1,
-        ]];
-    }
-
-    // 💳 CASO 2: Compra de una suscripción
-    elseif ($request->has('plan_nombre') && $request->has('precio')) {
-        $planNombre = $request->input('plan_nombre');
-        $precio = $request->input('precio');
-
-        if (!$planNombre || !$precio) {
-            return response()->json(['error' => 'Faltan datos de la suscripción'], 400);
-        }
-
-        $lineItems = [[
-            'price_data' => [
-                'currency' => 'eur',
-                'product_data' => [
-                    'name' => 'Suscripción: ' . $planNombre,
-                ],
-                'unit_amount' => intval(floatval($precio) * 100),
-            ],
-            'quantity' => 1,
-        ]];
-    }
-
-    // ❌ Ningún caso válido
-    else {
-        return response()->json(['error' => 'Faltan datos para crear la sesión de pago'], 400);
-    }
-
-    $session = Session::create([
+    $session = \Stripe\Checkout\Session::create([
         'payment_method_types' => ['card'],
-        'line_items' => $lineItems,
+        'line_items' => [[
+            'price_data' => [
+                'currency' => 'eur',
+                'product_data' => ['name' => 'Compra FitLand'],
+                'unit_amount' => intval($total * 100),
+            ],
+            'quantity' => 1,
+        ]],
         'mode' => 'payment',
         'success_url' => route('pago.exito'),
         'cancel_url' => route('pago.cancelado'),
@@ -266,20 +311,65 @@ public function crearSesion(Request $request)
 }
 
 
-
-   public function registrarDesdeStripe(Request $request)
+public function registrarDesdeStripe(Request $request)
 {
-    $pago = new Pago();
-    $pago->usuario_id = Auth::id();
-    $pago->compra_id = $request->input('compra_id'); // puede ser null
-    $pago->suscripcion_id = $request->input('suscripcion_id'); // también puede ser null
-    $pago->metodo_pago = $request->input('metodo_pago', 'Tarjeta Credito/Debito');
-    $pago->estado = $request->input('estado', 'completado');
-    $pago->monto = $request->input('monto');
-    $pago->transaccion_id = $request->input('transaccion_id');
-    $pago->created_at = now();
-    $pago->updated_at = now();
-    $pago->save();
+    $usuario_id = Auth::id();
+    $compra_id = $request->input('compra_id');
+    $suscripcion_id = $request->input('suscripcion_id');
+
+    if (!$compra_id && !$suscripcion_id) {
+        return response()->json(['error' => 'Debe enviarse una compra o una suscripción.'], 400);
+    }
+
+    DB::transaction(function () use ($usuario_id, $compra_id, $suscripcion_id, $request) {
+        $monto = '0.00';
+
+        if ($compra_id) {
+            $compra = Compra::with(['productos', 'usuario.suscripcionActiva.plan'])->findOrFail($compra_id);
+
+            foreach ($compra->productos as $producto) {
+                $subtotal = bcmul($producto->precio, $producto->pivot->cantidad, 2);
+                $monto = bcadd($monto, $subtotal, 2);
+            }
+
+            $suscripcionActiva = $compra->usuario->suscripcionActiva;
+
+            if ($suscripcionActiva && str_contains(strtolower($suscripcionActiva->plan->nombre), 'diamond')) {
+                $monto = bcmul($monto, '0.90', 2);
+            }
+        } elseif ($suscripcion_id) {
+            $suscripcion = Suscripcion::with(['plan'])->findOrFail($suscripcion_id);
+            $monto = $suscripcion->plan->precio;
+        }
+
+        $pago = new Pago();
+        $pago->usuario_id = $usuario_id;
+        $pago->compra_id = $compra_id;
+        $pago->suscripcion_id = $suscripcion_id;
+        $pago->metodo_pago = $request->input('metodo_pago', 'Tarjeta Credito/Debito');
+        $pago->estado = $request->input('estado', 'completado');
+        $pago->monto = $monto;
+        $pago->transaccion_id = $request->input('transaccion_id');
+        $pago->created_at = now();
+        $pago->updated_at = now();
+        $pago->save();
+
+        // ✅ Si es compra y pago completado y no se ha restado aún el stock
+        if (isset($compra) && $pago->estado === 'completado' && !$compra->stock_descargado) {
+            foreach ($compra->productos as $producto) {
+                $cantidad = $producto->pivot->cantidad;
+
+                if ($producto->stock < $cantidad) {
+                    throw new \Exception("No hay suficiente stock para el producto: {$producto->nombre}");
+                }
+
+                $producto->decrement('stock', $cantidad);
+            }
+
+            $compra->stock_descargado = true;
+            $compra->save();
+        }
+    });
 
     return response()->json(['message' => 'Pago registrado correctamente']);
 }
