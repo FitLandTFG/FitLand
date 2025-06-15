@@ -105,8 +105,14 @@ class CarritoController extends Controller
         return redirect()->route('admin.carritos.index');
     }
 
-    public function vistaUsuario()
-    {
-        return Inertia::render('Carrito/index');
-    }
+public function vistaUsuario()
+{
+    $usuario = Auth::user()->load('suscripcionActiva.plan');
+
+    return Inertia::render('Carrito/index', [
+        'suscripcion' => $usuario->suscripcionActiva?->plan->nombre,
+    ]);
+}
+
+
 }

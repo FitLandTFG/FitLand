@@ -203,39 +203,69 @@ public function index()
         return redirect()->route('admin.pagos.index');
     }
 
-    public function crearSesion(Request $request)
-    {
-        $productos = $request->input('carrito', []);
+public function crearSesion(Request $request)
+{
+    Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        if (empty($productos)) {
-            return response()->json(['error' => 'El carrito está vacío'], 400);
+    // 🛒 CASO 1: Compra de productos desde el carrito
+    if ($request->has('carrito') && $request->has('monto_total')) {
+        $productos = $request->input('carrito');
+        $montoTotal = $request->input('monto_total');
+
+        if (empty($productos) || !$montoTotal) {
+            return response()->json(['error' => 'El carrito está vacío o falta el monto total'], 400);
         }
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $lineItems = collect($productos)->map(function ($producto) {
-            return [
-                'price_data' => [
-                    'currency' => 'eur',
-                    'product_data' => [
-                        'name' => $producto['nombre'],
-                    ],
-                    'unit_amount' => intval($producto['precio'] * 100),
+        $lineItems = [[
+            'price_data' => [
+                'currency' => 'eur',
+                'product_data' => [
+                    'name' => 'Compra FitLand',
                 ],
-                'quantity' => $producto['cantidad'],
-            ];
-        })->toArray();
-
-        $session = Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => $lineItems,
-            'mode' => 'payment',
-            'success_url' => route('pago.exito'),
-            'cancel_url' => route('pago.cancelado'),
-        ]);
-
-        return response()->json(['url' => $session->url]);
+                'unit_amount' => intval(floatval($montoTotal) * 100), // en céntimos
+            ],
+            'quantity' => 1,
+        ]];
     }
+
+    // 💳 CASO 2: Compra de una suscripción
+    elseif ($request->has('plan_nombre') && $request->has('precio')) {
+        $planNombre = $request->input('plan_nombre');
+        $precio = $request->input('precio');
+
+        if (!$planNombre || !$precio) {
+            return response()->json(['error' => 'Faltan datos de la suscripción'], 400);
+        }
+
+        $lineItems = [[
+            'price_data' => [
+                'currency' => 'eur',
+                'product_data' => [
+                    'name' => 'Suscripción: ' . $planNombre,
+                ],
+                'unit_amount' => intval(floatval($precio) * 100),
+            ],
+            'quantity' => 1,
+        ]];
+    }
+
+    // ❌ Ningún caso válido
+    else {
+        return response()->json(['error' => 'Faltan datos para crear la sesión de pago'], 400);
+    }
+
+    $session = Session::create([
+        'payment_method_types' => ['card'],
+        'line_items' => $lineItems,
+        'mode' => 'payment',
+        'success_url' => route('pago.exito'),
+        'cancel_url' => route('pago.cancelado'),
+    ]);
+
+    return response()->json(['url' => $session->url]);
+}
+
+
 
    public function registrarDesdeStripe(Request $request)
 {

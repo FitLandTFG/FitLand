@@ -1,8 +1,18 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
 import type { ItemCarrito } from '@/types';
+export interface PageProps {
+  suscripcion?: string | null;
+  [key: string]: unknown; // <- esto soluciona el error
+}
+
+
 export default function Carrito() {
+  const { suscripcion } = usePage<PageProps>().props;
+
+  const tieneDescuento = suscripcion === 'Diamond Mensual' || suscripcion === 'Diamond Anual';
+
   const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
   const [total, setTotal] = useState(0);
 
@@ -44,21 +54,30 @@ export default function Carrito() {
   };
 
   const vaciarCarrito = () => {
-  localStorage.removeItem('carrito');
-  setCarrito([]);
-  setTotal(0);
-  window.dispatchEvent(new Event('carritoActualizado'));
-};
-const handlePago = async () => {
+    localStorage.removeItem('carrito');
+    setCarrito([]);
+    setTotal(0);
+    window.dispatchEvent(new Event('carritoActualizado'));
+  };
+
+  const handlePago = async () => {
   try {
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
     // Eliminar cualquier suscripción anterior pendiente
     localStorage.removeItem('plan_id');
 
-    // Guardamos el carrito y el monto, pero no creamos la compra aún
+    // Guardamos el carrito tal cual está, sin modificar precios
     localStorage.setItem('carrito', JSON.stringify(carrito));
-    localStorage.setItem('monto_total', total.toString());
+
+    // Calculamos el monto total con o sin descuento
+    const montoFinal = carrito.reduce(
+      (acc, item) => acc + item.precio * item.cantidad,
+      0
+    ) * (tieneDescuento ? 0.9 : 1);
+
+    // Guardamos solo el monto final con descuento (si aplica)
+    localStorage.setItem('monto_total', montoFinal.toFixed(2));
 
     const response = await fetch('/pago/crear-sesion', {
       method: 'POST',
@@ -66,7 +85,8 @@ const handlePago = async () => {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': token ?? '',
       },
-      body: JSON.stringify({ carrito }),
+      body: JSON.stringify({ carrito, monto_total: montoFinal.toFixed(2) }),
+
     });
 
     const data = await response.json();
@@ -129,24 +149,36 @@ const handlePago = async () => {
                 </li>
               ))}
             </ul>
-<div className="mt-6 text-right">
-  <p className="text-xl font-semibold mb-4">Total: €{total.toFixed(2)}</p>
 
-  <button
-    onClick={vaciarCarrito}
-    className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded cursor-pointer"
-  >
-    Vaciar carrito
-  </button>
+            <div className="mt-6 text-right">
+              <div className="text-right mb-4">
+                <p className="text-xl font-semibold">Total: €{total.toFixed(2)}</p>
+                {tieneDescuento && (
+                  <>
+                    <p className="text-green-700 font-semibold">
+                      Descuento (10%): –€{(total * 0.1).toFixed(2)}
+                    </p>
+                    <p className="text-2xl font-bold mt-1">
+                      Total a pagar: €{(total * 0.9).toFixed(2)}
+                    </p>
+                  </>
+                )}
+              </div>
 
-<button
-  onClick={handlePago}
-  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded ml-4 cursor-pointer"
->
-  Pagar
-</button>
-</div>
+              <button
+                onClick={vaciarCarrito}
+                className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded cursor-pointer"
+              >
+                Vaciar carrito
+              </button>
 
+              <button
+                onClick={handlePago}
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded ml-4 cursor-pointer"
+              >
+                Pagar
+              </button>
+            </div>
           </>
         )}
       </div>

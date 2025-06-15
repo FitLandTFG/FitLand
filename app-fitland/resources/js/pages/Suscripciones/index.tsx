@@ -1,6 +1,7 @@
 import Navbar from '@/components/navbar';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import type { User } from '@/types';
 
 interface Plan {
     id: number;
@@ -11,7 +12,14 @@ interface Plan {
 }
 
 export default function SuscripcionesIndex() {
-    const { planes, tieneSuscripcionActiva } = usePage().props as unknown as { planes: Plan[], tieneSuscripcionActiva: boolean };
+const { planes, tieneSuscripcionActiva, auth } = usePage().props as unknown as {
+  planes: Plan[];
+  tieneSuscripcionActiva: boolean;
+  auth: { user: User | null };
+};
+
+const user = auth.user;
+
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -53,6 +61,10 @@ export default function SuscripcionesIndex() {
     };
 
     const handleSuscripcion = async (planId: number, precio: number) => {
+            if (!user) {
+        window.location.href = '/login';
+        return;
+    }
         if (tieneSuscripcionActiva) {
             setModalVisible(true);
             return;
@@ -68,22 +80,17 @@ export default function SuscripcionesIndex() {
     localStorage.setItem('plan_id', planId.toString());
     localStorage.setItem('monto_total', precio.toString());
 
-    const pagoRes = await fetch('/pago/crear-sesion', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': token ?? '',
-        },
-        body: JSON.stringify({
-            carrito: [
-                {
-                    nombre: `Suscripción plan ${planId}`,
-                    precio: precio,
-                    cantidad: 1,
-                },
-            ],
-        }),
-    });
+   const pagoRes = await fetch('/pago/crear-sesion', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': token ?? '',
+    },
+    body: JSON.stringify({
+        plan_nombre: `Plan ${planId}`,
+        precio: precio,
+    }),
+});
 
     const pagoData = await pagoRes.json();
 
