@@ -20,7 +20,6 @@ class InscripcionController extends Controller
             'inscripciones' => $inscripciones
         ]);
     }
-
     public function crear()
     {
         return Inertia::render('admin/inscripciones/crear', [
@@ -29,7 +28,6 @@ class InscripcionController extends Controller
             'inscripciones' => Inscripcion::select('usuario_id', 'clase_id')->get(),
         ]);
     }
-
    public function guardar(Request $request)
 {
     $request->validate([
@@ -37,7 +35,6 @@ class InscripcionController extends Controller
         'clase_id' => 'required|exists:clases,id',
         'fecha_inscripcion' => 'required|date_format:Y-m-d H:i:s',
     ]);
-
     // Validar si ya está inscrito
     $yaInscrito = Inscripcion::where('usuario_id', $request->usuario_id)
         ->where('clase_id', $request->clase_id)
@@ -58,17 +55,12 @@ if (!$suscripcion || !in_array($suscripcion->plan->tipo, ['Gold', 'Diamond'])) {
         'general' => 'Necesitas una suscripción Gold o Diamond para inscribirte en las clases.',
     ]);
 }
-
-
     $clase = Clase::withCount('inscripciones')->findOrFail($request->clase_id);
 
     // Validar aforo disponible (aforo - inscritos)
     if ($clase->inscripciones_count >= $clase->aforo) {
         return back()->withErrors(['general' => 'No puedes inscribirte a esta clase porque ya no hay plazas disponibles.']);
-
-
     }
-
     // Validar que la fecha no sea en el pasado
     if (now()->gt($request->fecha_inscripcion)) {
         return back()->withErrors(['fecha_inscripcion' => 'No puedes inscribirte a una clase en el pasado.']);
@@ -83,8 +75,6 @@ if (!$suscripcion || !in_array($suscripcion->plan->tipo, ['Gold', 'Diamond'])) {
 
     return redirect()->route('admin.inscripciones.index');
 }
-
-
     public function editar(Inscripcion $inscripcion)
     {
         return Inertia::render('admin/inscripciones/editar', [
@@ -102,7 +92,7 @@ if (!$suscripcion || !in_array($suscripcion->plan->tipo, ['Gold', 'Diamond'])) {
         'fecha_inscripcion' => 'required|date_format:Y-m-d H:i:s',
     ]);
 
-    // ✅ Verificar si ya existe otra inscripción igual
+    // Verificar si ya existe otra inscripción igual
     $yaInscrito = \App\Models\Inscripcion::where('usuario_id', $request->usuario_id)
         ->where('clase_id', $request->clase_id)
         ->where('id', '!=', $inscripcion->id) // excluye la actual

@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { ItemCarrito } from '@/types';
 export interface PageProps {
   suscripcion?: string | null;
-  [key: string]: unknown; // <- esto soluciona el error
+  [key: string]: unknown;
 }
 
 
@@ -64,10 +64,8 @@ export default function Carrito() {
   try {
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    // Eliminar cualquier suscripción anterior pendiente
     localStorage.removeItem('plan_id');
 
-    // Guardamos el carrito tal cual está, sin modificar precios ni total
     localStorage.setItem('carrito', JSON.stringify(carrito));
 
     const response = await fetch('/pago/crear-sesion', {
@@ -76,7 +74,7 @@ export default function Carrito() {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': token ?? '',
       },
-      body: JSON.stringify({ carrito }), // ya no enviamos monto_total
+      body: JSON.stringify({ carrito }),
     });
 
     const data = await response.json();

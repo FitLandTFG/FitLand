@@ -182,7 +182,7 @@ public function index()
             'transaccion_id' => $request->transaccion_id ?? null,
         ]);
 
-        // 1. Descontar stock si pasa a completado y aún no se ha descontado
+        // Descontar stock si pasa a completado y aún no se ha descontado
         if (
             $estadoAnterior !== 'completado' &&
             $request->estado === 'completado' &&
@@ -202,7 +202,7 @@ public function index()
             $compra->save();
         }
 
-        // 2. Devolver stock si pasa de completado a pendiente o fallido
+        // Devolver stock si pasa de completado a pendiente o fallido
         if (
             $estadoAnterior === 'completado' &&
             in_array($request->estado, ['pendiente', 'fallido']) &&
@@ -240,7 +240,7 @@ public function crearSesion(Request $request)
 $precio = $plan->precio;
 $unitAmount = intval(bcmul($precio, '100', 2));
 
-        // 🔒 NO aplicar descuento al COMPRAR una suscripción, ni aunque sea Diamond
+        // NO aplicar descuento al COMPRAR una suscripción, ni aunque sea Diamond
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
@@ -282,7 +282,7 @@ $unitAmount = intval(bcmul($precio, '100', 2));
         }
     }
 
-    // ✅ Solo aplicar descuento si el usuario YA tiene una suscripción Diamond activa
+    // Solo aplicar descuento si el usuario YA tiene una suscripción Diamond activa
     $tieneDescuento = $usuario?->suscripcionActiva()?->exists() &&
                       str_contains(strtolower($usuario->suscripcionActiva->plan->nombre ?? ''), 'diamond');
 
@@ -354,7 +354,7 @@ public function registrarDesdeStripe(Request $request)
         $pago->updated_at = now();
         $pago->save();
 
-        // ✅ Si es compra y pago completado y no se ha restado aún el stock
+        // Si es compra y pago completado y no se ha restado aún el stock
         if (isset($compra) && $pago->estado === 'completado' && !$compra->stock_descargado) {
             foreach ($compra->productos as $producto) {
                 $cantidad = $producto->pivot->cantidad;

@@ -7,7 +7,6 @@ interface Props extends PageProps {
 }
 
 const Editar: React.FC<Props> = ({ usuario }) => {
-  // Inicializar el formulario con la data del usuario
   const { data, setData, put, processing, errors } = useForm({
     nombre_completo: usuario.nombre_completo,
     documentacion: usuario.documentacion,

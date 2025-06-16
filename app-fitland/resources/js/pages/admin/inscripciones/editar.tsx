@@ -32,7 +32,6 @@ interface Props extends PageProps {
   clases: Clase[];
 }
 
-// ✅ Tipado del formulario
 type FormData = {
   usuario_id: number;
   nombre_clase: string;
@@ -62,7 +61,7 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar Inscripción</h1>
 
-      {/* ✅ Mostrar error general si existe */}
+      {/* Mostrar error general si existe */}
       {generalError && (
         <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
           {generalError}

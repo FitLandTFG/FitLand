@@ -27,7 +27,7 @@ class SuscripcionController extends Controller
 {
     return Inertia::render('admin/suscripciones/crear', [
         'usuarios' => \App\Models\Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
-        'planes' => \App\Models\PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']), // ← aquí
+        'planes' => \App\Models\PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']),
     ]);
 }
 
@@ -62,7 +62,7 @@ class SuscripcionController extends Controller
     return Inertia::render('admin/suscripciones/editar', [
         'suscripcion' => $suscripcion,
         'usuarios' => Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
-        'planes' => PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']), // ← añade aquí los campos que faltan
+        'planes' => PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']),
     ]);
 }
 

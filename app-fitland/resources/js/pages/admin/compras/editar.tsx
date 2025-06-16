@@ -73,7 +73,6 @@ const Editar: React.FC<Props> = (props) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar Compra</h1>
 
-      {/* Error general si viene desde el backend (por ejemplo, sin stock) */}
       {flash?.error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {flash.error}

@@ -14,7 +14,7 @@ class HorarioClasesController extends Controller
     $inicioSemana = Carbon::create(2025, 6, 16)->startOfDay();
     $finSemana = $inicioSemana->copy()->addDays(6)->endOfDay();
 
-    $clases = Clase::withCount('inscripciones') // 👈 esto cuenta las inscripciones
+    $clases = Clase::withCount('inscripciones')
         ->whereBetween('horario', [$inicioSemana, $finSemana])
         ->orderBy('horario')
         ->get()
@@ -26,7 +26,7 @@ class HorarioClasesController extends Controller
                 'hora' => $clase->horario->format('H:i'),
                 'dia' => $clase->horario->format('l'),
                 'aforo' => $clase->aforo,
-                'inscritos' => $clase->inscripciones_count, // 👈 cantidad inscrita
+                'inscritos' => $clase->inscripciones_count,
             ];
         });
 

@@ -35,7 +35,7 @@ const Crear: React.FC<Props> = ({ compras, productos, flash }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Añadir Producto a Compra</h1>
 
-      {/* Mensaje de error general (por ejemplo, sin stock) */}
+
       {flash?.error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {flash.error}

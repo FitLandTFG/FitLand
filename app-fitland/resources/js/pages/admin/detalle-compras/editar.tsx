@@ -38,7 +38,6 @@ const Editar: React.FC<Props> = ({ detalle, flash }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar detalle de compras</h1>
 
-      {/* Mensaje de error global (por ejemplo, stock insuficiente) */}
       {flash?.error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {flash.error}

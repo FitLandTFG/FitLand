@@ -23,7 +23,7 @@ const Editar: React.FC<Props> = ({ producto }) => {
     descripcion: producto.descripcion,
     precio: producto.precio,
     imagen: producto.imagen,
-    stock: producto.stock, // ✅ nuevo campo
+    stock: producto.stock,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,8 +78,8 @@ const Editar: React.FC<Props> = ({ producto }) => {
           >
             <option value="ropa">Ropa</option>
             <option value="suplemento">Suplemento</option>
-            <option value="bebida">Bebida</option> {/* ✅ nuevo */}
-            <option value="accesorio">Accesorio</option> {/* ✅ nuevo */}
+            <option value="bebida">Bebida</option>
+            <option value="accesorio">Accesorio</option>
           </select>
           {errors.tipo && <p className="text-red-600 text-sm">{errors.tipo}</p>}
         </div>

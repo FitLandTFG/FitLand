@@ -44,7 +44,7 @@ interface Props extends PageProps {
 
 const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
   const { data, setData, post, processing, errors } = useForm({
-    tipo: 'compra', // nuevo
+    tipo: 'compra',
     compra_id: '',
     suscripcion_id: '',
     fecha_pago: '',

@@ -45,7 +45,7 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
     fecha_inscripcion: '',
   });
 
-  // 👇 Compatibilidad total: extraemos errors.general como string opcional
+
   const generalError = (errors as Record<string, string>).general;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,7 +57,7 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Registrar Inscripción</h1>
 
-      {/* ✅ Error general si lo hay */}
+      {/* Error general si lo hay */}
       {generalError && (
         <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
           {generalError}

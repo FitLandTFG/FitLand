@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { PageProps } from '@/types';
@@ -114,10 +114,10 @@ export default function Cuenta() {
       setFotoPreview(data.foto_perfil_url);
       setSubiendoFoto(false);
       window.location.reload();
-    } catch (error) {
-      setErrorFoto('Error inesperado al subir la foto');
-      setSubiendoFoto(false);
-    }
+    } catch {
+  setErrorFoto('Error inesperado al subir la foto');
+  setSubiendoFoto(false);
+}
   };
 
   const cancelarSuscripcion = async () => {

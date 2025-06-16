@@ -29,7 +29,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
     estado: 'activa',
   });
 
-  // Al seleccionar un plan, actualiza el precio y fecha de fin si hay fecha de inicio
   useEffect(() => {
     const planSeleccionado = planes.find(p => p.id === Number(data.plan_id));
 
@@ -95,7 +94,7 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           {errors.plan_id && <p className="text-red-600 text-sm">{errors.plan_id}</p>}
         </div>
 
-        {/* Precio (solo lectura) */}
+        {/* Precio */}
         <div>
           <label className="block font-semibold mb-1">Precio</label>
           <input
@@ -118,7 +117,7 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           {errors.fecha_inicio && <p className="text-red-600 text-sm">{errors.fecha_inicio}</p>}
         </div>
 
-        {/* Fecha de fin (calculada, solo lectura) */}
+        {/* Fecha de fin */}
         <div>
           <label className="block font-semibold mb-1">Fecha de fin</label>
           <input
