@@ -87,7 +87,7 @@ public function actualizarImagen(Request $request)
         mkdir($carpetaDestino, 0755, true);
     }
 
-    // ⚠️ Solo borramos si la imagen NO es la imagen por defecto
+    // Solo borramos si la imagen NO es la imagen por defecto
     if (
         $user->imagen &&
         $user->imagen !== '/images/defaults/avatar.jpg' &&
@@ -96,13 +96,13 @@ public function actualizarImagen(Request $request)
         unlink(public_path($user->imagen));
     }
 
-    // Guardar con un nombre personalizado (por ejemplo: usuario_5.jpg)
+    // Guardar con un nombre personalizado
     $extension = $request->file('imagen')->getClientOriginalExtension();
     $nombreArchivo = 'usuario_' . $user->id . '.' . $extension;
 
     $request->file('imagen')->move($carpetaDestino, $nombreArchivo);
 
-    // Guardar el path relativo para poder usarlo con asset()
+
     $user->imagen = '/images/Perfil/' . $nombreArchivo;
     $user->save();
 

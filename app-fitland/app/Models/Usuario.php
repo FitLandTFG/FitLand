@@ -41,5 +41,8 @@ public function suscripcionActiva()
         ->whereDate('fecha_inicio', '<=', now())
         ->whereDate('fecha_fin', '>=', now());
 }
-
+public function suscripcion()
+{
+    return $this->hasOne(\App\Models\Suscripcion::class, 'usuario_id');
+}
 }

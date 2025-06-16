@@ -28,7 +28,7 @@ public function generarPDF()
 
     $pdf = Pdf::loadView('facturas.factura', ['pago' => $pago]);
 
-    return $pdf->stream('factura.pdf'); // o ->download('factura.pdf')
+    return $pdf->stream('factura.pdf');
 }
 
 }
