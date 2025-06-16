@@ -1,0 +1,75 @@
+services:
+  - type: web
+    name: fitland-web
+    env: php
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromService:
+          name: fitland
+          type: postgres
+          property: host
+      - key: DB_PORT
+        fromService:
+          name: fitland
+          type: postgres
+          property: port
+      - key: DB_DATABASE
+        fromService:
+          name: fitland
+          type: postgres
+          property: database
+      - key: DB_USERNAME
+        fromService:
+          name: fitland
+          type: postgres
+          property: user
+      - key: DB_PASSWORD
+        fromService:
+          name: fitland
+          type: postgres
+          property: password
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USERNAME
+        sync: true
+      - key: MAIL_PASSWORD
+        sync: true
+      - key: MAIL_ENCRYPTION
+        value: tls
+      - key: MAIL_FROM_ADDRESS
+        value: asistentefitland@gmail.com
+      - key: MAIL_FROM_NAME
+        value: "Asistente FitLand"
+      - key: STRIPE_KEY
+        sync: true
+      - key: STRIPE_SECRET
+        sync: true
+
+databases:
+  - name: fitland
+    plan: free
+    region: oregon
+    postgresMajorVersion: 15

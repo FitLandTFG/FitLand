@@ -11,7 +11,6 @@ class RelacionUsuarioSuscripcionTest extends TestCase
 {
     public function test_usuario_tiene_una_suscripcion(): void
     {
-        // Crear usuario
         $usuario = new Usuario();
         $usuario->nombre_completo = 'Test User';
         $usuario->documentacion = '12345678A';
@@ -21,7 +20,6 @@ class RelacionUsuarioSuscripcionTest extends TestCase
         $usuario->imagen = 'usuario.jpg';
         $usuario->save();
 
-        // Crear plan de suscripción
         $plan = PlanSuscripcion::create([
             'nombre' => 'Prueba45',
             'descripcion' => 'Acceso completo a todas las funciones',
@@ -30,7 +28,6 @@ class RelacionUsuarioSuscripcionTest extends TestCase
             'tipo' => 'Prueba',
         ]);
 
-        // Crear suscripción asociada al usuario
         $suscripcion = Suscripcion::create([
             'usuario_id' => $usuario->id,
             'plan_id' => $plan->id,
@@ -40,10 +37,8 @@ class RelacionUsuarioSuscripcionTest extends TestCase
             'estado' => 'activa',
         ]);
 
-        // Recargar usuario para acceder correctamente a la relación
         $usuario->refresh();
 
-        // Verificar relación
         $this->assertEquals($suscripcion->id, $usuario->suscripcion->id);
         $this->assertEquals($usuario->id, $suscripcion->usuario->id);
     }

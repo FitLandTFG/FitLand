@@ -62,7 +62,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
       <h1 className="text-2xl font-bold mb-6">Crear Suscripción</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Usuario */}
         <div>
           <label className="block font-semibold mb-1">Usuario</label>
           <select
@@ -78,7 +77,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
         </div>
 
-        {/* Plan */}
         <div>
           <label className="block font-semibold mb-1">Plan</label>
           <select
@@ -94,7 +92,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           {errors.plan_id && <p className="text-red-600 text-sm">{errors.plan_id}</p>}
         </div>
 
-        {/* Precio */}
         <div>
           <label className="block font-semibold mb-1">Precio</label>
           <input
@@ -105,7 +102,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           />
         </div>
 
-        {/* Fecha de inicio */}
         <div>
           <label className="block font-semibold mb-1">Fecha de inicio</label>
           <input
@@ -117,7 +113,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           {errors.fecha_inicio && <p className="text-red-600 text-sm">{errors.fecha_inicio}</p>}
         </div>
 
-        {/* Fecha de fin */}
         <div>
           <label className="block font-semibold mb-1">Fecha de fin</label>
           <input
@@ -128,8 +123,6 @@ const Crear: React.FC<Props> = ({ usuarios, planes }) => {
           />
         </div>
 
-
-        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"

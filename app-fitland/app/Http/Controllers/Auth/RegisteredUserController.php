@@ -15,16 +15,13 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    // Muestra la página de registro
     public function create(): Response
     {
         return Inertia::render('auth/register');
     }
 
-    // Procesa el formulario de registro
     public function store(Request $request): RedirectResponse
     {
-        // Validación de los datos del formulario
         $request->validate([
             'nombre_completo' => ['required', 'string', 'max:50', 'regex:/^[\pL\s\-]+$/u'],
             'documentacion' => ['required', 'string', 'regex:/^(\d{8}[A-Z]|[XYZ]\d{7}[A-Z])$/', 'max:9', 'min:9', 'unique:usuarios'],
@@ -48,7 +45,6 @@ class RegisteredUserController extends Controller
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
         ]);
 
-        // Crear el nuevo usuario en la base de datos
         $usuario = Usuario::create([
             'nombre_completo' => $request->nombre_completo,
             'documentacion' => $request->documentacion,
@@ -59,15 +55,10 @@ class RegisteredUserController extends Controller
             'roles' => 'user',
         ]);
 
-        // Lanzar el evento de usuario registrado (esto envía el correo de verificación)
         event(new Registered($usuario));
 
-
-        // Loguear al usuario automáticamente
         Auth::login($usuario);
 
-
-        // Redirigir a la pantalla que le pide al usuario verificar su correo
         return redirect()->route('verification.notice');
     }
 }

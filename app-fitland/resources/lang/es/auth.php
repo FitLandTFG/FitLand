@@ -13,7 +13,6 @@ return [
     'unique' => 'El campo :attribute ya está en uso.',
     'regex' => 'El formato del campo :attribute no es válido.',
 
-    // Traducción de los nombres de los campos (opcional pero útil)
     'attributes' => [
         'email' => 'correo electrónico',
         'password' => 'contraseña',

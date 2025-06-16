@@ -57,7 +57,6 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Registrar Inscripción</h1>
 
-      {/* Error general si lo hay */}
       {generalError && (
         <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
           {generalError}
@@ -65,7 +64,6 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Usuario */}
         <div>
           <label className="block mb-1 font-semibold">Usuario</label>
           <select
@@ -83,7 +81,6 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
           {errors.usuario_id && <p className="text-red-600 text-sm">{errors.usuario_id}</p>}
         </div>
 
-        {/* Clase */}
         <div>
           <label className="block mb-1 font-semibold">Clase</label>
           <select
@@ -105,7 +102,6 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
           {errors.nombre_clase && <p className="text-red-600 text-sm">{errors.nombre_clase}</p>}
         </div>
 
-        {/* Fecha de inscripción */}
         <div>
           <label className="block mb-1 font-semibold">Fecha de Inscripción</label>
           <select
@@ -150,7 +146,6 @@ const Crear: React.FC<Props> = ({ usuarios, clases }) => {
           {errors.fecha_inscripcion && <p className="text-red-600 text-sm">{errors.fecha_inscripcion}</p>}
         </div>
 
-        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"

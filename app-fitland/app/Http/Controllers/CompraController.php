@@ -52,7 +52,6 @@ class CompraController extends Controller
 
                 $compra = Compra::create([
                     'usuario_id' => $request->usuario_id,
-                    // No se envía 'fecha_compra' porque ahora se rellena automáticamente
                 ]);
 
                 foreach ($request->productos as $producto) {
@@ -96,7 +95,6 @@ class CompraController extends Controller
 
         try {
             DB::transaction(function () use ($request, $compra) {
-                // Restaurar stock anterior
                 foreach ($compra->detalles as $detalle) {
                     Producto::where('id', $detalle->producto_id)->increment('stock', $detalle->cantidad);
                 }

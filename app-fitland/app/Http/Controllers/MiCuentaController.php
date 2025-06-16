@@ -79,15 +79,12 @@ public function actualizarImagen(Request $request)
 
     $user = $request->user();
 
-    // Ruta física absoluta al directorio donde quieres guardar
     $carpetaDestino = public_path('/images/Perfil');
 
-    // Crear la carpeta si no existe
     if (!file_exists($carpetaDestino)) {
         mkdir($carpetaDestino, 0755, true);
     }
 
-    // Solo borramos si la imagen NO es la imagen por defecto
     if (
         $user->imagen &&
         $user->imagen !== '/images/defaults/avatar.jpg' &&
@@ -96,7 +93,6 @@ public function actualizarImagen(Request $request)
         unlink(public_path($user->imagen));
     }
 
-    // Guardar con un nombre personalizado
     $extension = $request->file('imagen')->getClientOriginalExtension();
     $nombreArchivo = 'usuario_' . $user->id . '.' . $extension;
 
@@ -137,7 +133,6 @@ public function actualizarImagen(Request $request)
 {
     $usuario = Auth::user();
 
-    // Cambiar estado de la suscripción activa a 'cancelada'
     $suscripcion = Suscripcion::where('usuario_id', $usuario->id)
         ->where('estado', 'activa')
         ->whereDate('fecha_inicio', '<=', now())

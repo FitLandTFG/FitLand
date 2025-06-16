@@ -139,14 +139,14 @@ export default function Carrito() {
 
             <div className="mt-6 text-right">
               <div className="text-right mb-4">
-                <p className="text-xl font-semibold">Total: €{total.toFixed(2)}</p>
+                <p className="text-xl font-semibold">Total: €{total}</p>
                 {tieneDescuento && (
                   <>
                     <p className="text-green-700 font-semibold">
-                      Descuento (10%): –€{(total * 0.1).toFixed(2)}
+                      Descuento (10%): –€{(total * 0.1)}
                     </p>
                     <p className="text-2xl font-bold mt-1">
-                      Total a pagar: €{(total * 0.9).toFixed(2)}
+                      Total a pagar: €{(total * 0.9)}
                     </p>
                   </>
                 )}

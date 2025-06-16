@@ -112,7 +112,6 @@ export default function Register() {
                             <InputError message={errors.email} />
                         </div>
 
-                        {/* Contraseña */}
                         <div className="grid gap-2">
                             <Label htmlFor="password">Contraseña</Label>
                             <div className="relative">
@@ -140,7 +139,6 @@ export default function Register() {
                             <InputError message={errors.password} />
                         </div>
 
-                        {/* Confirmar contraseña */}
                         <div className="grid gap-2">
                             <Label htmlFor="password_confirmation">Confirmar contraseña</Label>
                             <div className="relative">

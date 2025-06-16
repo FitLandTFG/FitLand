@@ -12,13 +12,11 @@ use Inertia\Response;
 
 class ConfirmablePasswordController extends Controller
 {
-    // Muestra la vista para confirmar la contraseña
     public function show(): Response
     {
         return Inertia::render('auth/confirm-password');
     }
 
-    // Verifica que la contraseña ingresada sea correcta
     public function store(Request $request): RedirectResponse
     {
         if (! Auth::guard('web')->validate([
@@ -30,10 +28,8 @@ class ConfirmablePasswordController extends Controller
             ]);
         }
 
-        // Guarda en la sesión el momento de la confirmación
         $request->session()->put('auth.password_confirmed_at', time());
 
-        // Redirige al dashboard o a la ruta previa
         return redirect()->intended(route('inicio', absolute: false));
     }
 }

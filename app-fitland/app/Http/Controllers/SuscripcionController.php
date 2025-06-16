@@ -24,12 +24,12 @@ class SuscripcionController extends Controller
     }
 
     public function crear()
-{
-    return Inertia::render('admin/suscripciones/crear', [
-        'usuarios' => \App\Models\Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
-        'planes' => \App\Models\PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']),
-    ]);
-}
+    {
+        return Inertia::render('admin/suscripciones/crear', [
+            'usuarios' => \App\Models\Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
+            'planes' => \App\Models\PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']),
+        ]);
+    }
 
     public function guardar(Request $request)
     {
@@ -58,13 +58,13 @@ class SuscripcionController extends Controller
     }
 
     public function editar(Suscripcion $suscripcion)
-{
-    return Inertia::render('admin/suscripciones/editar', [
-        'suscripcion' => $suscripcion,
-        'usuarios' => Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
-        'planes' => PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']),
-    ]);
-}
+    {
+        return Inertia::render('admin/suscripciones/editar', [
+            'suscripcion' => $suscripcion,
+            'usuarios' => Usuario::orderBy('nombre_completo')->get(['id', 'nombre_completo']),
+            'planes' => PlanSuscripcion::orderBy('nombre')->get(['id', 'nombre', 'precio', 'duracion_dias']),
+        ]);
+    }
 
     public function actualizar(Request $request, Suscripcion $suscripcion)
     {
@@ -77,19 +77,18 @@ class SuscripcionController extends Controller
             'estado' => 'required|in:activa,expirada,cancelada',
         ]);
 
-         // Si el nuevo estado será "activa", hay que comprobar si ya tiene otra activa
-    if ($request->estado === 'activa') {
-        $yaTieneOtraActiva = \App\Models\Suscripcion::where('usuario_id', $request->usuario_id)
-            ->where('estado', 'activa')
-            ->where('id', '!=', $suscripcion->id)
-            ->exists();
+        if ($request->estado === 'activa') {
+            $yaTieneOtraActiva = \App\Models\Suscripcion::where('usuario_id', $request->usuario_id)
+                ->where('estado', 'activa')
+                ->where('id', '!=', $suscripcion->id)
+                ->exists();
 
-        if ($yaTieneOtraActiva) {
-            return back()
-                ->withErrors(['usuario_id' => 'Este usuario ya tiene otra suscripción activa.'])
-                ->withInput();
+            if ($yaTieneOtraActiva) {
+                return back()
+                    ->withErrors(['usuario_id' => 'Este usuario ya tiene otra suscripción activa.'])
+                    ->withInput();
+            }
         }
-    }
 
         $suscripcion->update($request->all());
 
@@ -105,22 +104,22 @@ class SuscripcionController extends Controller
 
 
     public function crearDesdeFrontend(Request $request)
-{
-    $usuarioId = Auth::id();
-    $planId = $request->input('plan_id');
+    {
+        $usuarioId = Auth::id();
+        $planId = $request->input('plan_id');
 
-    $plan = PlanSuscripcion::findOrFail($planId);
+        $plan = PlanSuscripcion::findOrFail($planId);
 
-    $suscripcion = new Suscripcion();
-    $suscripcion->usuario_id = $usuarioId;
-    $suscripcion->plan_id = $plan->id;
-    $suscripcion->precio = $plan->precio;
-    $suscripcion->fecha_inicio = now();
-    $suscripcion->fecha_fin = now()->addDays($plan->duracion_dias);
-    $suscripcion->created_at = now();
-    $suscripcion->updated_at = now();
-    $suscripcion->save();
+        $suscripcion = new Suscripcion();
+        $suscripcion->usuario_id = $usuarioId;
+        $suscripcion->plan_id = $plan->id;
+        $suscripcion->precio = $plan->precio;
+        $suscripcion->fecha_inicio = now();
+        $suscripcion->fecha_fin = now()->addDays($plan->duracion_dias);
+        $suscripcion->created_at = now();
+        $suscripcion->updated_at = now();
+        $suscripcion->save();
 
-    return response()->json(['suscripcion_id' => $suscripcion->id]);
-}
+        return response()->json(['suscripcion_id' => $suscripcion->id]);
+    }
 }

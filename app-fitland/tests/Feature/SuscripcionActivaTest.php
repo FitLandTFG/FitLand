@@ -12,7 +12,6 @@ class SuscripcionActivaTest extends TestCase
 {
     public function test_usuario_tiene_suscripcion_activa(): void
     {
-        // Crear usuario
         $usuario = new Usuario();
         $usuario->nombre_completo = 'Test User';
         $usuario->documentacion = '12345678A';
@@ -22,7 +21,6 @@ class SuscripcionActivaTest extends TestCase
         $usuario->imagen = 'usuario.jpg';
         $usuario->save();
 
-        // Crear plan de suscripción
         $plan = PlanSuscripcion::create([
             'nombre' => 'Gold',
             'descripcion' => 'Acceso completo',
@@ -31,7 +29,6 @@ class SuscripcionActivaTest extends TestCase
             'tipo' => 'Gold',
         ]);
 
-        // Crear suscripción activa (fecha actual)
         Suscripcion::create([
             'usuario_id' => $usuario->id,
             'plan_id' => $plan->id,
@@ -41,10 +38,8 @@ class SuscripcionActivaTest extends TestCase
             'estado' => 'activa',
         ]);
 
-        // Recargar relaciones
         $usuario->refresh();
 
-        // Verificación de que la suscripción activa existe
         $this->assertNotNull($usuario->suscripcionActiva);
         $this->assertEquals('activa', $usuario->suscripcionActiva->estado);
     }

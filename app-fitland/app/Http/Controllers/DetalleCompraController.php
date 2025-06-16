@@ -74,15 +74,12 @@ class DetalleCompraController extends Controller
 
         $producto = Producto::findOrFail($detalleCompra->producto_id);
 
-        // Restaurar el stock anterior antes de aplicar el nuevo cambio
         $producto->increment('stock', $detalleCompra->cantidad);
 
-        // Validar nuevo stock
         if ($producto->stock < $request->cantidad) {
             return redirect()->back()->with('error', 'No hay suficiente stock para actualizar este producto: ' . $producto->nombre);
         }
 
-        // Actualizar y descontar nuevo stock
         $detalleCompra->update([
             'cantidad' => $request->cantidad,
         ]);
@@ -94,7 +91,6 @@ class DetalleCompraController extends Controller
 
     public function eliminar(DetalleCompra $detalleCompra)
     {
-        // Devolver el stock antes de borrar
         Producto::where('id', $detalleCompra->producto_id)->increment('stock', $detalleCompra->cantidad);
 
         $detalleCompra->delete();

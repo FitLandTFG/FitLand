@@ -65,12 +65,12 @@ export default function Inicio() {
             <p className="text-lg sm:text-xl md:text-2xl mb-8">
               Únete hoy y entrena en el gimnasio más completo de Madrid.
             </p>
-           <Link
-  href="/suscripciones"
-  className="inline-block bg-white text-[#41A510] px-8 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-gray-100 transition"
->
-  Ver planes de suscripción
-</Link>
+            <Link
+              href="/suscripciones"
+              className="inline-block bg-white text-[#41A510] px-8 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-gray-100 transition"
+            >
+              Ver planes de suscripción
+            </Link>
           </div>
         </section>
 

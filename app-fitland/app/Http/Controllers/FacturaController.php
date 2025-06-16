@@ -15,7 +15,6 @@ public function generarPDF()
 {
     $usuario = Auth::user();
 
-    // Traer el último pago completado del usuario
     $pago = Pago::with(['compra.productos', 'suscripcion.plan'])
         ->where('usuario_id', $usuario->id)
         ->where('estado', 'completado')

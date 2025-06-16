@@ -82,7 +82,6 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
       <h1 className="text-2xl font-bold mb-6">Registrar Pago</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Tipo de pago */}
         <div>
           <label className="block mb-1 font-semibold">Tipo de Pago</label>
           <select
@@ -95,7 +94,6 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           </select>
         </div>
 
-        {/* Compra o suscripción */}
         {data.tipo === 'compra' ? (
           <div>
             <label className="block mb-1 font-semibold">Compra</label>
@@ -132,7 +130,6 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           </div>
         )}
 
-        {/* Monto calculado */}
         <div>
           <label className="block mb-1 font-semibold">Monto Total (€)</label>
           <input
@@ -143,20 +140,18 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           />
         </div>
 
-       {/* Fecha y hora */}
-<div>
-  <label className="block mb-1 font-semibold">Fecha y hora de Pago</label>
-  <input
-    type="datetime-local"
-    value={data.fecha_pago.slice(0, 16)}
-    onChange={(e) => setData('fecha_pago', e.target.value)}
-    className="w-full border rounded px-3 py-2"
-  />
-  {errors.fecha_pago && <p className="text-red-600 text-sm">{errors.fecha_pago}</p>}
-</div>
+        <div>
+          <label className="block mb-1 font-semibold">Fecha y hora de Pago</label>
+          <input
+            type="datetime-local"
+            value={data.fecha_pago.slice(0, 16)}
+            onChange={(e) => setData('fecha_pago', e.target.value)}
+            className="w-full border rounded px-3 py-2"
+          />
+          {errors.fecha_pago && <p className="text-red-600 text-sm">{errors.fecha_pago}</p>}
+        </div>
 
 
-        {/* Método */}
         <div>
           <label className="block mb-1 font-semibold">Método de Pago</label>
           <input
@@ -168,7 +163,6 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           {errors.metodo_pago && <p className="text-red-600 text-sm">{errors.metodo_pago}</p>}
         </div>
 
-        {/* Transacción */}
         <div>
           <label className="block mb-1 font-semibold">ID de Transacción (opcional)</label>
           <input
@@ -179,7 +173,6 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           />
         </div>
 
-        {/* Estado */}
         <div>
           <label className="block mb-1 font-semibold">Estado</label>
           <select
@@ -194,7 +187,6 @@ const Crear: React.FC<Props> = ({ compras, suscripciones }) => {
           {errors.estado && <p className="text-red-600 text-sm">{errors.estado}</p>}
         </div>
 
-        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"

@@ -61,7 +61,6 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Editar Inscripción</h1>
 
-      {/* Mostrar error general si existe */}
       {generalError && (
         <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
           {generalError}
@@ -69,7 +68,6 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Usuario (solo lectura) */}
         <div>
           <label className="block mb-1 font-semibold">Usuario</label>
           <input
@@ -80,7 +78,6 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
           />
         </div>
 
-        {/* Clase */}
         <div>
           <label className="block mb-1 font-semibold">Clase</label>
           <select
@@ -102,7 +99,6 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
           {errors.nombre_clase && <p className="text-red-600 text-sm">{errors.nombre_clase}</p>}
         </div>
 
-        {/* Horario */}
         <div>
           <label className="block mb-1 font-semibold">Horario</label>
           <select
@@ -145,7 +141,6 @@ const Editar: React.FC<Props> = ({ inscripcion, usuarios, clases }) => {
           )}
         </div>
 
-        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"

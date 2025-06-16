@@ -43,7 +43,6 @@ const Crear: React.FC<Props> = ({ compras, productos, flash }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Compra */}
         <div>
           <label className="block mb-1 font-semibold">Compra</label>
           <select
@@ -61,7 +60,6 @@ const Crear: React.FC<Props> = ({ compras, productos, flash }) => {
           {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
         </div>
 
-        {/* Producto */}
         <div>
           <label className="block mb-1 font-semibold">Producto</label>
           <select
@@ -79,7 +77,6 @@ const Crear: React.FC<Props> = ({ compras, productos, flash }) => {
           {errors.producto_id && <p className="text-red-600 text-sm">{errors.producto_id}</p>}
         </div>
 
-        {/* Cantidad */}
         <div>
           <label className="block mb-1 font-semibold">Cantidad</label>
           <input
@@ -92,7 +89,6 @@ const Crear: React.FC<Props> = ({ compras, productos, flash }) => {
           {errors.cantidad && <p className="text-red-600 text-sm">{errors.cantidad}</p>}
         </div>
 
-        {/* Botones */}
         <div className="flex space-x-4 pt-4">
           <button
             type="submit"

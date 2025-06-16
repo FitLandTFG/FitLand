@@ -13,7 +13,6 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    // Muestra la vista de inicio de sesión
     public function create(Request $request): Response
     {
         return Inertia::render('auth/login', [
@@ -22,20 +21,18 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    // Procesa el login del usuario
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate(); // Valida y autentica
-        $request->session()->regenerate(); // Regenera la sesión
+        $request->authenticate();
+        $request->session()->regenerate();
         return redirect()->intended(route('inicio', absolute: false));
     }
 
-    // Cierra sesión del usuario
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout(); // Cierra sesión
-        $request->session()->invalidate(); // Elimina datos de sesión
-        $request->session()->regenerateToken(); // Nuevo token CSRF
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect('/');
     }
 }

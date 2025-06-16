@@ -89,7 +89,6 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                             <InputError message={errors.password} />
                         </div>
 
-                        {/* Confirmar contraseña nueva con ojo */}
                         <div className="grid gap-2">
                             <Label htmlFor="password_confirmation">Confirmar contraseña nueva</Label>
                             <div className="relative">

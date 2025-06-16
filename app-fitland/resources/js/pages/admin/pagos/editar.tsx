@@ -68,7 +68,6 @@ const Editar: React.FC<Props> = ({ pago, compras }) => {
       <h1 className="text-2xl font-bold mb-6">Editar Pago</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        {/* Compra */}
         <div>
           <label className="block mb-1 font-semibold">Compra</label>
           <select
@@ -86,7 +85,6 @@ const Editar: React.FC<Props> = ({ pago, compras }) => {
           {errors.compra_id && <p className="text-red-600 text-sm">{errors.compra_id}</p>}
         </div>
 
-        {/* Monto calculado */}
         <div>
           <label className="block mb-1 font-semibold">Monto calculado (€)</label>
           <input
@@ -97,19 +95,17 @@ const Editar: React.FC<Props> = ({ pago, compras }) => {
           />
         </div>
 
-        {/* Fecha */}
         <div>
           <label className="block mb-1 font-semibold">Fecha de Pago</label>
           <input
-  type="datetime-local"
-  value={data.fecha_pago.slice(0, 16)}
-  onChange={(e) => setData('fecha_pago', e.target.value)}
-  className="w-full border rounded px-3 py-2"
-/>
+            type="datetime-local"
+            value={data.fecha_pago.slice(0, 16)}
+            onChange={(e) => setData('fecha_pago', e.target.value)}
+            className="w-full border rounded px-3 py-2"
+          />
           {errors.fecha_pago && <p className="text-red-600 text-sm">{errors.fecha_pago}</p>}
         </div>
 
-        {/* Método de pago */}
         <div>
           <label className="block mb-1 font-semibold">Método de Pago</label>
           <input
@@ -121,7 +117,6 @@ const Editar: React.FC<Props> = ({ pago, compras }) => {
           {errors.metodo_pago && <p className="text-red-600 text-sm">{errors.metodo_pago}</p>}
         </div>
 
-        {/* Transacción */}
         <div>
           <label className="block mb-1 font-semibold">ID de Transacción (opcional)</label>
           <input
@@ -132,7 +127,6 @@ const Editar: React.FC<Props> = ({ pago, compras }) => {
           />
         </div>
 
-        {/* Estado */}
         <div>
           <label className="block mb-1 font-semibold">Estado</label>
           <select
@@ -149,7 +143,6 @@ const Editar: React.FC<Props> = ({ pago, compras }) => {
           {errors.estado && <p className="text-red-600 text-sm">{errors.estado}</p>}
         </div>
 
-        {/* Botones */}
         <div className="flex space-x-4">
           <button
             type="submit"
