@@ -1,1 +1,0 @@
-Swiper.js: https://swiperjs.com/demos
