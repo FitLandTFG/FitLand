@@ -2,27 +2,23 @@ FROM node:18 AS frontend-builder
 
 WORKDIR /app
 
-COPY app-fitland/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY app-fitland ./
+COPY . .
 RUN npm run build
 
 FROM php:8.2-fpm
 
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    unzip \
-    git \
-    zip \
-    curl \
+    libpq-dev unzip git zip curl \
     && docker-php-ext-install pdo_pgsql
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY app-fitland/ ./
+COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
