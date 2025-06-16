@@ -5,19 +5,22 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     zip \
+    nodejs \
+    npm \
     && docker-php-ext-install pdo_pgsql
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
-COPY . .
+WORKDIR /var/www/html/app-fitland
+
+COPY app-fitland/package*.json ./
+
+RUN npm install
+RUN npm run build
+
+COPY app-fitland/ ./
 
 RUN composer install --no-dev --optimize-autoloader
-
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install \
-    && npm run build
 
 EXPOSE 8000
 
