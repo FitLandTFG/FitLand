@@ -138,6 +138,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 });
+Route::get('/migrar', function () {
+    \Artisan::call('migrate --force');
+    return 'Migraciones ejecutadas';
+});
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
