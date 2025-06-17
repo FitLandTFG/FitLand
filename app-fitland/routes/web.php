@@ -146,6 +146,9 @@ Route::get('/migrar', function () {
     }
     return 'Solo disponible en producción ❌';
 });
+Route::get('/prueba', function () {
+    return 'Hola, Render está funcionando ✅';
+});
 
 
 require __DIR__.'/settings.php';
