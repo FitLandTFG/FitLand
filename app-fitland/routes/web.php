@@ -17,6 +17,7 @@ use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\HorarioClasesController;
+use Illuminate\Support\Facades\Artisan;
 
 
 Route::get('/', function () {
@@ -139,8 +140,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 Route::get('/migrar', function () {
-    \Artisan::call('migrate --force');
-    return 'Migraciones ejecutadas';
+    if (app()->environment('production')) {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migraciones ejecutadas ✅';
+    }
+    return 'Solo disponible en producción ❌';
 });
 
 
